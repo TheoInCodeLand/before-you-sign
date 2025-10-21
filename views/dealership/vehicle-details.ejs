@@ -2,156 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
   <%- include('../partials/header') %>
-  
   <div class="container">
     <div style="margin-bottom: 20px;">
       <a href="/dealership/vehicles" class="btn btn-secondary">&larr; Back to Vehicles</a>
     </div>
-    
     <h1><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></h1>
-    
+
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 30px;">
-        <div style="flex: 1; min-width: 300px;">
+      <div style="display: flex; flex-wrap: wrap; gap: 30px;">
+        <div style="flex: 1; min-width: 280px;">
           <h2>Status</h2>
-          <p style="margin: 15px 0;">
+          <p style="margin: 10px 0;">
             <% if (vehicle.status === 'verified') { %>
-              <span class="badge badge-success" style="font-size: 1.1rem; padding: 10px 20px;">✓ Verified</span>
+              <span class="badge badge-success">✓ Verified</span>
             <% } else if (vehicle.status === 'pending_verification') { %>
-              <span class="badge badge-warning" style="font-size: 1.1rem; padding: 10px 20px;">⏳ Pending Verification</span>
+              <span class="badge badge-warning">⏳ Pending Verification</span>
             <% } else { %>
-              <span class="badge badge-danger" style="font-size: 1.1rem; padding: 10px 20px;">✗ Rejected</span>
+              <span class="badge badge-danger">✗ Rejected</span>
             <% } %>
           </p>
-          
-          <% if (vehicle.status === 'verified') { %>
-            <p style="color: var(--success); margin-top: 10px;">
-              <strong>Verified on:</strong> <%= new Date(vehicle.verified_at).toLocaleDateString() %>
-            </p>
-            <% if (vehicle.verification_notes) { %>
-              <p style="margin-top: 10px;">
-                <strong>Admin Notes:</strong><br>
-                <%= vehicle.verification_notes %>
-              </p>
-            <% } %>
-          <% } else if (vehicle.status === 'rejected' && vehicle.rejection_reason) { %>
-            <div class="alert alert-error" style="margin-top: 15px;">
-              <strong>Rejection Reason:</strong><br>
-              <%= vehicle.rejection_reason %>
+          <% if (vehicle.status === 'rejected' && vehicle.rejection_reason) { %>
+            <div class="alert alert-error"><strong>Rejection Reason:</strong><br><%= vehicle.rejection_reason %></div>
+          <% } %>
+          <% if (vehicle.qr_code_path) { %>
+            <div style="margin-top: 15px; text-align:center;">
+              <img src="<%= vehicle.qr_code_path %>" alt="Vehicle QR Code" style="max-width:150px; border-radius:8px;">
+              <div style="color:#7d7d7d; font-size:.93em;">Scan for instant verified history</div>
             </div>
-            <p style="margin-top: 10px; color: var(--text-light);">
-              Please contact support or update the vehicle information and resubmit.
-            </p>
-          <% } else { %>
-            <p style="color: var(--text-light); margin-top: 10px;">
-              Your vehicle is awaiting admin verification. This typically takes 1-2 business days.
-            </p>
           <% } %>
         </div>
-        
-        <% if (vehicle.qr_code_path) { %>
-          <div style="text-align: center; padding: 20px; background: var(--background); border-radius: 8px;">
-            <p><strong>QR Code</strong></p>
-            <img src="<%= vehicle.qr_code_path %>" alt="Vehicle QR Code" style="max-width: 200px; margin-top: 10px; border: 4px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px;">
-            <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 10px;">Customers can scan this code</p>
-          </div>
-        <% } %>
+        <div style="flex: 1; min-width: 220px;">
+          <h2>Quick Info</h2>
+          <table class="table">
+            <tr><td><strong>Price:</strong></td><td>R <%= vehicle.price ? vehicle.price.toLocaleString() : '-' %></td></tr>
+            <tr><td><strong>Mileage:</strong></td><td><%= vehicle.mileage ? vehicle.mileage.toLocaleString() + ' km' : '-' %></td></tr>
+            <tr><td><strong>VIN:</strong></td><td style="font-family:monospace"><%= vehicle.vin %></td></tr>
+            <tr><td><strong>Plate Number:</strong></td><td style="font-family:monospace"><%= vehicle.plate_number %></td></tr>
+            <tr><td><strong>Engine Number:</strong></td><td style="font-family:monospace"><%= vehicle.engine_number %></td></tr>
+          </table>
+        </div>
       </div>
     </div>
-    
-    <div class="card">
-      <h2>Vehicle Information</h2>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
-        <div>
-          <p><strong>VIN:</strong></p>
-          <p style="font-family: monospace; background: var(--background); padding: 8px; border-radius: 4px;"><%= vehicle.vin %></p>
-        </div>
-        
-        <div>
-          <p><strong>Price:</strong></p>
-          <p style="font-size: 1.5rem; color: var(--primary); font-weight: bold;">R <%= vehicle.price.toLocaleString() %></p>
-        </div>
-        
-        <div>
-          <p><strong>Mileage:</strong></p>
-          <p style="font-size: 1.2rem;"><%= vehicle.mileage.toLocaleString() %> km</p>
-        </div>
-      </div>
-      
-      <table class="table" style="margin-top: 30px;">
+
+    <div class="card" style="margin-top: 30px;">
+      <h2>Registration & Legal Information</h2>
+      <table class="table">
         <tr>
-          <td><strong>Make:</strong></td>
-          <td><%= vehicle.make %></td>
-          <td><strong>Model:</strong></td>
-          <td><%= vehicle.model %></td>
+          <td><strong>Registration Authority:</strong></td>
+          <td><%= vehicle.registration_authority || 'Not provided' %></td>
+          <td><strong>Vehicle Status:</strong></td>
+          <td style="text-transform: capitalize;"><%= vehicle.vehicle_status || 'Not provided' %></td>
         </tr>
         <tr>
-          <td><strong>Year:</strong></td>
-          <td><%= vehicle.year %></td>
-          <td><strong>Color:</strong></td>
-          <td><%= vehicle.color || 'Not specified' %></td>
+          <td><strong>Date Liable for Licensing:</strong></td>
+          <td><%= vehicle.date_liability_licensing ? new Date(vehicle.date_liability_licensing).toLocaleDateString() : 'Not provided' %></td>
+          <td><strong>Date Liable for Registration:</strong></td>
+          <td><%= vehicle.date_liable_registration ? new Date(vehicle.date_liable_registration).toLocaleDateString() : 'Not provided' %></td>
         </tr>
         <tr>
-          <td><strong>Body Type:</strong></td>
-          <td><%= vehicle.body_type || 'Not specified' %></td>
-          <td><strong>Fuel Type:</strong></td>
-          <td><%= vehicle.fuel_type || 'Not specified' %></td>
-        </tr>
-        <tr>
-          <td><strong>Transmission:</strong></td>
-          <td><%= vehicle.transmission || 'Not specified' %></td>
+          <td><strong>Tare Weight (kg):</strong></td>
+          <td><%= vehicle.tare_weight ? vehicle.tare_weight + ' kg' : 'Not provided' %></td>
           <td><strong>Previous Owners:</strong></td>
           <td><%= vehicle.previous_owners %></td>
         </tr>
       </table>
+      <% if (vehicle.license_numbers) { 
+          const licenseNums = JSON.parse(vehicle.license_numbers); 
+          if (licenseNums.length > 0) { %>
+        <h3 style="margin-top: 18px;">License Numbers (last 3, most recent first)</h3>
+        <ul style="padding-left:20px; margin-bottom:12px;">
+          <% licenseNums.forEach((num, idx) => { %>
+            <li><strong><%= idx === 0 ? 'Current' : `Previous ${idx}` %>:</strong> <%= num %></li>
+          <% }) %>
+        </ul>
+      <% } } %>
     </div>
-    
-    <div class="card">
+
+    <div class="card" style="margin-top: 30px;">
+      <h2>Vehicle Specifications</h2>
+      <table class="table">
+        <tr>
+          <td><strong>Make:</strong></td><td><%= vehicle.make %></td>
+          <td><strong>Model:</strong></td><td><%= vehicle.model %></td>
+        </tr>
+        <tr>
+          <td><strong>Year:</strong></td><td><%= vehicle.year %></td>
+          <td><strong>Color:</strong></td><td><%= vehicle.color || '-' %></td>
+        </tr>
+        <tr>
+          <td><strong>Body Type:</strong></td><td><%= vehicle.body_type || '-' %></td>
+          <td><strong>Transmission:</strong></td><td><%= vehicle.transmission || '-' %></td>
+        </tr>
+        <tr>
+          <td><strong>Engine Type:</strong></td>
+          <td><%= vehicle.engine_type || '-' %></td>
+          <td><strong>Engine Capacity:</strong></td>
+          <td><%= vehicle.engine_capacity || '-' %></td>
+        </tr>
+        <tr>
+          <td><strong>Fuel Type:</strong></td>
+          <td><%= vehicle.fuel_type || '-' %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top: 30px;">
       <h2>Vehicle History</h2>
-      
-      <h3 style="margin-top: 20px;">Service History</h3>
-      <p style="white-space: pre-wrap;"><%= vehicle.service_history || 'Not provided' %></p>
-      
-      <h3 style="margin-top: 30px;">Accident History</h3>
-      <p style="white-space: pre-wrap;"><%= vehicle.accident_history || 'Not provided' %></p>
-      
-      <h3 style="margin-top: 30px;">Recall Information</h3>
-      <p style="white-space: pre-wrap;"><%= vehicle.recall_information || 'Not provided' %></p>
-      
-      <% if (vehicle.additional_features) { %>
-        <h3 style="margin-top: 30px;">Additional Features</h3>
-        <p style="white-space: pre-wrap;"><%= vehicle.additional_features %></p>
-      <% } %>
-      
-      <% if (vehicle.description) { %>
-        <h3 style="margin-top: 30px;">Description</h3>
-        <p style="white-space: pre-wrap;"><%= vehicle.description %></p>
-      <% } %>
+      <h3>Service History</h3>
+      <p><%= vehicle.service_history || 'Not provided' %></p>
+      <h3>Accident History</h3>
+      <p><%= vehicle.accident_history || 'Not provided' %></p>
+      <h3>Recall Information</h3>
+      <p><%= vehicle.recall_information || 'Not provided' %></p>
     </div>
-    
-    <div class="card">
+
+    <% if (vehicle.additional_features) { %>
+      <div class="card" style="margin-top:30px;">
+        <h2>Additional Features</h2>
+        <p><%= vehicle.additional_features %></p>
+      </div>
+    <% } %>
+    <% if (vehicle.description) { %>
+      <div class="card" style="margin-top:30px;">
+        <h2>Description</h2>
+        <p><%= vehicle.description %></p>
+      </div>
+    <% } %>
+
+    <div class="card" style="margin-top: 30px;">
       <h3>System Information</h3>
       <p><strong>Added:</strong> <%= new Date(vehicle.created_at).toLocaleString() %></p>
       <p><strong>Last Updated:</strong> <%= new Date(vehicle.updated_at).toLocaleString() %></p>
     </div>
-    
-    <div style="margin-top: 20px; display: flex; gap: 15px;">
+    <div style="margin-top:20px;">
       <a href="/dealership/vehicles" class="btn btn-secondary">Back to Vehicles</a>
       <% if (vehicle.status === 'pending_verification') { %>
-        <form method="POST" action="/dealership/vehicle/<%= vehicle.id %>/delete" style="display: inline;">
-          <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this vehicle? This action cannot be undone.')">Delete Vehicle</button>
+        <form method="POST" action="/dealership/vehicle/<%= vehicle.id %>/delete" style="display:inline;">
+          <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this vehicle? This cannot be undone.')">Delete Vehicle</button>
         </form>
       <% } %>
     </div>
   </div>
-  
   <%- include('../partials/footer') %>
 </body>
 </html>

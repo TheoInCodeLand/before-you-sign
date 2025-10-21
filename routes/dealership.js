@@ -94,12 +94,18 @@ router.get('/add-vehicle', (req, res) => {
   });
 });
 
-// Add vehicle POST
+// Add vehicle POST - UPDATED VERSION
 router.post('/add-vehicle', async (req, res) => {
   getDealershipId(req.session.userId, async (dealershipId) => {
     const {
       vin, make, model, year, mileage, price, color,
       bodyType, fuelType, transmission, previousOwners,
+      // NEW FIELDS
+      registrationAuthority, plateNumber, engineNumber, tareWeight,
+      dateLiabilityLicensing, vehicleStatus, dateLiableRegistration,
+      licenseNumber1, licenseNumber2, licenseNumber3,
+      engineType, engineCapacity,
+      // EXISTING FIELDS
       serviceHistory, accidentHistory, recallInformation,
       additionalFeatures, description
     } = req.body;
@@ -109,28 +115,44 @@ router.post('/add-vehicle', async (req, res) => {
       if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
         return res.render('dealership/add-vehicle', {
           title: 'Add Vehicle',
-          error: 'Invalid VIN format',
+          error: 'Invalid VIN format (17 characters, no I, O, Q)',
           success: null
         });
       }
       
-      // Insert vehicle
+      // Prepare license numbers array (most recent first)
+      const licenseNumbers = [];
+      if (licenseNumber1) licenseNumbers.push(licenseNumber1);
+      if (licenseNumber2) licenseNumbers.push(licenseNumber2);
+      if (licenseNumber3) licenseNumbers.push(licenseNumber3);
+      const licenseNumbersJson = JSON.stringify(licenseNumbers);
+      
+      // Insert vehicle with all fields
       db.run(`
         INSERT INTO vehicles 
         (dealership_id, vin, make, model, year, mileage, price, color,
          body_type, fuel_type, transmission, previous_owners,
+         registration_authority, plate_number, engine_number, tare_weight,
+         date_liability_licensing, vehicle_status, date_liable_registration,
+         license_numbers, engine_type, engine_capacity,
          service_history, accident_history, recall_information,
          additional_features, description)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [dealershipId, vin, make, model, year, mileage, price, color,
-          bodyType, fuelType, transmission, previousOwners || 0,
-          serviceHistory, accidentHistory, recallInformation,
-          additionalFeatures, description],
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        dealershipId, vin, make, model, year, mileage, price, color,
+        bodyType, fuelType, transmission, previousOwners || 0,
+        registrationAuthority, plateNumber, engineNumber, tareWeight,
+        dateLiabilityLicensing, vehicleStatus, dateLiableRegistration,
+        licenseNumbersJson, engineType, engineCapacity,
+        serviceHistory, accidentHistory, recallInformation,
+        additionalFeatures, description
+      ],
       async function(err) {
         if (err) {
+          console.error('Database error:', err);
           return res.render('dealership/add-vehicle', {
             title: 'Add Vehicle',
-            error: 'Error adding vehicle. VIN may already exist.',
+            error: 'Error adding vehicle. VIN or Plate Number may already exist.',
             success: null
           });
         }
@@ -138,7 +160,7 @@ router.post('/add-vehicle', async (req, res) => {
         const vehicleId = this.lastID;
         
         // Generate QR code
-        const qrData = JSON.stringify({ vehicleId, vin, dealershipId });
+        const qrData = JSON.stringify({ vehicleId, vin, plateNumber, dealershipId });
         const qrPath = path.join(__dirname, '../public/qr-codes', `vehicle_${vehicleId}.png`);
         
         // Ensure qr-codes directory exists
@@ -158,6 +180,7 @@ router.post('/add-vehicle', async (req, res) => {
         res.redirect('/dealership/vehicles');
       });
     } catch (error) {
+      console.error('Error:', error);
       res.render('dealership/add-vehicle', {
         title: 'Add Vehicle',
         error: 'An error occurred while adding the vehicle',
@@ -166,6 +189,7 @@ router.post('/add-vehicle', async (req, res) => {
     }
   });
 });
+
 
 // View all vehicles
 router.get('/vehicles', (req, res) => {

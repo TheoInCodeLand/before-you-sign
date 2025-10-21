@@ -1,6 +1,135 @@
-<footer class="footer">
-  <div class="container">
-    <p>&copy; 2025 Before You Sign - Certified Ethical Dealership Programme</p>
-    <p>Empowering car buyers with transparent, verified vehicle information</p>
+
+<!-- FOOTER STYLES START HERE -->
+<style>
+  .footer__container {
+    display: grid;
+    gap: 4rem 2rem;
+    border-bottom: 1px solid var(--text-light);
+  }
+
+  .footer__col h4 {
+    margin-bottom: 2rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .footer__links {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .footer__links a {
+    font-weight: 600;
+    color: var(--text-light);
+  }
+
+  .footer__links a:hover {
+    color: var(--primary-color);
+  }
+
+  .footer__bar {
+    padding-block: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .footer__bar h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .footer__bar p {
+    font-weight: 500;
+    color: var(--text-light);
+    text-align: center;
+  }
+
+  .footer__socials {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer__socials a {
+    display: inline-block;
+    padding: 8px 10px;
+    font-size: 1rem;
+    color: var(--text-dark);
+    border-radius: 100%;
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .footer__socials a:hover {
+    color: var(--white);
+    background: var(--gradient);
+  }
+</style>
+
+<!-- FOOTER STARTS HERE -->
+<footer>
+  <div class="section__container footer__container">
+    <div class="footer__col">
+      <h4>For Customers</h4>
+      <ul class="footer__links">
+        <li><a href="/customer/vehicles">Browse Vehicles</a></li>
+        <li><a href="/customer/browse-dealerships">Certified Dealerships</a></li>
+        <li><a href="/register/customer">Register</a></li>
+        <li><a href="/customer/my-disputes">My Disputes</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>For Dealerships</h4>
+      <ul class="footer__links">
+        <li><a href="/register/dealership">Join Programme</a></li>
+        <li><a href="/dealership/dashboard">Dealership Login</a></li>
+        <li><a href="#benefits">Benefits</a></li>
+        <li><a href="/dealership/add-vehicle">Add Vehicle</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Our Mission</h4>
+      <ul class="footer__links">
+        <li><a href="#home">About Us</a></li>
+        <li><a href="#how-it-works">Transparency Pledge</a></li>
+        <li><a href="#features">Platform Features</a></li>
+        <li><a href="/customer/report-dispute">Report Issue</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Support</h4>
+      <ul class="footer__links">
+        <li><a href="#get-started">Get Started</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="#how-it-works">FAQ</a></li>
+        <li><a href="#get-started">Contact Us</a></li>
+      </ul>
+    </div>  
+  </div>
+  <div class="section__container footer__bar">
+    <h4>Before You Sign</h4>
+    <p>Copyright © <span id="year"></span> Before You Sign - Certified Ethical Dealership Programme. All rights reserved.</p>
+    <ul class="footer__socials">
+      <li>
+        <a href="#"><i class="ri-facebook-fill"></i></a>
+      </li>
+      <li>
+        <a href="#"><i class="ri-twitter-fill"></i></a>
+      </li>
+      <li>
+        <a href="#"><i class="ri-linkedin-fill"></i></a>
+      </li>
+    </ul>
   </div>
 </footer>
+
+<!-- CURRENT YEAR SCRIPT STARTS HERE -->
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>

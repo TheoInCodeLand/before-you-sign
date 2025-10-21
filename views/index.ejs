@@ -1,51 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
-</head>
-<body>
-  <%- include('partials/header') %>
-  
-  <section class="hero">
-    <div class="container">
-      <h1>Before You Sign, Know What You're Getting</h1>
-      <p>Empowering car buyers with transparent, verified vehicle information</p>
-      <div style="margin-top: 30px;">
-        <a href="/customer/vehicles" class="btn btn-primary" style="margin-right: 15px;">Browse Vehicles</a>
-        <a href="/register/customer" class="btn btn-secondary">Get Started</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
+      crossorigin="anonymous" referrerpolicy="no-referrer" 
+    />
+    <link rel="stylesheet" href="/css/main-style.css" />
+    <title>Before You Sign | Certified Ethical Dealership Programme</title>
+  </head>
+  <body>
+    <header>
+      <!-- DYNAMIC NAVIGATION BAR -->
+      <%- include('partials/navbar.ejs') %>
+      
+
+      <!-- DYNAMIC HERO-SECTION -->
+      <div class="section__container header__container" id="home">
+        <div class="header__image">
+          <img src="/assets/header.png" alt="header" />
+        </div>
+        <div class="header__content">
+          <h1><i class="fa-solid fa-file-signature"></i>Before You Sign, Know What You're Getting</h1>
+          <p>
+            Discover certified ethical dealerships in South Africa with verified vehicle histories. 
+            Browse transparent vehicle information with instant QR code access to complete service 
+            records, mileage verification, and ownership details.
+          </p>
+          <!-- VISIT LATER TO SEE THE DYNAMIC -->
+          <div class="header__links">
+            <a href="/customer/vehicles">
+              <button class="btn btn__primary" style="padding: 15px 30px; font-size: 1rem;">Browse Verified Vehicles</button>
+            </a>
+            <a href="/register/dealership">
+              <button class="btn btn__secondary" style="padding: 15px 30px; font-size: 1rem;">Register Your Dealership</button>
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
-  
-  <div class="container">
-    <h2 style="text-align: center; margin: 40px 0;">How It Works</h2>
+    </header>
+
+    <!-- HOW IT WORKS (MAKE DYNAMIC LATER ON) -->
+    <section class="section__container steps__container" id="how-it-works">
+      <p class="section__subheader">HOW IT WORKS</p>
+      <h2 class="section__header">Before You Sign - 3 simple steps</h2>
+      <div class="steps__grid">
+        <div class="steps__card">
+          <span><i class="ri-search-line"></i></span>
+          <h4>Browse Verified Vehicles</h4>
+          <p>
+            Search our database of independently verified vehicles from certified 
+            ethical dealerships across South Africa with complete transparency.
+          </p>
+        </div>
+        <div class="steps__card">
+          <span><i class="ri-qr-scan-2-line"></i></span>
+          <h4>Scan QR Code</h4>
+          <p>
+            Each vehicle has a unique QR code providing instant access to verified 
+            service history, mileage records, accident reports, and recall information.
+          </p>
+        </div>
+        <div class="steps__card">
+          <span><i class="ri-shield-check-fill"></i></span>
+          <h4>Buy with Confidence</h4>
+          <p>
+            Make informed decisions with admin-verified data. If you find discrepancies, 
+            our dispute resolution system ensures accountability.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFITS (MAKE DYNAMIC LATER ON) -->
+    <section class="section__container service__container" id="benefits">
+      <div class="service__image">
+        <img src="/assets/service.png" alt="service" />
+      </div>
+      <div class="service__content">
+        <p class="section__subheader">WHY CHOOSE US</p>
+        <h2 class="section__header">
+          Experience complete transparency in vehicle buying
+        </h2>
+        <ul class="service__list">
+          <li>
+            <span><i class="ri-verified-badge-fill"></i></span>
+            <div>
+              <h4>Independent Verification</h4>
+              <p>
+                Every vehicle undergoes thorough admin verification before being 
+                listed. We check VIN accuracy, mileage consistency, service history, 
+                and accident records to ensure you get honest information.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span><i class="ri-qr-code-fill"></i></span>
+            <div>
+              <h4>QR Code Transparency</h4>
+              <p>
+                Scan the unique QR code on any vehicle to instantly access its complete 
+                verified history. No hidden surprises - all information is available 
+                before you sign any paperwork.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span><i class="ri-customer-service-fill"></i></span>
+            <div>
+              <h4>Dispute Resolution</h4>
+              <p>
+                Found a discrepancy? Our structured dispute resolution process holds 
+                dealerships accountable. Report issues through our platform and get 
+                fair, mediated resolution with real consequences.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- OUR CUSTOMERS (MAKE DYNAMIC LATER ON) -->
+    <section class="section__container experience__container" id="features">
+      <p class="section__subheader">PLATFORM FEATURES</p>
+      <h2 class="section__header">
+        Building trust through data-driven transparency
+      </h2>
+      <div class="experience__content">
+        <div class="experience__card">
+          <span><i class="ri-shield-check-line"></i></span>
+          <h4>Admin-Verified Vehicles</h4>
+        </div>
+        <div class="experience__card">
+          <span><i class="ri-qr-scan-2-line"></i></span>
+          <h4>Instant QR Code Access</h4>
+        </div>
+        <div class="experience__card">
+          <span><i class="ri-history-line"></i></span>
+          <h4>Complete Service History</h4>
+        </div>
+        <div class="experience__card">
+          <span><i class="ri-dashboard-3-line"></i></span>
+          <h4>Mileage Verification Timeline</h4>
+        </div>
+        <div class="experience__card">
+          <span><i class="ri-error-warning-line"></i></span>
+          <h4>Accident & Recall Reports</h4>
+        </div>
+        <div class="experience__card">
+          <span><i class="ri-medal-fill"></i></span>
+          <h4>Certified Dealerships Only</h4>
+        </div>
+        <img src="/assets/experience.png" alt="experience" />
+      </div>
+    </section>
+
+    <!-- CONTACT US (MAKE DYNAMIC LATER ON) -->
+    <section class="section__container download__container" id="get-started">
+      <div class="download__grid">
+        <div class="download__content">
+          <h2 class="section__header">Ready to buy your next vehicle with confidence?</h2>
+          <p>
+            Join Before You Sign today and browse verified vehicles from certified ethical 
+            dealerships. Access complete vehicle histories, report discrepancies, and make 
+            informed decisions with our transparent platform.
+          </p>
+          <div class="download__links" style="display: flex; gap: 15px; margin-top: 30px;">
+            <a href="/register/customer">
+              <button class="btn btn__primary" style="padding: 15px 30px; font-size: 1rem;">
+                <i class="ri-user-add-line"></i> Register as Customer
+              </button>
+            </a>
+            <a href="/customer/vehicles">
+              <button class="btn btn__secondary" style="padding: 15px 30px; font-size: 1rem;">
+                <i class="ri-car-line"></i> Browse Vehicles
+              </button>
+            </a>
+          </div>
+        </div>
+        <div class="download__image">
+          <img src="/assets/download.png" alt="download" class="__image"/>
+        </div>
+      </div>
+    </section>
+
     
-    <div class="dashboard-grid">
-      <div class="card">
-        <h3>🏢 Certified Dealerships</h3>
-        <p>We partner with ethical dealerships committed to transparency.</p>
+    <!-- FOR DEALERSHIPS SECTION -->
+    <section class="section__container" style="padding: 60px 20px; background: #f9fafb;">
+      <div style="max-width: 1200px; margin: 0 auto;">
+        <p class="section__subheader" style="text-align: center;">FOR DEALERSHIPS</p>
+        <h2 class="section__header" style="text-align: center; margin-bottom: 20px;">
+          Build Trust & Differentiate Your Dealership
+        </h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 40px; color: #6b7280; font-size: 1.1rem;">
+          Join our certified ethical dealership programme and showcase your commitment 
+          to transparency. Stand out from competitors, build customer trust, and attract 
+          informed buyers who value honesty.
+        </p>
+        <div style="text-align: center;">
+          <a href="/register/dealership">
+            <button class="btn btn__primary" style="padding: 15px 40px; font-size: 1.1rem;">
+              <i class="ri-building-line"></i> Register Your Dealership
+            </button>
+          </a>
+        </div>
       </div>
-      
-      <div class="card">
-        <h3>📱 QR Code Verification</h3>
-        <p>Each vehicle gets a unique QR code with verified history.</p>
-      </div>
-      
-      <div class="card">
-        <h3>✅ Independent Verification</h3>
-        <p>Our admin team verifies all vehicle information independently.</p>
-      </div>
-      
-      <div class="card">
-        <h3>⚖️ Dispute Resolution</h3>
-        <p>Report discrepancies and get fair resolution.</p>
-      </div>
-    </div>
-  </div>
-  
-  <%- include('partials/footer') %>
-</body>
+    </section>
+
+
+    <!-- FOOTER -->
+    <%- include('partials/footer.ejs') %>
+
+    
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="/js/main-script.js"></script>
+  </body>
 </html>

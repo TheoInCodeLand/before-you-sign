@@ -1,0 +1,56 @@
+
+<nav>
+    <div class="nav__header">
+        <div class="nav__logo">            
+            <a href="/">Before You Sign</a>
+        </div>
+        <div class="nav__menu__btn" id="menu-btn">
+        <i class="ri-menu-line"></i>
+    </div>
+    </div>
+    <ul class="nav__links" id="nav-links">
+        <% if (!role) { %>
+            <li><a href="/">Home</a></li>
+            <li><a href="/customer/vehicles">Vehicles</a></li>
+            <li><a href="/customer/browse-dealerships">Dealerships</a></li>
+            <li><a href="/customer/about">AboutUs</a></li>
+            <li class="nav__links__btn">
+                <button class="btn" onclick="window.location.href='/register/dealership'">Register Dealership</button>
+            </li>
+            <li class="nav__links__btn">
+                <button class="btn" onclick="window.location.href='/login'">Sign In</button>
+            </li>
+        <% } else if (role === 'admin') {%>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/dealerships">Dealerships</a></li>
+            <li><a href="/admin/verify-vehicles">Verify Vehicles</a></li>
+            <li><a href="/admin/disputes">Disputes</a></li>
+            
+            <li class="nav__links__btn">
+              <button class="btn" onclick="window.location.href='/logout'">Sign Out</button>
+            </li>
+        <% } else if (role === 'dealership') {%>
+            <li><a href="/dealership/dashboard">Dashboard</a></li>
+            <li><a href="/dealership/profile">Profile</a></li>
+            <li><a href="/dealership/add-vehicle">Add Vehicle</a></li>
+            <li><a href="/dealership/vehicles">Vehicles</a></li>
+            
+            <li class="nav__links__btn">
+              <button class="btn" onclick="window.location.href='/logout'">Sign Out</button>
+            </li>
+        <% } else if (role === 'customer') {%>
+            <li><a href="/customer/dashboard">Dashboard</a></li>
+            <li><a href="/customer/vehicles">Vehicles</a></li>
+            <li><a href="/customer/browse-dealerships">Dealerships</a></li>
+            <li><a href="/customer/my-disputes">My Disputes</a></li>
+            
+            <li class="nav__links__btn">
+              <button class="btn" onclick="window.location.href='/logout'">Sign Out</button>
+            </li>
+        <%}%>
+    </ul>
+    <div class="nav__btns">
+        <button class="btn btn__primary" onclick="window.location.href='/register/dealership'">Register Dealership</button>
+      <button class="btn btn__secondary" onclick="window.location.href='/login'">Sign In</button>
+    </div>
+</nav>
