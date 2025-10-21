@@ -119,9 +119,13 @@ router.get('/verify-vehicle/:id', (req, res) => {
 
 // Process Vehicle Verification
 router.post('/verify-vehicle/:id', (req, res) => {
-  const { action, notes, rejectionReason, vinVerified, mileageVerified, 
-          serviceHistoryVerified, ownershipVerified, accidentHistoryVerified, 
-          recallVerified } = req.body;
+  const { 
+    action, notes, rejectionReason, 
+    vinVerified, plateNumberVerified, engineNumberVerified,
+    mileageVerified, serviceHistoryVerified, ownershipVerified, 
+    accidentHistoryVerified, recallVerified,
+    registrationVerified, engineSpecsVerified
+  } = req.body;
   
   if (action === 'approve') {
     db.run(`
@@ -134,22 +138,42 @@ router.post('/verify-vehicle/:id', (req, res) => {
       WHERE id = ?
     `, [notes, req.session.userId, req.params.id], function(err) {
       if (err) {
+        console.error('Verification error:', err);
         return res.send('Error verifying vehicle');
       }
       
-      // Insert verification checklist
+      // Insert or update verification checklist with new fields
       db.run(`
-        INSERT INTO verification_checklist 
-        (vehicle_id, vin_verified, mileage_verified, service_history_verified,
-         ownership_verified, accident_history_verified, recall_verified)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [req.params.id, vinVerified ? 1 : 0, mileageVerified ? 1 : 0,
-          serviceHistoryVerified ? 1 : 0, ownershipVerified ? 1 : 0,
-          accidentHistoryVerified ? 1 : 0, recallVerified ? 1 : 0]);
-      
-      res.redirect('/admin/verify-vehicles');
+        INSERT OR REPLACE INTO verification_checklist 
+        (vehicle_id, vin_verified, plate_number_verified, engine_number_verified,
+         mileage_verified, service_history_verified, ownership_verified,
+         accident_history_verified, recall_verified, registration_verified,
+         engine_specs_verified, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      `, [
+        req.params.id, 
+        vinVerified ? 1 : 0, 
+        plateNumberVerified ? 1 : 0,
+        engineNumberVerified ? 1 : 0,
+        mileageVerified ? 1 : 0,
+        serviceHistoryVerified ? 1 : 0, 
+        ownershipVerified ? 1 : 0,
+        accidentHistoryVerified ? 1 : 0, 
+        recallVerified ? 1 : 0,
+        registrationVerified ? 1 : 0,
+        engineSpecsVerified ? 1 : 0
+      ], (checklistErr) => {
+        if (checklistErr) {
+          console.error('Checklist error:', checklistErr);
+        }
+        res.redirect('/admin/verify-vehicles');
+      });
     });
   } else if (action === 'reject') {
+    if (!rejectionReason || rejectionReason.trim() === '') {
+      return res.send('Rejection reason is required');
+    }
+    
     db.run(`
       UPDATE vehicles 
       SET status = 'rejected',
@@ -160,8 +184,14 @@ router.post('/verify-vehicle/:id', (req, res) => {
           updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `, [rejectionReason, notes, req.session.userId, req.params.id], (err) => {
+      if (err) {
+        console.error('Rejection error:', err);
+        return res.send('Error rejecting vehicle');
+      }
       res.redirect('/admin/verify-vehicles');
     });
+  } else {
+    res.send('Invalid action');
   }
 });
 

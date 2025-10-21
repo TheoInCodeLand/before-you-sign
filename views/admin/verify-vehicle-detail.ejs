@@ -5,104 +5,369 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/main.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
 </head>
 <body>
   <%- include('../partials/header') %>
   
   <div class="container">
-    <h1>Verify Vehicle</h1>
-    
-    <div class="card">
-      <h2><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></h2>
-      <p><strong>Dealership:</strong> <%= vehicle.business_name %>
-        <% if (vehicle.certification_status === 'active') { %>
-          <span class="badge badge-success">Certified</span>
-        <% } %>
-      </p>
-      <p><strong>VIN:</strong> <%= vehicle.vin %></p>
-      
-      <h3>Vehicle Information</h3>
-      <table class="table">
-        <tr><td><strong>Price:</strong></td><td>R <%= vehicle.price.toLocaleString() %></td></tr>
-        <tr><td><strong>Mileage:</strong></td><td><%= vehicle.mileage.toLocaleString() %> km</td></tr>
-        <tr><td><strong>Color:</strong></td><td><%= vehicle.color %></td></tr>
-        <tr><td><strong>Body Type:</strong></td><td><%= vehicle.body_type %></td></tr>
-        <tr><td><strong>Fuel Type:</strong></td><td><%= vehicle.fuel_type %></td></tr>
-        <tr><td><strong>Transmission:</strong></td><td><%= vehicle.transmission %></td></tr>
-        <tr><td><strong>Previous Owners:</strong></td><td><%= vehicle.previous_owners %></td></tr>
-      </table>
-      
-      <h3>Service History</h3>
-      <p><%= vehicle.service_history || 'Not provided' %></p>
-      
-      <h3>Accident History</h3>
-      <p><%= vehicle.accident_history || 'Not provided' %></p>
-      
-      <h3>Recall Information</h3>
-      <p><%= vehicle.recall_information || 'Not provided' %></p>
+    <div style="margin-bottom: 20px;">
+      <a href="/admin/verify-vehicles" class="btn btn-secondary">
+        <i class="ri-arrow-left-line"></i> Back to Pending Vehicles
+      </a>
     </div>
     
+    <h1><i class="ri-shield-check-line"></i> Verify Vehicle</h1>
+    
+    <!-- VEHICLE OVERVIEW CARD -->
     <div class="card">
-      <h2>Verification</h2>
+      <h2><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></h2>
+      <div style="display: flex; gap: 20px; margin-top: 15px; flex-wrap: wrap;">
+        <div>
+          <p><strong>Dealership:</strong> <%= vehicle.business_name %>
+            <% if (vehicle.certification_status === 'active') { %>
+              <span class="badge badge-success">Certified</span>
+            <% } else { %>
+              <span class="badge badge-warning">Pending Certification</span>
+            <% } %>
+          </p>
+          <p><strong>VIN:</strong> <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;"><%= vehicle.vin %></code></p>
+          <p><strong>Plate Number:</strong> <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;"><%= vehicle.plate_number %></code></p>
+          <p><strong>Engine Number:</strong> <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;"><%= vehicle.engine_number %></code></p>
+        </div>
+        <div>
+          <p><strong>Price:</strong> <span style="font-size: 1.3rem; color: var(--primary); font-weight: bold;">R <%= vehicle.price.toLocaleString() %></span></p>
+          <p><strong>Mileage:</strong> <%= vehicle.mileage.toLocaleString() %> km</p>
+          <p><strong>Vehicle Status:</strong> <span style="text-transform: capitalize;"><%= vehicle.vehicle_status || 'Not specified' %></span></p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- REGISTRATION & LEGAL INFORMATION -->
+    <div class="card">
+      <h2><i class="ri-file-list-3-line"></i> Registration & Legal Information</h2>
+      <table class="table">
+        <tr>
+          <td style="width: 30%;"><strong>Registration Authority:</strong></td>
+          <td style="width: 70%;"><%= vehicle.registration_authority || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Plate Number:</strong></td>
+          <td style="font-family: monospace; font-weight: 600;"><%= vehicle.plate_number || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Engine Number:</strong></td>
+          <td style="font-family: monospace; font-weight: 600;"><%= vehicle.engine_number || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Tare Weight (kg):</strong></td>
+          <td><%= vehicle.tare_weight ? vehicle.tare_weight + ' kg' : 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Vehicle Status:</strong></td>
+          <td style="text-transform: capitalize;"><%= vehicle.vehicle_status || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Date Liable for Licensing:</strong></td>
+          <td><%= vehicle.date_liability_licensing ? new Date(vehicle.date_liability_licensing).toLocaleDateString() : 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Date Liable for Registration:</strong></td>
+          <td><%= vehicle.date_liable_registration ? new Date(vehicle.date_liable_registration).toLocaleDateString() : 'Not provided' %></td>
+        </tr>
+      </table>
+      
+      <% if (vehicle.license_numbers) { %>
+        <% try { %>
+          <% const licenseNums = JSON.parse(vehicle.license_numbers); %>
+          <% if (licenseNums.length > 0) { %>
+            <h3 style="margin-top: 20px;"><i class="ri-file-copy-line"></i> License Number History (Most Recent First)</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+              <% licenseNums.forEach((num, index) => { %>
+                <div style="padding: 10px 15px; background: <%= index === 0 ? '#dbeafe' : '#f3f4f6' %>; border-radius: 6px; border-left: 4px solid <%= index === 0 ? 'var(--primary)' : '#d1d5db' %>;">
+                  <small style="display: block; color: #6b7280; font-weight: 600;"><%= index === 0 ? 'CURRENT' : `PREVIOUS ${index}` %></small>
+                  <strong style="font-family: monospace; font-size: 1.1rem;"><%= num %></strong>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        <% } catch(e) { %>
+          <p style="color: #ef4444;">Error parsing license numbers</p>
+        <% } %>
+      <% } %>
+    </div>
+    
+    <!-- ENGINE & FUEL SPECIFICATIONS -->
+    <div class="card">
+      <h2><i class="ri-settings-3-line"></i> Engine & Fuel Specifications</h2>
+      <table class="table">
+        <tr>
+          <td style="width: 30%;"><strong>Engine Type:</strong></td>
+          <td style="width: 70%;"><%= vehicle.engine_type || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Engine Capacity:</strong></td>
+          <td><%= vehicle.engine_capacity || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Fuel Type:</strong></td>
+          <td><%= vehicle.fuel_type || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Transmission:</strong></td>
+          <td><%= vehicle.transmission || 'Not provided' %></td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- VEHICLE SPECIFICATIONS -->
+    <div class="card">
+      <h2><i class="ri-car-line"></i> Vehicle Specifications</h2>
+      <table class="table">
+        <tr>
+          <td style="width: 30%;"><strong>Make:</strong></td>
+          <td style="width: 20%;"><%= vehicle.make %></td>
+          <td style="width: 30%;"><strong>Model:</strong></td>
+          <td style="width: 20%;"><%= vehicle.model %></td>
+        </tr>
+        <tr>
+          <td><strong>Year:</strong></td>
+          <td><%= vehicle.year %></td>
+          <td><strong>Color:</strong></td>
+          <td><%= vehicle.color || 'Not specified' %></td>
+        </tr>
+        <tr>
+          <td><strong>Body Type:</strong></td>
+          <td><%= vehicle.body_type || 'Not specified' %></td>
+          <td><strong>Mileage:</strong></td>
+          <td><%= vehicle.mileage.toLocaleString() %> km</td>
+        </tr>
+        <tr>
+          <td><strong>Price:</strong></td>
+          <td colspan="3" style="font-size: 1.2rem; color: var(--primary); font-weight: bold;">R <%= vehicle.price.toLocaleString() %></td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- OWNERSHIP INFORMATION -->
+    <div class="card">
+      <h2><i class="ri-user-3-line"></i> Ownership Information</h2>
+      <table class="table">
+        <tr>
+          <td style="width: 30%;"><strong>Number of Previous Owners:</strong></td>
+          <td style="width: 70%;"><%= vehicle.previous_owners %></td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- VEHICLE HISTORY -->
+    <div class="card">
+      <h2><i class="ri-file-history-line"></i> Vehicle History</h2>
+      
+      <h3 style="margin-top: 20px;"><i class="ri-tools-line"></i> Service History</h3>
+      <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
+        <%= vehicle.service_history || 'Not provided' %>
+      </div>
+      
+      <h3 style="margin-top: 20px;"><i class="ri-alarm-warning-line"></i> Accident History</h3>
+      <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
+        <%= vehicle.accident_history || 'Not provided' %>
+      </div>
+      
+      <h3 style="margin-top: 20px;"><i class="ri-error-warning-line"></i> Recall Information</h3>
+      <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
+        <%= vehicle.recall_information || 'Not provided' %>
+      </div>
+      
+      <% if (vehicle.additional_features) { %>
+        <h3 style="margin-top: 20px;"><i class="ri-star-line"></i> Additional Features</h3>
+        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
+          <%= vehicle.additional_features %>
+        </div>
+      <% } %>
+      
+      <% if (vehicle.description) { %>
+        <h3 style="margin-top: 20px;"><i class="ri-file-text-line"></i> Vehicle Description</h3>
+        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
+          <%= vehicle.description %>
+        </div>
+      <% } %>
+    </div>
+    
+    <!-- VERIFICATION FORM -->
+    <div class="card" style="border: 2px solid var(--primary);">
+      <h2 style="color: var(--primary);"><i class="ri-shield-check-line"></i> Vehicle Verification</h2>
       
       <form method="POST" action="/admin/verify-vehicle/<%= vehicle.id %>">
-        <h3>Verification Checklist</h3>
+        <h3 style="margin-top: 20px;">Verification Checklist</h3>
+        <p style="color: var(--text-light); margin-bottom: 20px;">
+          Check each item you have independently verified for accuracy
+        </p>
         
-        <div class="form-group">
-          <label><input type="checkbox" name="vinVerified" value="1"> VIN Verified</label>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" name="mileageVerified" value="1"> Mileage Verified</label>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" name="serviceHistoryVerified" value="1"> Service History Verified</label>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" name="ownershipVerified" value="1"> Ownership History Verified</label>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" name="accidentHistoryVerified" value="1"> Accident History Verified</label>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" name="recallVerified" value="1"> Recall Information Verified</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="vinVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>VIN Verified</strong><br><small style="color: #6b7280;">Checked against registration</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="plateNumberVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Plate Number Verified</strong><br><small style="color: #6b7280;">Matches official records</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="engineNumberVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Engine Number Verified</strong><br><small style="color: #6b7280;">Matches manufacturer data</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="mileageVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Mileage Verified</strong><br><small style="color: #6b7280;">Consistent with service records</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="serviceHistoryVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Service History Verified</strong><br><small style="color: #6b7280;">Documentation reviewed</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="ownershipVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Ownership Verified</strong><br><small style="color: #6b7280;">Previous owners confirmed</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="accidentHistoryVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Accident History Verified</strong><br><small style="color: #6b7280;">Police/insurance records checked</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="recallVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Recall Information Verified</strong><br><small style="color: #6b7280;">Manufacturer recall check</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="registrationVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Registration Verified</strong><br><small style="color: #6b7280;">License & registration dates</small></span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label style="display: flex; align-items: center; padding: 12px; background: #f9fafb; border-radius: 6px; cursor: pointer;">
+              <input type="checkbox" name="engineSpecsVerified" value="1" style="margin-right: 10px; width: 18px; height: 18px;">
+              <span><strong>Engine Specs Verified</strong><br><small style="color: #6b7280;">Type, capacity, fuel type</small></span>
+            </label>
+          </div>
         </div>
         
-        <div class="form-group">
-          <label class="form-label">Verification Notes</label>
-          <textarea name="notes" class="form-control" rows="4"></textarea>
+        <div class="form-group" style="margin-top: 30px;">
+          <label class="form-label"><i class="ri-file-text-line"></i> Verification Notes</label>
+          <textarea name="notes" class="form-control" rows="4" placeholder="Add any additional notes about the verification process, findings, or recommendations..."></textarea>
         </div>
         
-        <h3>Decision</h3>
+        <h3 style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--border);">
+          <i class="ri-checkbox-circle-line"></i> Final Decision
+        </h3>
         
         <div class="form-group">
           <label class="form-label">Action *</label>
-          <select name="action" class="form-control" required id="verificationAction">
-            <option value="">Select...</option>
-            <option value="approve">Approve Vehicle</option>
-            <option value="reject">Reject Vehicle</option>
+          <select name="action" class="form-control" required id="verificationAction" style="font-size: 1.1rem; padding: 12px;">
+            <option value="">Select verification decision...</option>
+            <option value="approve">✓ Approve Vehicle (Mark as Verified)</option>
+            <option value="reject">✗ Reject Vehicle (Not Verified)</option>
           </select>
         </div>
         
         <div class="form-group" id="rejectionReasonGroup" style="display: none;">
-          <label class="form-label">Rejection Reason *</label>
-          <textarea name="rejectionReason" class="form-control" rows="3"></textarea>
+          <label class="form-label" style="color: var(--danger);">
+            <i class="ri-alert-line"></i> Rejection Reason * (Required for rejection)
+          </label>
+          <textarea name="rejectionReason" class="form-control" rows="4" placeholder="Provide detailed reason for rejection. Include specific discrepancies found, missing documentation, or verification failures..."></textarea>
+          <small style="color: var(--danger);">This will be visible to the dealership</small>
         </div>
         
-        <div style="margin-top: 20px;">
-          <button type="submit" class="btn btn-primary">Submit Verification</button>
-          <a href="/admin/verify-vehicles" class="btn btn-secondary">Cancel</a>
+        <div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 6px;">
+          <p style="margin: 0; color: #92400e;">
+            <i class="ri-information-line"></i> 
+            <strong>Important:</strong> By submitting this verification, you confirm that you have independently verified the information provided and that it meets our transparency standards.
+          </p>
+        </div>
+        
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+          <button type="submit" class="btn btn-primary" style="font-size: 1.1rem; padding: 15px 30px;">
+            <i class="ri-save-line"></i> Submit Verification
+          </button>
+          <a href="/admin/verify-vehicles" class="btn btn-secondary" style="padding: 15px 30px;">
+            <i class="ri-close-line"></i> Cancel
+          </a>
         </div>
       </form>
     </div>
   </div>
   
   <script>
+    // Show/hide rejection reason field
     document.getElementById('verificationAction').addEventListener('change', function() {
       const rejectionGroup = document.getElementById('rejectionReasonGroup');
+      const rejectionTextarea = rejectionGroup.querySelector('textarea');
+      
       if (this.value === 'reject') {
         rejectionGroup.style.display = 'block';
+        rejectionTextarea.required = true;
       } else {
         rejectionGroup.style.display = 'none';
+        rejectionTextarea.required = false;
+      }
+    });
+    
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const action = document.getElementById('verificationAction').value;
+      
+      if (action === 'approve') {
+        const checkboxes = this.querySelectorAll('input[type="checkbox"]');
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+        
+        if (checkedCount === 0) {
+          e.preventDefault();
+          alert('Please check at least one verification item before approving the vehicle.');
+          return false;
+        }
+        
+        if (!confirm('Are you sure you want to APPROVE this vehicle? It will be visible to customers with verified status.')) {
+          e.preventDefault();
+          return false;
+        }
+      }
+      
+      if (action === 'reject') {
+        const reason = document.querySelector('textarea[name="rejectionReason"]').value.trim();
+        if (!reason) {
+          e.preventDefault();
+          alert('Please provide a detailed rejection reason.');
+          return false;
+        }
+        
+        if (!confirm('Are you sure you want to REJECT this vehicle? The dealership will be notified.')) {
+          e.preventDefault();
+          return false;
+        }
       }
     });
   </script>
