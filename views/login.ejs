@@ -560,12 +560,7 @@
         <!-- Left Side - Brand Section -->
         <div class="brand-section">
             <div class="brand-content">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-square"></i>
-                    </div>
-                    <span class="logo-text">Before You Sign</span>
-                </div>
+                
 
                 <div class="brand-message">
                     <h1>Before You Sign, Know What You're Getting</h1>
@@ -574,7 +569,7 @@
             </div>
 
             <div class="brand-footer">
-                <p>Copyright &copy; 2025 Before You Sign</p>
+                <p>Copyright &copy; <span id="year"></span> Before You Sign</p>
                 <a href="#" class="privacy-link">Privacy Policy</a>
             </div>
         </div>
@@ -675,6 +670,9 @@
           });
       }
 
+    </script>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
