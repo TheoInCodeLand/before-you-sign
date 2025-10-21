@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  
+  <div class="container">
+    <h1>Welcome, <%= dealership.business_name %></h1>
+    
+    <div class="card">
+      <p><strong>Certification Status:</strong>
+        <% if (dealership.certification_status === 'active') { %>
+          <span class="badge badge-success">Active Certified</span>
+        <% } else if (dealership.certification_status === 'pending') { %>
+          <span class="badge badge-warning">Pending Approval</span>
+        <% } else { %>
+          <span class="badge badge-danger">Suspended</span>
+        <% } %>
+      </p>
+    </div>
+    
+    <h2>Statistics</h2>
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Vehicles</div>
+        <div class="stat-value"><%= stats.total %></div>
+      </div>
+      
+      <div class="stat-card success">
+        <div class="stat-label">Verified</div>
+        <div class="stat-value"><%= stats.verified %></div>
+      </div>
+      
+      <div class="stat-card warning">
+        <div class="stat-label">Pending Verification</div>
+        <div class="stat-value"><%= stats.pending %></div>
+      </div>
+    </div>
+    
+    <h2>Quick Actions</h2>
+    <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+      <a href="/dealership/add-vehicle" class="btn btn-primary">Add New Vehicle</a>
+      <a href="/dealership/vehicles" class="btn btn-secondary">View All Vehicles</a>
+      <a href="/dealership/profile" class="btn btn-secondary">Edit Profile</a>
+    </div>
+  </div>
+  
+  <%- include('../partials/footer') %>
+</body>
+</html>

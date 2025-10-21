@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>Manage Disputes</h1>
+    
+    <% if (disputes.length > 0) { %>
+      <% disputes.forEach(function(d) { %>
+        <div class="card">
+          <h3><%= d.year %> <%= d.make %> <%= d.model %> (VIN: <%= d.vin %>)</h3>
+          <p><strong>Customer:</strong> <%= d.customer_name %></p>
+          <p><strong>Type:</strong> <%= d.discrepancy_type %></p>
+          <p><strong>Status:</strong> 
+            <% if (d.status === 'submitted') { %>
+              <span class="badge badge-warning">Submitted</span>
+            <% } else if (d.status === 'under_review') { %>
+              <span class="badge badge-info">Under Review</span>
+            <% } else { %>
+              <span class="badge badge-success">Resolved</span>
+            <% } %>
+          </p>
+          <p><strong>Description:</strong> <%= d.description %></p>
+          
+          <form method="POST" action="/admin/dispute/<%= d.id %>/update" style="margin-top: 15px;">
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select name="status" class="form-control">
+                <option value="submitted">Submitted</option>
+                <option value="under_review">Under Review</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Admin Response</label>
+              <textarea name="adminResponse" class="form-control" rows="3"><%= d.admin_response || '' %></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <div class="card">
+        <p>No disputes to display.</p>
+      </div>
+    <% } %>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

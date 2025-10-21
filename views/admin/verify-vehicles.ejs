@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>Verify Vehicles</h1>
+    
+    <% if (vehicles.length > 0) { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>VIN</th>
+            <th>Vehicle</th>
+            <th>Dealership</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% vehicles.forEach(function(v) { %>
+            <tr>
+              <td><%= v.vin %></td>
+              <td><%= v.year %> <%= v.make %> <%= v.model %></td>
+              <td><%= v.business_name %></td>
+              <td>R <%= v.price.toLocaleString() %></td>
+              <td><a href="/admin/verify-vehicle/<%= v.id %>" class="btn btn-primary">Verify</a></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <div class="card">
+        <p>No vehicles pending verification.</p>
+      </div>
+    <% } %>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  
+  <div class="container">
+    <h1>Verify Vehicle</h1>
+    
+    <div class="card">
+      <h2><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></h2>
+      <p><strong>Dealership:</strong> <%= vehicle.business_name %>
+        <% if (vehicle.certification_status === 'active') { %>
+          <span class="badge badge-success">Certified</span>
+        <% } %>
+      </p>
+      <p><strong>VIN:</strong> <%= vehicle.vin %></p>
+      
+      <h3>Vehicle Information</h3>
+      <table class="table">
+        <tr><td><strong>Price:</strong></td><td>R <%= vehicle.price.toLocaleString() %></td></tr>
+        <tr><td><strong>Mileage:</strong></td><td><%= vehicle.mileage.toLocaleString() %> km</td></tr>
+        <tr><td><strong>Color:</strong></td><td><%= vehicle.color %></td></tr>
+        <tr><td><strong>Body Type:</strong></td><td><%= vehicle.body_type %></td></tr>
+        <tr><td><strong>Fuel Type:</strong></td><td><%= vehicle.fuel_type %></td></tr>
+        <tr><td><strong>Transmission:</strong></td><td><%= vehicle.transmission %></td></tr>
+        <tr><td><strong>Previous Owners:</strong></td><td><%= vehicle.previous_owners %></td></tr>
+      </table>
+      
+      <h3>Service History</h3>
+      <p><%= vehicle.service_history || 'Not provided' %></p>
+      
+      <h3>Accident History</h3>
+      <p><%= vehicle.accident_history || 'Not provided' %></p>
+      
+      <h3>Recall Information</h3>
+      <p><%= vehicle.recall_information || 'Not provided' %></p>
+    </div>
+    
+    <div class="card">
+      <h2>Verification</h2>
+      
+      <form method="POST" action="/admin/verify-vehicle/<%= vehicle.id %>">
+        <h3>Verification Checklist</h3>
+        
+        <div class="form-group">
+          <label><input type="checkbox" name="vinVerified" value="1"> VIN Verified</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" name="mileageVerified" value="1"> Mileage Verified</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" name="serviceHistoryVerified" value="1"> Service History Verified</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" name="ownershipVerified" value="1"> Ownership History Verified</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" name="accidentHistoryVerified" value="1"> Accident History Verified</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" name="recallVerified" value="1"> Recall Information Verified</label>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Verification Notes</label>
+          <textarea name="notes" class="form-control" rows="4"></textarea>
+        </div>
+        
+        <h3>Decision</h3>
+        
+        <div class="form-group">
+          <label class="form-label">Action *</label>
+          <select name="action" class="form-control" required id="verificationAction">
+            <option value="">Select...</option>
+            <option value="approve">Approve Vehicle</option>
+            <option value="reject">Reject Vehicle</option>
+          </select>
+        </div>
+        
+        <div class="form-group" id="rejectionReasonGroup" style="display: none;">
+          <label class="form-label">Rejection Reason *</label>
+          <textarea name="rejectionReason" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <div style="margin-top: 20px;">
+          <button type="submit" class="btn btn-primary">Submit Verification</button>
+          <a href="/admin/verify-vehicles" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    document.getElementById('verificationAction').addEventListener('change', function() {
+      const rejectionGroup = document.getElementById('rejectionReasonGroup');
+      if (this.value === 'reject') {
+        rejectionGroup.style.display = 'block';
+      } else {
+        rejectionGroup.style.display = 'none';
+      }
+    });
+  </script>
+  
+  <%- include('../partials/footer') %>
+</body>
+</html>

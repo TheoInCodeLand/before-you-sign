@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>Manage Dealerships</h1>
+    
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Business Name</th>
+          <th>City</th>
+          <th>Status</th>
+          <th>Vehicles</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% dealerships.forEach(function(d) { %>
+          <tr>
+            <td><%= d.business_name %></td>
+            <td><%= d.city %></td>
+            <td>
+              <% if (d.certification_status === 'active') { %>
+                <span class="badge badge-success">Active</span>
+              <% } else if (d.certification_status === 'pending') { %>
+                <span class="badge badge-warning">Pending</span>
+              <% } else { %>
+                <span class="badge badge-danger">Suspended</span>
+              <% } %>
+            </td>
+            <td><%= d.vehicle_count %></td>
+            <td><a href="/admin/dealership/<%= d.id %>" class="btn btn-secondary">View</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

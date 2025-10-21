@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>Browse Verified Vehicles</h1>
+    
+    <div class="card">
+      <form method="GET" action="/customer/vehicles">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+          <div class="form-group">
+            <label class="form-label">Make</label>
+            <input type="text" name="make" class="form-control" value="<%= filters.make || '' %>">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Body Type</label>
+            <select name="bodyType" class="form-control">
+              <option value="">All</option>
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Hatchback">Hatchback</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Min Price</label>
+            <input type="number" name="minPrice" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Max Price</label>
+            <input type="number" name="maxPrice" class="form-control">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+      </form>
+    </div>
+    
+    <div class="vehicle-grid">
+      <% vehicles.forEach(function(vehicle) { %>
+        <div class="vehicle-card">
+          <div class="vehicle-info">
+            <div class="vehicle-title"><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></div>
+            <div class="vehicle-price">R <%= vehicle.price.toLocaleString() %></div>
+            <div class="vehicle-details">
+              <span><%= vehicle.mileage.toLocaleString() %> km</span>
+              <span><%= vehicle.body_type %></span>
+              <span><%= vehicle.fuel_type %></span>
+            </div>
+            <span class="badge badge-success">Verified</span>
+            <p><strong><%= vehicle.business_name %></strong></p>
+            <a href="/vehicle/<%= vehicle.id %>" class="btn btn-primary">View Details</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    
+    <% if (vehicles.length === 0) { %>
+      <div class="card"><p>No vehicles found matching your criteria.</p></div>
+    <% } %>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

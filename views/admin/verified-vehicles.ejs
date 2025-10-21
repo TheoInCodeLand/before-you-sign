@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>Verified Vehicles</h1>
+    
+    <table class="table">
+      <thead>
+        <tr>
+          <th>VIN</th>
+          <th>Vehicle</th>
+          <th>Dealership</th>
+          <th>Verified By</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% vehicles.forEach(function(v) { %>
+          <tr>
+            <td><%= v.vin %></td>
+            <td><%= v.year %> <%= v.make %> <%= v.model %></td>
+            <td><%= v.business_name %></td>
+            <td><%= v.verified_by_username %></td>
+            <td><%= new Date(v.verified_at).toLocaleDateString() %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

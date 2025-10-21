@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  
+  <div class="container">
+    <div style="margin-bottom: 20px;">
+      <a href="/admin/dealerships" class="btn btn-secondary">&larr; Back to Dealerships</a>
+    </div>
+    
+    <h1><%= dealership.business_name %></h1>
+    
+    <div class="card">
+      <h2>Update Certification Status</h2>
+      <form method="POST" action="/admin/dealership/<%= dealership.id %>/update-status">
+        <div class="form-group">
+          <label class="form-label">Certification Status</label>
+          <select name="status" class="form-control" required>
+            <option value="pending" <%= dealership.certification_status === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="active" <%= dealership.certification_status === 'active' ? 'selected' : '' %>>Active</option>
+            <option value="suspended" <%= dealership.certification_status === 'suspended' ? 'selected' : '' %>>Suspended</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Status</button>
+      </form>
+      
+      <p style="margin-top: 20px;">
+        <strong>Current Status:</strong>
+        <% if (dealership.certification_status === 'active') { %>
+          <span class="badge badge-success">Active Certified</span>
+        <% } else if (dealership.certification_status === 'pending') { %>
+          <span class="badge badge-warning">Pending Approval</span>
+        <% } else { %>
+          <span class="badge badge-danger">Suspended</span>
+        <% } %>
+      </p>
+    </div>
+    
+    <div class="card">
+      <h2>Dealership Information</h2>
+      
+      <table class="table">
+        <tr>
+          <td><strong>Business Name:</strong></td>
+          <td><%= dealership.business_name %></td>
+        </tr>
+        <tr>
+          <td><strong>Registration Number:</strong></td>
+          <td><%= dealership.registration_number %></td>
+        </tr>
+        <tr>
+          <td><strong>License Number:</strong></td>
+          <td><%= dealership.license_number || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Year Established:</strong></td>
+          <td><%= dealership.year_established || 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Username:</strong></td>
+          <td><%= dealership.username %></td>
+        </tr>
+        <tr>
+          <td><strong>Email:</strong></td>
+          <td><%= dealership.email %></td>
+        </tr>
+        <tr>
+          <td><strong>Phone:</strong></td>
+          <td><%= dealership.phone %></td>
+        </tr>
+        <tr>
+          <td><strong>Website:</strong></td>
+          <td><%= dealership.website ? '<a href="' + dealership.website + '" target="_blank">' + dealership.website + '</a>' : 'Not provided' %></td>
+        </tr>
+        <tr>
+          <td><strong>Address:</strong></td>
+          <td><%= dealership.address %>, <%= dealership.city %>, <%= dealership.postal_code || '' %></td>
+        </tr>
+        <tr>
+          <td><strong>Operating Hours:</strong></td>
+          <td><%= dealership.operating_hours || 'Not provided' %></td>
+        </tr>
+      </table>
+      
+      <% if (dealership.description) { %>
+        <h3 style="margin-top: 20px;">Description</h3>
+        <p><%= dealership.description %></p>
+      <% } %>
+      
+      <h3 style="margin-top: 30px;">Account Details</h3>
+      <p><strong>Registered:</strong> <%= new Date(dealership.created_at).toLocaleString() %></p>
+      <p><strong>Last Updated:</strong> <%= new Date(dealership.updated_at).toLocaleString() %></p>
+    </div>
+    
+    <div class="card">
+      <h2>Vehicles (<%= vehicles.length %>)</h2>
+      
+      <% if (vehicles.length > 0) { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>VIN</th>
+              <th>Vehicle</th>
+              <th>Year</th>
+              <th>Price</th>
+              <th>Mileage</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% vehicles.forEach(function(v) { %>
+              <tr>
+                <td><%= v.vin %></td>
+                <td><strong><%= v.make %> <%= v.model %></strong></td>
+                <td><%= v.year %></td>
+                <td>R <%= v.price.toLocaleString() %></td>
+                <td><%= v.mileage.toLocaleString() %> km</td>
+                <td>
+                  <% if (v.status === 'verified') { %>
+                    <span class="badge badge-success">Verified</span>
+                  <% } else if (v.status === 'pending_verification') { %>
+                    <span class="badge badge-warning">Pending</span>
+                  <% } else { %>
+                    <span class="badge badge-danger">Rejected</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (v.status === 'pending_verification') { %>
+                    <a href="/admin/verify-vehicle/<%= v.id %>" class="btn btn-primary">Verify</a>
+                  <% } else if (v.status === 'verified') { %>
+                    <a href="/vehicle/<%= v.id %>" class="btn btn-secondary">View</a>
+                  <% } else { %>
+                    <span class="badge badge-danger">Rejected</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p style="color: var(--text-light); text-align: center; padding: 40px;">
+          This dealership hasn't added any vehicles yet.
+        </p>
+      <% } %>
+    </div>
+    
+    <div style="margin-top: 30px;">
+      <a href="/admin/dealerships" class="btn btn-secondary">Back to Dealerships</a>
+    </div>
+  </div>
+  
+  <%- include('../partials/footer') %>
+</body>
+</html>

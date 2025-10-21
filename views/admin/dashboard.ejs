@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Dealerships</div>
+        <div class="stat-value"><%= stats.total_dealerships %></div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-label">Active Dealerships</div>
+        <div class="stat-value"><%= stats.active_dealerships %></div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-label">Pending Vehicles</div>
+        <div class="stat-value"><%= stats.pending_vehicles %></div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-label">Verified Vehicles</div>
+        <div class="stat-value"><%= stats.verified_vehicles %></div>
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 15px; margin-top: 30px;">
+      <a href="/admin/verify-vehicles" class="btn btn-primary">Verify Vehicles</a>
+      <a href="/admin/dealerships" class="btn btn-secondary">Manage Dealerships</a>
+      <a href="/admin/disputes" class="btn btn-secondary">View Disputes</a>
+    </div>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

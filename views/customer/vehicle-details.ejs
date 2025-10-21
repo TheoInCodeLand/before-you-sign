@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></h1>
+    
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+          <div class="vehicle-price">R <%= vehicle.price.toLocaleString() %></div>
+          <p><strong>Dealership:</strong> <%= vehicle.business_name %>
+            <span class="badge badge-success">Certified</span>
+          </p>
+          <p><strong>VIN:</strong> <%= vehicle.vin %></p>
+          <span class="badge badge-success">Verified Vehicle</span>
+        </div>
+        
+        <% if (vehicle.qr_code_path) { %>
+          <div style="text-align: center; padding: 20px;">
+            <p><strong>Scan for Instant History</strong></p>
+            <img src="<%= vehicle.qr_code_path %>" alt="QR Code" style="max-width: 200px; border: 4px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          </div>
+        <% } %>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Vehicle Specifications</h2>
+      <table class="table">
+        <tr><td><strong>Mileage:</strong></td><td><%= vehicle.mileage.toLocaleString() %> km</td></tr>
+        <tr><td><strong>Color:</strong></td><td><%= vehicle.color %></td></tr>
+        <tr><td><strong>Body Type:</strong></td><td><%= vehicle.body_type %></td></tr>
+        <tr><td><strong>Fuel Type:</strong></td><td><%= vehicle.fuel_type %></td></tr>
+        <tr><td><strong>Transmission:</strong></td><td><%= vehicle.transmission %></td></tr>
+        <tr><td><strong>Previous Owners:</strong></td><td><%= vehicle.previous_owners %></td></tr>
+      </table>
+    </div>
+    
+    <div class="card">
+      <h2>Vehicle History</h2>
+      <h3>Service History</h3>
+      <p><%= vehicle.service_history || 'Not provided' %></p>
+      
+      <h3>Accident History</h3>
+      <p><%= vehicle.accident_history || 'Not provided' %></p>
+      
+      <h3>Recall Information</h3>
+      <p><%= vehicle.recall_information || 'Not provided' %></p>
+    </div>
+    
+    <% if (role === 'customer') { %>
+      <a href="/customer/report-dispute?vehicleId=<%= vehicle.id %>" class="btn btn-danger">Report Discrepancy</a>
+    <% } %>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

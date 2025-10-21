@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>Certified Dealerships</h1>
+    <div class="vehicle-grid">
+      <% dealerships.forEach(function(dealership) { %>
+        <div class="card">
+          <h3><%= dealership.business_name %></h3>
+          <p><span class="badge badge-success">Certified</span></p>
+          <p><strong>City:</strong> <%= dealership.city %></p>
+          <p><strong>Verified Vehicles:</strong> <%= dealership.vehicle_count %></p>
+          <p><%= dealership.description %></p>
+          <a href="/customer/vehicles?dealershipId=<%= dealership.id %>" class="btn btn-primary">View Vehicles</a>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

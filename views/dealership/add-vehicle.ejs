@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  
+  <div class="container">
+    <h1><%= title %></h1>
+    
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    
+    <% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    
+    <div class="card">
+      <form method="POST" action="/dealership/add-vehicle">
+        <h3>Basic Information</h3>
+        
+        <div class="form-group">
+          <label class="form-label">VIN (Vehicle Identification Number) *</label>
+          <input type="text" name="vin" class="form-control" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}" required style="text-transform: uppercase;">
+          <small style="color: var(--text-light);">17 characters, no I, O, or Q</small>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="form-group">
+            <label class="form-label">Make *</label>
+            <input type="text" name="make" class="form-control" required placeholder="e.g., BMW, Toyota, Ford">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Model *</label>
+            <input type="text" name="model" class="form-control" required placeholder="e.g., 3 Series, Corolla, F-150">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+          <div class="form-group">
+            <label class="form-label">Year *</label>
+            <select name="year" class="form-control" required>
+              <option value="">Select Year</option>
+              <% for(let year = 2025; year >= 1980; year--) { %>
+                <option value="<%= year %>"><%= year %></option>
+              <% } %>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Mileage (km) *</label>
+            <input type="number" name="mileage" class="form-control" min="0" required placeholder="0">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Price (ZAR) *</label>
+            <input type="number" name="price" class="form-control" min="0" step="1000" required placeholder="0">
+          </div>
+        </div>
+        
+        <h3 style="margin-top: 30px;">Vehicle Details</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="form-group">
+            <label class="form-label">Color</label>
+            <input type="text" name="color" class="form-control" placeholder="e.g., Black, White, Silver">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Body Type</label>
+            <select name="bodyType" class="form-control">
+              <option value="">Select...</option>
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Truck">Truck</option>
+              <option value="Coupe">Coupe</option>
+              <option value="Convertible">Convertible</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Van">Van</option>
+              <option value="Wagon">Wagon</option>
+            </select>
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+          <div class="form-group">
+            <label class="form-label">Fuel Type</label>
+            <select name="fuelType" class="form-control">
+              <option value="">Select...</option>
+              <option value="Petrol">Petrol</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Electric">Electric</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Transmission</label>
+            <select name="transmission" class="form-control">
+              <option value="">Select...</option>
+              <option value="Automatic">Automatic</option>
+              <option value="Manual">Manual</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Previous Owners</label>
+            <input type="number" name="previousOwners" class="form-control" min="0" max="10" value="0">
+          </div>
+        </div>
+        
+        <h3 style="margin-top: 30px;">Vehicle History</h3>
+        
+        <div class="form-group">
+          <label class="form-label">Service History</label>
+          <textarea name="serviceHistory" class="form-control" rows="4" placeholder="Detail all service records with dates and mileage..."></textarea>
+          <small style="color: var(--text-light);">Example: "First service at 15,000 km on 2023-05-15, Second service at 30,000 km on 2024-01-20..."</small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Accident History</label>
+          <textarea name="accidentHistory" class="form-control" rows="3" placeholder="No accidents or detail any accidents with dates and repairs..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Recall Information</label>
+          <textarea name="recallInformation" class="form-control" rows="2" placeholder="No open recalls or list completed recalls..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Additional Features</label>
+          <textarea name="additionalFeatures" class="form-control" rows="3" placeholder="List additional features (e.g., Leather seats, Navigation system, Sunroof, Parking sensors, Bluetooth...)"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="4" placeholder="Provide a detailed description of the vehicle condition and any notable features..."></textarea>
+        </div>
+        
+        <div style="margin-top: 30px; border-top: 2px solid var(--border); padding-top: 20px;">
+          <button type="submit" class="btn btn-primary">Add Vehicle & Generate QR Code</button>
+          <a href="/dealership/vehicles" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <%- include('../partials/footer') %>
+  
+  <script>
+    // VIN input formatting
+    document.querySelector('input[name="vin"]').addEventListener('input', function(e) {
+      this.value = this.value.toUpperCase();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>My Profile</h1>
+    <div class="card">
+      <p><strong>Name:</strong> <%= customer ? customer.full_name : 'N/A' %></p>
+      <p><strong>Email:</strong> <%= session.email %></p>
+      <p><strong>Phone:</strong> <%= customer ? customer.phone : 'N/A' %></p>
+    </div>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

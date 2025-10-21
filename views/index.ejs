@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  
+  <section class="hero">
+    <div class="container">
+      <h1>Before You Sign, Know What You're Getting</h1>
+      <p>Empowering car buyers with transparent, verified vehicle information</p>
+      <div style="margin-top: 30px;">
+        <a href="/customer/vehicles" class="btn btn-primary" style="margin-right: 15px;">Browse Vehicles</a>
+        <a href="/register/customer" class="btn btn-secondary">Get Started</a>
+      </div>
+    </div>
+  </section>
+  
+  <div class="container">
+    <h2 style="text-align: center; margin: 40px 0;">How It Works</h2>
+    
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3>🏢 Certified Dealerships</h3>
+        <p>We partner with ethical dealerships committed to transparency.</p>
+      </div>
+      
+      <div class="card">
+        <h3>📱 QR Code Verification</h3>
+        <p>Each vehicle gets a unique QR code with verified history.</p>
+      </div>
+      
+      <div class="card">
+        <h3>✅ Independent Verification</h3>
+        <p>Our admin team verifies all vehicle information independently.</p>
+      </div>
+      
+      <div class="card">
+        <h3>⚖️ Dispute Resolution</h3>
+        <p>Report discrepancies and get fair resolution.</p>
+      </div>
+    </div>
+  </div>
+  
+  <%- include('partials/footer') %>
+</body>
+</html>

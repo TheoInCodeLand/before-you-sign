@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h1>My Vehicles</h1>
+      <a href="/dealership/add-vehicle" class="btn btn-primary">Add New Vehicle</a>
+    </div>
+    
+    <div class="card">
+      <h3>Filter by Status</h3>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="?status=all" class="btn <%= selectedStatus === 'all' ? 'btn-primary' : 'btn-secondary' %>">
+          All (<%= vehicles.length %>)
+        </a>
+        <a href="?status=pending_verification" class="btn <%= selectedStatus === 'pending_verification' ? 'btn-primary' : 'btn-secondary' %>">
+          Pending
+        </a>
+        <a href="?status=verified" class="btn <%= selectedStatus === 'verified' ? 'btn-primary' : 'btn-secondary' %>">
+          Verified
+        </a>
+        <a href="?status=rejected" class="btn <%= selectedStatus === 'rejected' ? 'btn-primary' : 'btn-secondary' %>">
+          Rejected
+        </a>
+      </div>
+    </div>
+    
+    <% if (vehicles.length > 0) { %>
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>VIN</th>
+              <th>Vehicle</th>
+              <th>Year</th>
+              <th>Price</th>
+              <th>Mileage</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% vehicles.forEach(function(v) { %>
+              <tr>
+                <td><%= v.vin %></td>
+                <td><strong><%= v.make %> <%= v.model %></strong></td>
+                <td><%= v.year %></td>
+                <td>R <%= v.price.toLocaleString() %></td>
+                <td><%= v.mileage.toLocaleString() %> km</td>
+                <td>
+                  <% if (v.status === 'verified') { %>
+                    <span class="badge badge-success">Verified</span>
+                  <% } else if (v.status === 'pending_verification') { %>
+                    <span class="badge badge-warning">Pending</span>
+                  <% } else { %>
+                    <span class="badge badge-danger">Rejected</span>
+                  <% } %>
+                </td>
+                <td>
+                  <a href="/dealership/vehicle/<%= v.id %>" class="btn btn-secondary">View</a>
+                  <% if (v.status === 'pending_verification') { %>
+                    <form method="POST" action="/dealership/vehicle/<%= v.id %>/delete" style="display: inline;">
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this vehicle?')" style="margin-left: 5px;">Delete</button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="card" style="text-align: center; padding: 60px 20px;">
+        <h2>No vehicles found</h2>
+        <p style="color: var(--text-light); margin: 20px 0;">
+          <% if (selectedStatus === 'all') { %>
+            You haven't added any vehicles yet.
+          <% } else { %>
+            No vehicles with status: <%= selectedStatus.replace('_', ' ') %>
+          <% } %>
+        </p>
+        <a href="/dealership/add-vehicle" class="btn btn-primary">Add Your First Vehicle</a>
+      </div>
+    <% } %>
+  </div>
+  
+  <%- include('../partials/footer') %>
+</body>
+</html>
