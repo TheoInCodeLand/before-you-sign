@@ -8,7 +8,7 @@
   --extra-light: #f2f2f2;
   --white: #ffffff;
   --max-width: 1200px;
-  --gradient: linear-gradient(to bottom, #000000, #020854);
+  --gradient: linear-gradient(to bottom, #00000079, #000000);
 }
 
 * {
@@ -181,6 +181,9 @@ nav {
   z-index: -1;
 }
 
+.header__container img {
+  transform: scale(1.3);
+}
 .header__content h1 {
   position: relative;
   isolation: isolate;
@@ -436,6 +439,16 @@ nav {
     flex-wrap: wrap;
   }
 
+  .header__content {
+    text-align: center;
+  }
+
+  .header__content h1 {
+    margin-top: -4rem;
+    transform: scale(0.65);
+    color: #aaaaaa;
+  }
+
   .download__links {
     justify-content: center;
     align-items: center;
@@ -583,7 +596,6 @@ nav {
   }
 
   .download__image {
-    display: flex;
     position: relative;
     isolation: isolate;
   }
