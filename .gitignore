@@ -1,9 +1,9 @@
 node_modules/
-database/dealership.db
-public/qr-codes/*.png
-!public/qr-codes/.gitkeep
-public/uploads/*
-!public/uploads/.gitkeep
-.env
-*.log
-.DS_Store
+# database/dealership.db
+# public/qr-codes/*.png
+# !public/qr-codes/.gitkeep
+# public/uploads/*
+# !public/uploads/.gitkeep
+# .env
+# *.log
+# .DS_Store
