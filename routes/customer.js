@@ -42,6 +42,10 @@ router.get('/browse-dealerships', (req, res) => {
 
 // Browse vehicles (public)
 router.get('/vehicles', (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 9; // 9 cars per page
+  const offset = (page - 1) * limit;
+  
   let query = `
     SELECT v.*, d.business_name, d.certification_status
     FROM vehicles v
@@ -73,13 +77,38 @@ router.get('/vehicles', (req, res) => {
     query += ' AND ' + filters.join(' AND ');
   }
   
-  query += ' ORDER BY v.created_at DESC';
+  // Get total count for pagination
+  const countQuery = `SELECT COUNT(*) as total FROM (${query})`;
   
-  db.all(query, params, (err, vehicles) => {
-    res.render('customer/vehicles', {
-      title: 'Browse Vehicles',
-      vehicles: vehicles || [],
-      filters: req.query
+  // Add pagination to the main query
+  query += ' ORDER BY v.created_at DESC LIMIT ? OFFSET ?';
+  params.push(limit, offset);
+  
+  // First get the total count
+  db.get(countQuery, params.slice(0, -2), (err, countResult) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Database error');
+    }
+    
+    const totalVehicles = countResult.total;
+    const totalPages = Math.ceil(totalVehicles / limit);
+    
+    // Then get the paginated vehicles
+    db.all(query, params, (err, vehicles) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Database error');
+      }
+      
+      res.render('customer/vehicles', {
+        title: 'Browse Vehicles',
+        vehicles: vehicles || [],
+        filters: req.query,
+        currentPage: page,
+        totalPages: totalPages,
+        totalVehicles: totalVehicles
+      });
     });
   });
 });

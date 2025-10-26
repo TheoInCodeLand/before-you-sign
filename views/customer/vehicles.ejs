@@ -1,67 +1,590 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Before You Sign - Verified Vehicles</title>
+
+  <!-- 
+    - favicon
+  -->
+  <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+
+  <!-- 
+    - custom css link
+  -->
+  <link rel="stylesheet" href="/css/vehicles.css">
+
+  <!-- 
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&family=Open+Sans&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
-  <%- include('../partials/header') %>
-  <div class="container">
-    <h1>Browse Verified Vehicles</h1>
-    
-    <div class="card">
-      <form method="GET" action="/customer/vehicles">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-          <div class="form-group">
-            <label class="form-label">Make</label>
-            <input type="text" name="make" class="form-control" value="<%= filters.make || '' %>">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Body Type</label>
-            <select name="bodyType" class="form-control">
-              <option value="">All</option>
-              <option value="Sedan">Sedan</option>
-              <option value="SUV">SUV</option>
-              <option value="Hatchback">Hatchback</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Min Price</label>
-            <input type="number" name="minPrice" class="form-control">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Max Price</label>
-            <input type="number" name="maxPrice" class="form-control">
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Filter</button>
-      </form>
+
+  <!-- 
+    - #HEADER
+  -->
+
+  <header class="header" data-header>
+    <div class="container">
+
+      <div class="overlay" data-overlay></div>
+
+      <a href="/" class="logo">
+        <img src="./assets/images/logo.svg" alt="Before You Sign logo">
+      </a>
+
+      <nav class="navbar" data-navbar>
+        <ul class="navbar-list">
+
+          <li>
+            <a href="/" class="navbar-link" data-nav-link>Home</a>
+          </li>
+
+          <li>
+            <a href="#featured-car" class="navbar-link" data-nav-link>Browse Vehicles</a>
+          </li>
+
+          <li>
+            <a href="#" class="navbar-link" data-nav-link>About us</a>
+          </li>
+
+          <li>
+            <a href="#blog" class="navbar-link" data-nav-link>Blog</a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="nav-toggle-btn" data-nav-toggle-btn aria-label="Toggle Menu">
+          <span class="one"></span>
+          <span class="two"></span>
+          <span class="three"></span>
+        </button>
+
+      </div>
+
     </div>
-    
-    <div class="vehicle-grid">
-      <% vehicles.forEach(function(vehicle) { %>
-        <div class="vehicle-card">
-          <div class="vehicle-info">
-            <div class="vehicle-title"><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></div>
-            <div class="vehicle-price">R <%= vehicle.price.toLocaleString() %></div>
-            <div class="vehicle-details">
-              <span><%= vehicle.mileage.toLocaleString() %> km</span>
-              <span><%= vehicle.body_type %></span>
-              <span><%= vehicle.fuel_type %></span>
+  </header>
+
+  <main>
+    <article>
+
+      <!-- 
+        - #HERO
+      -->
+
+      <section class="section hero" id="home">
+        <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+
+          <div class="hero-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <h2 class="h1 hero-title">Search & Find Your Next Verified Vehicle</h2>
+
+            <p class="hero-text">
+              Browse our selection of certified vehicles with complete verified histories from ethical dealerships
+            </p>
+          </div>
+
+          <form action="/vehicles" method="GET" class="hero-form">
+
+            <div class="input-wrapper">
+              <label for="input-1" class="input-label">Car, model, or brand</label>
+
+              <input type="text" name="make" id="input-1" class="input-field"
+                placeholder="What car are you looking for?" value="<%= filters.make || '' %>">
             </div>
-            <span class="badge badge-success">Verified</span>
-            <p><strong><%= vehicle.business_name %></strong></p>
-            <a href="/vehicle/<%= vehicle.id %>" class="btn btn-primary">View Details</a>
-          </div>
+            <div class="input-wrapper" id>
+              <label for="input-1" class="input-label">Vin</label>
+
+              <input type="text" name="make" id="input-2" class="input-field"
+                placeholder="Search by VIN" value="<%= filters.make || '' %>">
+            </div>
+            <button type="submit" class="btn">Search</button>
+            <button type="submit" class="btn">Scan QR</button>
+
+
+          </form>
+
         </div>
-      <% }); %>
-    </div>
-    
-    <% if (vehicles.length === 0) { %>
-      <div class="card"><p>No vehicles found matching your criteria.</p></div>
-    <% } %>
-  </div>
-  <%- include('../partials/footer') %>
+      </section>
+
+      <!-- 
+        - #FEATURED CAR
+      -->
+
+      <section class="section featured-car" id="featured-car">
+        <div class="container">
+
+          <div class="title-wrapper">
+            <h2 class="h2 section-title">Verified Vehicles</h2>
+
+            <div class="results-count">
+              Showing <%= vehicles.length %> vehicle<%= vehicles.length !== 1 ? 's' : '' %>
+            </div>
+          </div>
+
+          <% if (vehicles.length === 0) { %>
+            <div style="text-align: center; padding: 3rem; color: #6b7280;">
+              <ion-icon name="search-outline" style="font-size: 3rem; margin-bottom: 1rem;"></ion-icon>
+              <h3>No vehicles found</h3>
+              <p>Try adjusting your search criteria or filters</p>
+              <a href="/vehicles" class="btn" style="margin-top: 1rem;">Clear Filters</a>
+            </div>
+          <% } else { %>
+            <ul class="featured-car-list">
+              <% vehicles.forEach(function(vehicle) { %>
+                <li>
+                  <div class="featured-car-card">
+
+                    <figure class="card-banner">
+                      <img src="<%= vehicle.image_url || 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80' %>" 
+                           alt="<%= vehicle.make %> <%= vehicle.model %>" loading="lazy" width="440" height="300"
+                           class="w-100">
+                      <div style="position: absolute; top: 10px; left: 10px; background: #00a859; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                        <ion-icon name="shield-checkmark-outline"></ion-icon> Verified
+                      </div>
+                    </figure>
+
+                    <div class="card-content">
+
+                      <div class="card-title-wrapper">
+                        <h3 class="h3 card-title">
+                          <a href="/vehicle/<%= vehicle.id %>"><%= vehicle.make %> <%= vehicle.model %></a>
+                        </h3>
+
+                        <data class="year" value="<%= vehicle.year %>"><%= vehicle.year %></data>
+                      </div>
+
+                      <ul class="card-list">
+
+                        <li class="card-list-item">
+                          <ion-icon name="speedometer-outline"></ion-icon>
+
+                          <span class="card-item-text"><%= vehicle.mileage ? vehicle.mileage.toLocaleString() + ' km' : 'N/A' %></span>
+                        </li>
+
+                        <li class="card-list-item">
+                          <ion-icon name="flash-outline"></ion-icon>
+
+                          <span class="card-item-text"><%= vehicle.fuel_type || 'N/A' %></span>
+                        </li>
+
+                        <li class="card-list-item">
+                          <ion-icon name="hardware-chip-outline"></ion-icon>
+
+                          <span class="card-item-text"><%= vehicle.transmission || 'N/A' %></span>
+                        </li>
+
+                        <li class="card-list-item">
+                          <ion-icon name="business-outline"></ion-icon>
+
+                          <span class="card-item-text"><%= vehicle.business_name %></span>
+                        </li>
+
+                      </ul>
+
+                      <div class="card-price-wrapper">
+
+                        <p class="card-price">
+                          <strong>R<%= vehicle.price.toLocaleString() %></strong>
+                        </p>
+
+                        <button class="btn fav-btn" aria-label="Add to favourite list">
+                          <ion-icon name="heart-outline"></ion-icon>
+                        </button>
+
+                        <a href="/vehicle/<%= vehicle.id %>" class="btn">View Details</a>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+                </li>
+              <% }); %>
+            </ul>
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+              <div class="pagination" style="display: flex; justify-content: center; margin-top: 3rem; gap: 0.5rem;">
+                <% if (currentPage > 1) { %>
+                  <a href="/vehicles?page=<%= currentPage - 1 %><%= filters.make ? '&make=' + filters.make : '' %><%= filters.maxPrice ? '&maxPrice=' + filters.maxPrice : '' %><%= filters.bodyType ? '&bodyType=' + filters.bodyType : '' %>" 
+                     class="btn" style="padding: 0.5rem 1rem;">Previous</a>
+                <% } %>
+
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <% if (i === currentPage) { %>
+                    <span class="btn" style="background: #000; color: white; padding: 0.5rem 1rem;"><%= i %></span>
+                  <% } else { %>
+                    <a href="/vehicles?page=<%= i %><%= filters.make ? '&make=' + filters.make : '' %><%= filters.maxPrice ? '&maxPrice=' + filters.maxPrice : '' %><%= filters.bodyType ? '&bodyType=' + filters.bodyType : '' %>" 
+                       class="btn" style="padding: 0.5rem 1rem;"><%= i %></a>
+                  <% } %>
+                <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                  <a href="/vehicles?page=<%= currentPage + 1 %><%= filters.make ? '&make=' + filters.make : '' %><%= filters.maxPrice ? '&maxPrice=' + filters.maxPrice : '' %><%= filters.bodyType ? '&bodyType=' + filters.bodyType : '' %>" 
+                     class="btn" style="padding: 0.5rem 1rem;">Next</a>
+                <% } %>
+              </div>
+            <% } %>
+          <% } %>
+
+        </div>
+      </section>
+
+      <!-- 
+        - #GET START
+      -->
+
+      <section class="section get-start">
+        <div class="container">
+
+          <h2 class="h2 section-title">Get started with 3 simple steps</h2>
+
+          <ul class="get-start-list">
+            <li>
+              <div class="get-start-card">
+
+                <div class="card-icon icon-1">
+                  <ion-icon name="person-add-outline"></ion-icon>
+                </div>
+
+                <h3 class="card-title">Create a profile</h3>
+
+                <p class="card-text">
+                  If you are going to use a passage of Lorem Ipsum, you need to be sure.
+                </p>
+
+                <a href="#" class="card-link">Get started</a>
+
+              </div>
+            </li>
+            <li>
+              <div class="get-start-card">
+
+                <div class="card-icon icon-1">
+                  <ion-icon name="search-outline"></ion-icon>
+                </div>
+
+                <h3 class="card-title">Browse Verified Vehicles</h3>
+
+                <p class="card-text">
+                  Search our database of independently verified vehicles from certified ethical dealerships across SA.
+                </p>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="get-start-card">
+
+                <div class="card-icon icon-2">
+                  <ion-icon name="qr-code-outline"></ion-icon>
+                </div>
+
+                <h3 class="card-title">Scan QR Code</h3>
+
+                <p class="card-text">
+                  Each vehicle has a unique QR code providing instant access to verified service history and records.
+                </p>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="get-start-card">
+
+                <div class="card-icon icon-3">
+                  <ion-icon name="shield-checkmark-outline"></ion-icon>
+                </div>
+
+                <h3 class="card-title">Buy with Confidence</h3>
+
+                <p class="card-text">
+                  Make informed decisions with admin-verified data. Our dispute resolution system ensures accountability.
+                </p>
+
+              </div>
+            </li>
+
+          </ul>
+
+        </div>
+      </section>
+
+      <!-- 
+        - #BLOG
+      -->
+
+      <section class="section blog" id="blog">
+        <div class="container">
+
+          <h2 class="h2 section-title">Our Blog</h2>
+
+          <ul class="blog-list has-scrollbar">
+
+            <li>
+              <div class="blog-card">
+
+                <figure class="card-banner">
+
+                  <a href="#">
+                    <img src="./assets/images/blog-1.jpg" alt="How to verify a vehicle's history" loading="lazy"
+                      class="w-100">
+                  </a>
+
+                  <a href="#" class="btn card-badge">Verification</a>
+
+                </figure>
+
+                <div class="card-content">
+
+                  <h3 class="h3 card-title">
+                    <a href="#">How to verify a vehicle's history</a>
+                  </h3>
+
+                  <div class="card-meta">
+
+                    <div class="publish-date">
+                      <ion-icon name="time-outline"></ion-icon>
+
+                      <time datetime="2023-01-14">January 14, 2023</time>
+                    </div>
+
+                    <div class="comments">
+                      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+
+                      <data value="23">23</data>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="blog-card">
+
+                <figure class="card-banner">
+
+                  <a href="#">
+                    <img src="./assets/images/blog-2.jpg" alt="What to look for when buying a used car" loading="lazy"
+                      class="w-100">
+                  </a>
+
+                  <a href="#" class="btn card-badge">Buying Guide</a>
+
+                </figure>
+
+                <div class="card-content">
+
+                  <h3 class="h3 card-title">
+                    <a href="#">What to look for when buying a used car</a>
+                  </h3>
+
+                  <div class="card-meta">
+
+                    <div class="publish-date">
+                      <ion-icon name="time-outline"></ion-icon>
+
+                      <time datetime="2023-01-10">January 10, 2023</time>
+                    </div>
+
+                    <div class="comments">
+                      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+
+                      <data value="42">42</data>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="blog-card">
+
+                <figure class="card-banner">
+
+                  <a href="#">
+                    <img src="./assets/images/blog-3.jpg" alt="Benefits of certified dealerships" loading="lazy"
+                      class="w-100">
+                  </a>
+
+                  <a href="#" class="btn card-badge">Dealerships</a>
+
+                </figure>
+
+                <div class="card-content">
+
+                  <h3 class="h3 card-title">
+                    <a href="#">Benefits of certified dealerships</a>
+                  </h3>
+
+                  <div class="card-meta">
+
+                    <div class="publish-date">
+                      <ion-icon name="time-outline"></ion-icon>
+
+                      <time datetime="2022-12-28">December 28, 2022</time>
+                    </div>
+
+                    <div class="comments">
+                      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+
+                      <data value="18">18</data>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="blog-card">
+
+                <figure class="card-banner">
+
+                  <a href="#">
+                    <img src="./assets/images/blog-1.jpg" alt="How to verify a vehicle's history" loading="lazy"
+                      class="w-100">
+                  </a>
+
+                  <a href="#" class="btn card-badge">Verification</a>
+
+                </figure>
+
+                <div class="card-content">
+
+                  <h3 class="h3 card-title">
+                    <a href="#">How to verify a vehicle's history</a>
+                  </h3>
+
+                  <div class="card-meta">
+
+                    <div class="publish-date">
+                      <ion-icon name="time-outline"></ion-icon>
+
+                      <time datetime="2023-01-14">January 14, 2023</time>
+                    </div>
+
+                    <div class="comments">
+                      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+
+                      <data value="23">23</data>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="blog-card">
+
+                <figure class="card-banner">
+
+                  <a href="#">
+                    <img src="./assets/images/blog-2.jpg" alt="What to look for when buying a used car" loading="lazy"
+                      class="w-100">
+                  </a>
+
+                  <a href="#" class="btn card-badge">Buying Guide</a>
+
+                </figure>
+
+                <div class="card-content">
+
+                  <h3 class="h3 card-title">
+                    <a href="#">What to look for when buying a used car</a>
+                  </h3>
+
+                  <div class="card-meta">
+
+                    <div class="publish-date">
+                      <ion-icon name="time-outline"></ion-icon>
+
+                      <time datetime="2023-01-10">January 10, 2023</time>
+                    </div>
+
+                    <div class="comments">
+                      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+
+                      <data value="42">42</data>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </li>
+          </ul>
+
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+
+  <script>
+    'use strict';
+
+    /**
+     * navbar toggle
+     */
+    const overlay = document.querySelector("[data-overlay]");
+    const navbar = document.querySelector("[data-navbar]");
+    const navToggleBtn = document.querySelector("[data-nav-toggle-btn]");
+    const navbarLinks = document.querySelectorAll("[data-nav-link]");
+
+    const navToggleFunc = function () {
+      navToggleBtn.classList.toggle("active");
+      navbar.classList.toggle("active");
+      overlay.classList.toggle("active");
+    }
+
+    navToggleBtn.addEventListener("click", navToggleFunc);
+    overlay.addEventListener("click", navToggleFunc);
+
+    for (let i = 0; i < navbarLinks.length; i++) {
+      navbarLinks[i].addEventListener("click", navToggleFunc);
+    }
+
+    /**
+     * header active on scroll
+     */
+    const header = document.querySelector("[data-header]");
+
+    window.addEventListener("scroll", function () {
+      window.scrollY >= 10 ? header.classList.add("active")
+        : header.classList.remove("active");
+    });
+  </script>
+
+  <!-- 
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
 </body>
+
 </html>

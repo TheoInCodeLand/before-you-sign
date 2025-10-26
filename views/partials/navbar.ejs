@@ -49,8 +49,25 @@
             </li>
         <%}%>
     </ul>
-    <div class="nav__btns">
+    <% if (!role) { %>
+     <div class="nav__btns">
         <button class="btn btn__primary" onclick="window.location.href='/register/dealership'">Register Dealership</button>
-      <button class="btn btn__secondary" onclick="window.location.href='/login'">Sign In</button>
+        <button class="btn btn__secondary" onclick="window.location.href='/login'">Sign In</button>
     </div>
+    <% } else if (role === 'admin') {%>
+        <div class="nav__btns">
+            <button class="btn btn__secondary" onclick="window.location.href='/logout'">Sign Out</button>
+        </div>
+    <% } else if (role === 'dealership') {%>
+        <div class="nav__btns">
+            <button class="btn btn__secondary" onclick="window.location.href='/logout'">Sign Out</button>
+        </div>
+    <% } else if (role === 'customer') {%>
+        <div class="nav__btns">
+            <button class="btn btn__secondary" onclick="window.location.href='/logout'">Sign Out</button>
+        </div>
+    <%}%>
+</nav>
+
+    
 </nav>
