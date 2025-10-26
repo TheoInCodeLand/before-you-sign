@@ -1,16 +1,11 @@
 
 :root {
-
-  /**
-   * colors
-   */
-
   --pale-purple-pantone: hsl(262, 63%, 92%);
   --medium-sea-green: hsl(152, 63%, 43%);
   --lavender-blush: hsl(336, 35%, 92%);
-  --carolina-blue: hsl(204, 91%, 53%);
+  --carolina-blue: hsl(0, 0%, 0%);
   --columbia-blue: hsl(204, 92%, 90%);
-  --alice-blue-1: hsl(216, 38%, 95%);
+  --alice-blue-1: hsl(0, 0%, 90%);
   --alice-blue-2: hsl(216, 75%, 97%);
   --alice-blue-3: hsl(216, 38%, 95%);
   --alice-blue-4: hsl(217, 33%, 92%);
@@ -30,10 +25,6 @@
 
   --gradient: linear-gradient(to top, var(--alice-blue-2), var(--alice-blue-3));
 
-  /**
-   * typography
-   */
-
   --ff-nunito: 'Nunito', sans-serif;
   --ff-open-sans: 'Open Sans', sans-serif;
 
@@ -48,42 +39,18 @@
   --fw-400: 400;
   --fw-600: 600;
 
-  /**
-   * transition
-   */
-
   --transition: 0.5s ease;
-
-  /**
-   * spacing
-   */
 
   --section-padding: 50px;
 
-  /**
-   * radius
-   */
-
-  --radius-10: 10px;
-  --radius-14: 14px;
-  --radius-18: 18px;
-
-  /**
-   * shadow
-   */
+  --radius-10: 0.8rem;
+  --radius-14: 0.9rem;
+  --radius-18: 1rem;
 
   --shadow-1: 3px 3px 9px hsla(240, 14%, 69%, 0.2);
   --shadow-2: 3px 3px 9px hsla(204, 92%, 59%, 0.3);
 
 }
-
-
-
-
-
-/*-----------------------------------*\
-  #RESET
-\*-----------------------------------*/
 
 *, *::before, *::after {
   margin: 0;
@@ -126,7 +93,7 @@ html {
 
 body {
   font-family: "Mulish", sans-serif;
-  background: var(--alice-blue-1);
+  background: var(--white);
   overflow-x: hidden;
 }
 
@@ -143,14 +110,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover { background: hsla(219, 14%, 60%, 0.5); }
-
-
-
-
-
-/*-----------------------------------*\
-  #REUSED STYLE
-\*-----------------------------------*/
 
 .container { padding-inline: 15px; }
 
@@ -214,14 +173,6 @@ button, a { transition: var(--transition); }
 .h3 { font-size: var(--fs-4); }
 
 .w-100 { width: 100%; }
-
-
-
-
-
-/*-----------------------------------*\
-  #HEADER
-\*-----------------------------------*/
 
 .header-contact { display: none; }
 
@@ -328,14 +279,6 @@ button, a { transition: var(--transition); }
   pointer-events: all;
 }
 
-
-
-
-
-/*-----------------------------------*\
-  #HERO
-\*-----------------------------------*/
-
 .hero { 
   padding-top: 120px; 
 }
@@ -389,14 +332,6 @@ button, a { transition: var(--transition); }
   margin: 20px;
   text-transform: uppercase;
 }
-
-
-
-
-
-/*-----------------------------------*\
-  #FEATURED CAR
-\*-----------------------------------*/
 
 .featured-car .title-wrapper {
   display: flex;
@@ -548,14 +483,6 @@ button, a { transition: var(--transition); }
   --color: var(--red-salsa);
 }
 
-
-
-
-
-/*-----------------------------------*\
-  #GET START
-\*-----------------------------------*/
-
 .get-start .section-title { margin-bottom: 25px; }
 
 .get-start-list {
@@ -639,14 +566,6 @@ button, a { transition: var(--transition); }
 }
 
 .get-start-card .card-link:is(:hover, :focus)::before { width: 100%; }
-
-
-
-
-
-/*-----------------------------------*\
-  #BLOG
-\*-----------------------------------*/
 
 .blog .section-title { margin-bottom: 30px; }
 
@@ -735,19 +654,7 @@ button, a { transition: var(--transition); }
 
 .has-scrollbar::-webkit-scrollbar-button { width: calc(25% - 40px); }
 
-/*-----------------------------------*\
-  #MEDIA QUERIES
-\*-----------------------------------*/
-
-/**
- * responsive for large than 350px screen
- */
-
 @media (min-width: 350px) {
-
-  /**
-   * FEATURED CAR
-   */
 
   .featured-car-card .card-list { grid-template-columns: 1fr 1fr; }
 
@@ -760,19 +667,7 @@ button, a { transition: var(--transition); }
 
 }
 
-
-
-
-
-/**
- * responsive for large than 580px screen
- */
-
 @media (min-width: 580px) {
-
-  /**
-   * REUSED STYLE
-   */
 
   .container {
     max-width: 540px;
