@@ -20,6 +20,7 @@
   <!-- 
     - google font link
   -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&family=Open+Sans&display=swap"
@@ -77,11 +78,6 @@
 
   <main>
     <article>
-
-      <!-- 
-        - #HERO
-      -->
-
       <section class="section hero" id="home">
         <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
 
@@ -119,7 +115,6 @@
       <!-- 
         - #FEATURED CAR
       -->
-
       <section class="section featured-car" id="featured-car">
         <div class="container">
 
@@ -193,13 +188,13 @@
 
                       <div class="card-price-wrapper">
 
-                        <p class="card-price">
-                          <strong>R<%= vehicle.price.toLocaleString() %></strong>
-                        </p>
+                        <!-- <p class="card-price">
+                          <p style="color: #00a859;"><i class="fa-solid fa-certificate"></i> Verified</p>
+                        </p> -->
 
                         <a href="">
-                          <button class="btn fav-btn" aria-label="Add to favourite list">
-                            <ion-icon name="heart-outline"></ion-icon>
+                          <button class="btn fav-btn" aria-label="Add to favourite list" style="display: flex;">
+                            <i class="fa-solid fa-globe"></i> Visit Web
                           </button>
                         </a>
 
@@ -245,7 +240,6 @@
       <!-- 
         - #GET START
       -->
-
       <section class="section get-start">
         <div class="container">
 

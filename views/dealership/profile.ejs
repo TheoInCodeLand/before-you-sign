@@ -1,88 +1,710 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dealership Profile - Before You Sign</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --primary: 0 0% 0%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --radius: 0.75rem;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: hsl(var(--card));
+            border-right: 1px solid hsl(var(--border));
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 0 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        .nav-item.active {
+            background-color: hsl(var(--secondary));
+            font-weight: 500;
+        }
+
+        .nav-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px;
+            border-bottom: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 448px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: hsl(var(--muted-foreground));
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 40px;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: hsl(var(--primary));
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-button {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .user-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 32px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+        }
+
+        .primary-button:hover {
+            opacity: 0.9;
+        }
+
+        .outline-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .outline-button:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        /* Card */
+        .card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 100%;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid hsl(var(--primary));
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: hsl(var(--primary));
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-grid-2-1 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background-color: hsl(var(--background));
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Account Info */
+        .account-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-item {
+            padding: 12px 0;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Submit Section */
+        .submit-section {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .account-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .primary-button, .outline-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-grid,
+            .form-grid-2-1 {
+                grid-template-columns: 1fr;
+            }
+
+            .submit-section {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <%- include('../partials/header') %>
-  
-  <div class="container">
-    <h1>My Profile</h1>
-    
-    <% if (success) { %>
-      <div class="alert alert-success"><%= success %></div>
-    <% } %>
-    <% if (error) { %>
-      <div class="alert alert-error"><%= error %></div>
-    <% } %>
-    
-    <div class="card">
-      <form method="POST" action="/dealership/profile/update">
-        <h3>Business Information</h3>
-        
-        <div class="form-group">
-          <label class="form-label">Business Name *</label>
-          <input type="text" name="businessName" class="form-control" value="<%= dealership.business_name %>" required>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Phone *</label>
-            <input type="tel" name="phone" class="form-control" value="<%= dealership.phone %>" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Website</label>
-            <input type="url" name="website" class="form-control" value="<%= dealership.website || '' %>">
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Address *</label>
-          <input type="text" name="address" class="form-control" value="<%= dealership.address %>" required>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">City *</label>
-            <input type="text" name="city" class="form-control" value="<%= dealership.city %>" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Postal Code</label>
-            <input type="text" name="postalCode" class="form-control" value="<%= dealership.postal_code || '' %>">
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Operating Hours</label>
-          <input type="text" name="operatingHours" class="form-control" value="<%= dealership.operating_hours || '' %>" placeholder="e.g., Mon-Fri 8AM-6PM, Sat 9AM-4PM">
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea name="description" class="form-control" rows="4"><%= dealership.description || '' %></textarea>
-        </div>
-        
-        <div style="margin-top: 30px;">
-          <button type="submit" class="btn btn-primary">Update Profile</button>
-          <a href="/dealership/dashboard" class="btn btn-secondary">Cancel</a>
-        </div>
-      </form>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" style="text-decoration: none; color: inherit;">
+                    <div class="logo-container">
+                        <div class="logo-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
+                        </div>
+                        <span class="logo-text">Before You Sign</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dealership/dashboard" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/dealership/vehicles" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/dealership/add-vehicle" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span>Add Vehicle</span>
+                </a>
+                <a href="/dealership/profile" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <span>Dealership Profile</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout" style="color: inherit; text-decoration: none;">
+                    <div class="user-info">
+                        <img src="https://media.istockphoto.com/id/1018739074/vector/power-turn-off-icon-vector-illustration.jpg?s=612x612&w=0&k=20&c=VbwdvU0oVPP2vPDqLod2AWi5Gws6QwALYzZ6bV0oYSc=" alt="Logout" class="user-avatar">
+                        <div class="user-details">
+                            <span class="user-name">Logout</span>
+                            <span class="user-role"><%= dealership.business_name %></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="search-container">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    <input type="text" placeholder="Search vehicles, customers, or documents..." class="search-input">
+                </div>
+
+                <div class="topbar-actions">
+                    <!-- User Menu -->
+                    <div class="dropdown">
+                        <button class="user-button" id="userBtn">
+                            <img src="https://png.pngtree.com/png-clipart/20250708/original/pngtree-verified-check-logo-vector-png-image_21292418.png" alt="User" class="user-avatar-small">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title">Dealership Profile</h1>
+                    <div class="header-actions">
+                        <a href="/dealership/dashboard" class="outline-button">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <% if (success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> <%= success %>
+                    </div>
+                <% } %>
+                <% if (error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> <%= error %>
+                    </div>
+                <% } %>
+
+                <!-- Profile Form Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Business Information</h3>
+                        <p class="card-description">Update your dealership's public information</p>
+                    </div>
+                    <div class="card-content">
+                        <form method="POST" action="/dealership/profile/update" class="form-container">
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fas fa-building"></i>
+                                    <h2 class="section-title">Business Details</h2>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Business Name *</label>
+                                    <input type="text" name="businessName" class="form-control" value="<%= dealership.business_name %>" required>
+                                </div>
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">Phone *</label>
+                                        <input type="tel" name="phone" class="form-control" value="<%= dealership.phone %>" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Website</label>
+                                        <input type="url" name="website" class="form-control" value="<%= dealership.website || '' %>" placeholder="https://example.com">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Address *</label>
+                                    <input type="text" name="address" class="form-control" value="<%= dealership.address %>" required>
+                                </div>
+                                
+                                <div class="form-grid-2-1">
+                                    <div class="form-group">
+                                        <label class="form-label">City *</label>
+                                        <input type="text" name="city" class="form-control" value="<%= dealership.city %>" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Postal Code</label>
+                                        <input type="text" name="postalCode" class="form-control" value="<%= dealership.postal_code || '' %>">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Operating Hours</label>
+                                    <input type="text" name="operatingHours" class="form-control" value="<%= dealership.operating_hours || '' %>" placeholder="e.g., Mon-Fri 8AM-6PM, Sat 9AM-4PM">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="description" class="form-control" rows="4" placeholder="Tell customers about your dealership..."><%= dealership.description || '' %></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="submit-section">
+                                <button type="submit" class="primary-button">
+                                    <i class="fas fa-save"></i> Update Profile
+                                </button>
+                                <a href="/dealership/dashboard" class="outline-button">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Account Information Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Account Information</h3>
+                        <p class="card-description">Your dealership's registered details (read-only)</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="account-info">
+                            <div class="info-item">
+                                <div class="info-label">Registration Number</div>
+                                <div class="info-value"><%= dealership.registration_number %></div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value"><%= dealership.email %></div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Year Established</div>
+                                <div class="info-value"><%= dealership.year_established || 'Not specified' %></div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">License Number</div>
+                                <div class="info-value"><%= dealership.license_number || 'Not specified' %></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-    
-    <div class="card">
-      <h3>Account Information (Read Only)</h3>
-      <p><strong>Registration Number:</strong> <%= dealership.registration_number %></p>
-      <p><strong>Email:</strong> <%= dealership.email %></p>
-      <p><strong>Year Established:</strong> <%= dealership.year_established || 'Not specified' %></p>
-      <p><strong>License Number:</strong> <%= dealership.license_number || 'Not specified' %></p>
-    </div>
-  </div>
-  
-  <%- include('../partials/footer') %>
+
+    <script>
+        // Add loading state for form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            submitBtn.disabled = true;
+            
+            // Revert after 5 seconds if still on page (fallback)
+            setTimeout(() => {
+                if (submitBtn.disabled) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }, 5000);
+        });
+    </script>
 </body>
 </html>

@@ -1,306 +1,935 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Vehicle - Before You Sign</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --primary: 0 0% 0%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --radius: 0.75rem;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: hsl(var(--card));
+            border-right: 1px solid hsl(var(--border));
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 0 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        .nav-item.active {
+            background-color: hsl(var(--secondary));
+            font-weight: 500;
+        }
+
+        .nav-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px;
+            border-bottom: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 448px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: hsl(var(--muted-foreground));
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 40px;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: hsl(var(--primary));
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-button {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .user-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 32px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+        }
+
+        .primary-button:hover {
+            opacity: 0.9;
+        }
+
+        .outline-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .outline-button:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        /* Card */
+        .card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 100%;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid hsl(var(--primary));
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: hsl(var(--primary));
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background-color: hsl(var(--background));
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+        }
+
+        .form-text {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        /* Submit Section */
+        .submit-section {
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 40px;
+            border-top: 2px solid hsl(var(--border));
+        }
+
+        .submit-text {
+            margin-bottom: 20px;
+            color: hsl(var(--foreground));
+            font-weight: 500;
+        }
+
+        .submit-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            border-radius: 8px;
+            font-size: 14px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .form-grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .primary-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-grid,
+            .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .submit-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <%- include('../partials/header') %>
-  
-  <div class="container">
-    <h1><%= title %></h1>
-    
-    <% if (error) { %>
-      <div class="alert alert-error"><%= error %></div>
-    <% } %>
-    
-    <% if (success) { %>
-      <div class="alert alert-success"><%= success %></div>
-    <% } %>
-    
-    <div class="card">
-      <form method="POST" action="/dealership/add-vehicle">
-        
-        <!-- SECTION 1: Vehicle Identification -->
-        <h3 style="color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
-          <i class="ri-car-line"></i> Vehicle Identification
-        </h3>
-        
-        <div class="form-group">
-          <label class="form-label">VIN (Vehicle Identification Number) *</label>
-          <input type="text" name="vin" class="form-control" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}" required style="text-transform: uppercase;">
-          <small style="color: var(--text-light);">17 characters, no I, O, or Q</small>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Plate Number *</label>
-            <input type="text" name="plateNumber" class="form-control" required style="text-transform: uppercase;" placeholder="e.g., ABC123GP">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Engine Number *</label>
-            <input type="text" name="engineNumber" class="form-control" required style="text-transform: uppercase;">
-          </div>
-        </div>
-        
-        <!-- SECTION 2: Basic Vehicle Information -->
-        <h3 style="margin-top: 40px; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
-          <i class="ri-information-line"></i> Basic Information
-        </h3>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Make *</label>
-            <input type="text" name="make" class="form-control" required placeholder="e.g., BMW, Toyota, Ford">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Model *</label>
-            <input type="text" name="model" class="form-control" required placeholder="e.g., 3 Series, Corolla, F-150">
-          </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Year *</label>
-            <select name="year" class="form-control" required>
-              <option value="">Select Year</option>
-              <% for(let year = 2025; year >= 1980; year--) { %>
-                <option value="<%= year %>"><%= year %></option>
-              <% } %>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Mileage (km) *</label>
-            <input type="number" name="mileage" class="form-control" min="0" required placeholder="0">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Price (ZAR) *</label>
-            <input type="number" name="price" class="form-control" min="0" step="1" required placeholder="0">
-          </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Color</label>
-            <input type="text" name="color" class="form-control" placeholder="e.g., Black, White, Silver">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Body Type *</label>
-            <select name="bodyType" class="form-control" required>
-              <option value="">Select...</option>
-              <option value="Sedan">Sedan</option>
-              <option value="SUV">SUV</option>
-              <option value="Truck">Truck</option>
-              <option value="Coupe">Coupe</option>
-              <option value="Convertible">Convertible</option>
-              <option value="Hatchback">Hatchback</option>
-              <option value="Van">Van</option>
-              <option value="Wagon">Wagon</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Transmission *</label>
-            <select name="transmission" class="form-control" required>
-              <option value="">Select...</option>
-              <option value="Automatic">Automatic</option>
-              <option value="Manual">Manual</option>
-              <option value="Semi-Automatic">Semi-Automatic</option>
-            </select>
-          </div>
-        </div>
-        
-        <!-- SECTION 3: Registration & Legal Information -->
-        <h3 style="margin-top: 40px; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
-          <i class="ri-file-list-3-line"></i> Registration & Legal Information
-        </h3>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Registration Authority *</label>
-            <select name="registrationAuthority" class="form-control" required>
-              <option value="">Select Province...</option>
-              <option value="Gauteng">Gauteng (GP)</option>
-              <option value="Western Cape">Western Cape (WC)</option>
-              <option value="KwaZulu-Natal">KwaZulu-Natal (KZN)</option>
-              <option value="Eastern Cape">Eastern Cape (EC)</option>
-              <option value="Free State">Free State (FS)</option>
-              <option value="Mpumalanga">Mpumalanga (MP)</option>
-              <option value="Limpopo">Limpopo (L)</option>
-              <option value="North West">North West (NW)</option>
-              <option value="Northern Cape">Northern Cape (NC)</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Vehicle Status *</label>
-            <select name="vehicleStatus" class="form-control" required>
-              <option value="">Select...</option>
-              <option value="used">Used</option>
-              <option value="new">New</option>
-            </select>
-          </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Tare Weight (kg)</label>
-            <input type="number" name="tareWeight" class="form-control" min="0" placeholder="e.g., 1500">
-            <small style="color: var(--text-light);">Vehicle weight without load</small>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Date Liable for Licensing</label>
-            <input type="date" name="dateLiabilityLicensing" class="form-control">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Date Liable for Registration</label>
-            <input type="date" name="dateLiableRegistration" class="form-control">
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Last 3 License Numbers (Most Recent First)</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-            <input type="text" name="licenseNumber1" class="form-control" placeholder="Most recent" style="text-transform: uppercase;">
-            <input type="text" name="licenseNumber2" class="form-control" placeholder="Second most recent" style="text-transform: uppercase;">
-            <input type="text" name="licenseNumber3" class="form-control" placeholder="Third most recent" style="text-transform: uppercase;">
-          </div>
-          <small style="color: var(--text-light);">Leave empty if not available</small>
-        </div>
-        
-        <!-- SECTION 4: Engine & Fuel Information -->
-        <h3 style="margin-top: 40px; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
-          <i class="ri-settings-3-line"></i> Engine & Fuel Information
-        </h3>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Fuel Type *</label>
-            <select name="fuelType" class="form-control" required>
-              <option value="">Select...</option>
-              <option value="Petrol">Petrol</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Electric">Electric</option>
-              <option value="Hybrid">Hybrid (Petrol/Electric)</option>
-              <option value="Plug-in Hybrid">Plug-in Hybrid</option>
-              <option value="CNG">CNG (Compressed Natural Gas)</option>
-              <option value="LPG">LPG (Liquefied Petroleum Gas)</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Engine Type *</label>
-            <select name="engineType" class="form-control" required>
-              <option value="">Select...</option>
-              <option value="Inline-4">Inline-4</option>
-              <option value="Inline-6">Inline-6</option>
-              <option value="V6">V6</option>
-              <option value="V8">V8</option>
-              <option value="V12">V12</option>
-              <option value="Boxer">Boxer/Flat</option>
-              <option value="Rotary">Rotary</option>
-              <option value="Electric Motor">Electric Motor</option>
-              <option value="Hybrid">Hybrid</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Engine Capacity</label>
-            <input type="text" name="engineCapacity" class="form-control" placeholder="e.g., 2.0L, 3.5L, 250kW">
-            <small style="color: var(--text-light);">Liters (L) or kW for electric</small>
-          </div>
-        </div>
-        
-        <!-- SECTION 5: Ownership -->
-        <h3 style="margin-top: 40px; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
-          <i class="ri-user-3-line"></i> Ownership Information
-        </h3>
-        
-        <div class="form-group">
-          <label class="form-label">Number of Previous Owners *</label>
-          <input type="number" name="previousOwners" class="form-control" min="0" max="20" value="0" required>
-          <small style="color: var(--text-light);">Enter 0 if first owner/new vehicle</small>
-        </div>
-        
-        <!-- SECTION 6: Vehicle History -->
-        <h3 style="margin-top: 40px; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
-          <i class="ri-file-history-line"></i> Vehicle History
-        </h3>
-        
-        <div class="form-group">
-          <label class="form-label">Service History *</label>
-          <textarea name="serviceHistory" class="form-control" rows="5" required placeholder="Detail all service records with dates and mileage..."></textarea>
-          <small style="color: var(--text-light);">Example: "15,000 km service on 2023-05-15 at authorized dealer. Oil change, filter replacement. 30,000 km service on 2024-01-20..."</small>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Accident History *</label>
-          <textarea name="accidentHistory" class="form-control" rows="3" required placeholder="No accidents OR detail any accidents with dates and repairs..."></textarea>
-          <small style="color: var(--text-light);">Be honest - this builds trust. Include dates, damage details, and repair documentation.</small>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Recall Information *</label>
-          <textarea name="recallInformation" class="form-control" rows="2" required placeholder="No open recalls OR list completed recalls..."></textarea>
-          <small style="color: var(--text-light);">Check manufacturer website for recall history by VIN.</small>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Additional Features</label>
-          <textarea name="additionalFeatures" class="form-control" rows="4" placeholder="List additional features (e.g., Leather seats, Navigation system, Sunroof, Parking sensors, Bluetooth, Cruise control, etc.)"></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Vehicle Description</label>
-          <textarea name="description" class="form-control" rows="4" placeholder="Provide a detailed description of the vehicle condition and any notable features..."></textarea>
-        </div>
-        
-        <div style="margin-top: 40px; border-top: 2px solid var(--border); padding-top: 20px; background: #f0f9ff; padding: 20px; border-radius: 8px;">
-          <p style="margin-bottom: 15px; color: var(--text); font-weight: 500;">
-            <i class="ri-information-line" style="color: var(--primary);"></i> 
-            By submitting this vehicle, you confirm that all information provided is accurate and complete.
-          </p>
-          <button type="submit" class="btn btn-primary" style="font-size: 1.1rem; padding: 15px 40px;">
-            <i class="ri-qr-code-line"></i> Add Vehicle & Generate QR Code
-          </button>
-          <a href="/dealership/vehicles" class="btn btn-secondary" style="margin-left: 15px;">Cancel</a>
-        </div>
-      </form>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" style="text-decoration: none; color: inherit;">
+                    <div class="logo-container">
+                        <div class="logo-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
+                        </div>
+                        <span class="logo-text">Before You Sign</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dealership/dashboard" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/dealership/vehicles" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/dealership/add-vehicle" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span>Add Vehicle</span>
+                </a>
+                <a href="/dealership/profile" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <span>Dealership Profile</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout" style="color: inherit; text-decoration: none;">
+                    <div class="user-info">
+                        <img src="https://media.istockphoto.com/id/1018739074/vector/power-turn-off-icon-vector-illustration.jpg?s=612x612&w=0&k=20&c=VbwdvU0oVPP2vPDqLod2AWi5Gws6QwALYzZ6bV0oYSc=" alt="Logout" class="user-avatar">
+                        <div class="user-details">
+                            <span class="user-name">Logout</span>
+                            <span class="user-role">Dealership Account</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="search-container">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    <input type="text" placeholder="Search vehicles, customers, or documents..." class="search-input">
+                </div>
+
+                <div class="topbar-actions">
+                    <!-- User Menu -->
+                    <div class="dropdown">
+                        <button class="user-button" id="userBtn">
+                            <img src="https://png.pngtree.com/png-clipart/20250708/original/pngtree-verified-check-logo-vector-png-image_21292418.png" alt="User" class="user-avatar-small">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title">Add New Vehicle</h1>
+                    <div class="header-actions">
+                        <a href="/dealership/vehicles" class="outline-button">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Vehicles
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <% if (error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> <%= error %>
+                    </div>
+                <% } %>
+                
+                <% if (success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> <%= success %>
+                    </div>
+                <% } %>
+
+                <!-- Form Container -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Vehicle Information</h3>
+                        <p class="card-description">Fill in all required details to add a new vehicle to your inventory</p>
+                    </div>
+                    <div class="card-content">
+                        <form method="POST" action="/dealership/add-vehicle" class="form-container">
+                            
+                            <!-- SECTION 1: Vehicle Identification -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fas fa-car"></i>
+                                    <h2 class="section-title">Vehicle Identification</h2>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">VIN (Vehicle Identification Number) *</label>
+                                    <input type="text" name="vin" class="form-control" maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}" required style="text-transform: uppercase;">
+                                    <span class="form-text">17 characters, no I, O, or Q</span>
+                                </div>
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">Plate Number *</label>
+                                        <input type="text" name="plateNumber" class="form-control" required style="text-transform: uppercase;" placeholder="e.g., ABC123GP">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Engine Number *</label>
+                                        <input type="text" name="engineNumber" class="form-control" required style="text-transform: uppercase;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- SECTION 2: Basic Vehicle Information -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fas fa-info-circle"></i>
+                                    <h2 class="section-title">Basic Information</h2>
+                                </div>
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">Make *</label>
+                                        <input type="text" name="make" class="form-control" required placeholder="e.g., BMW, Toyota, Ford">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Model *</label>
+                                        <input type="text" name="model" class="form-control" required placeholder="e.g., 3 Series, Corolla, F-150">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-grid-3">
+                                    <div class="form-group">
+                                        <label class="form-label">Year *</label>
+                                        <select name="year" class="form-control" required>
+                                            <option value="">Select Year</option>
+                                            <% for(let year = 2025; year >= 1980; year--) { %>
+                                                <option value="<%= year %>"><%= year %></option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Mileage (km) *</label>
+                                        <input type="number" name="mileage" class="form-control" min="0" required placeholder="0">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Price (ZAR) *</label>
+                                        <input type="number" name="price" class="form-control" min="0" step="1" required placeholder="0">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-grid-3">
+                                    <div class="form-group">
+                                        <label class="form-label">Color</label>
+                                        <input type="text" name="color" class="form-control" placeholder="e.g., Black, White, Silver">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Body Type *</label>
+                                        <select name="bodyType" class="form-control" required>
+                                            <option value="">Select...</option>
+                                            <option value="Sedan">Sedan</option>
+                                            <option value="SUV">SUV</option>
+                                            <option value="Truck">Truck</option>
+                                            <option value="Coupe">Coupe</option>
+                                            <option value="Convertible">Convertible</option>
+                                            <option value="Hatchback">Hatchback</option>
+                                            <option value="Van">Van</option>
+                                            <option value="Wagon">Wagon</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Transmission *</label>
+                                        <select name="transmission" class="form-control" required>
+                                            <option value="">Select...</option>
+                                            <option value="Automatic">Automatic</option>
+                                            <option value="Manual">Manual</option>
+                                            <option value="Semi-Automatic">Semi-Automatic</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- SECTION 3: Registration & Legal Information -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h2 class="section-title">Registration & Legal Information</h2>
+                                </div>
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">Registration Authority *</label>
+                                        <select name="registrationAuthority" class="form-control" required>
+                                            <option value="">Select Province...</option>
+                                            <option value="Gauteng">Gauteng (GP)</option>
+                                            <option value="Western Cape">Western Cape (WC)</option>
+                                            <option value="KwaZulu-Natal">KwaZulu-Natal (KZN)</option>
+                                            <option value="Eastern Cape">Eastern Cape (EC)</option>
+                                            <option value="Free State">Free State (FS)</option>
+                                            <option value="Mpumalanga">Mpumalanga (MP)</option>
+                                            <option value="Limpopo">Limpopo (L)</option>
+                                            <option value="North West">North West (NW)</option>
+                                            <option value="Northern Cape">Northern Cape (NC)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Vehicle Status *</label>
+                                        <select name="vehicleStatus" class="form-control" required>
+                                            <option value="">Select...</option>
+                                            <option value="used">Used</option>
+                                            <option value="new">New</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-grid-3">
+                                    <div class="form-group">
+                                        <label class="form-label">Tare Weight (kg)</label>
+                                        <input type="number" name="tareWeight" class="form-control" min="0" placeholder="e.g., 1500">
+                                        <span class="form-text">Vehicle weight without load</span>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Date Liable for Licensing</label>
+                                        <input type="date" name="dateLiabilityLicensing" class="form-control">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Date Liable for Registration</label>
+                                        <input type="date" name="dateLiableRegistration" class="form-control">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Last 3 License Numbers (Most Recent First)</label>
+                                    <div class="form-grid-3">
+                                        <input type="text" name="licenseNumber1" class="form-control" placeholder="Most recent" style="text-transform: uppercase;">
+                                        <input type="text" name="licenseNumber2" class="form-control" placeholder="Second most recent" style="text-transform: uppercase;">
+                                        <input type="text" name="licenseNumber3" class="form-control" placeholder="Third most recent" style="text-transform: uppercase;">
+                                    </div>
+                                    <span class="form-text">Leave empty if not available</span>
+                                </div>
+                            </div>
+                            
+                            <!-- SECTION 4: Engine & Fuel Information -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fas fa-cog"></i>
+                                    <h2 class="section-title">Engine & Fuel Information</h2>
+                                </div>
+                                
+                                <div class="form-grid-3">
+                                    <div class="form-group">
+                                        <label class="form-label">Fuel Type *</label>
+                                        <select name="fuelType" class="form-control" required>
+                                            <option value="">Select...</option>
+                                            <option value="Petrol">Petrol</option>
+                                            <option value="Diesel">Diesel</option>
+                                            <option value="Electric">Electric</option>
+                                            <option value="Hybrid">Hybrid (Petrol/Electric)</option>
+                                            <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+                                            <option value="CNG">CNG (Compressed Natural Gas)</option>
+                                            <option value="LPG">LPG (Liquefied Petroleum Gas)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Engine Type *</label>
+                                        <select name="engineType" class="form-control" required>
+                                            <option value="">Select...</option>
+                                            <option value="Inline-4">Inline-4</option>
+                                            <option value="Inline-6">Inline-6</option>
+                                            <option value="V6">V6</option>
+                                            <option value="V8">V8</option>
+                                            <option value="V12">V12</option>
+                                            <option value="Boxer">Boxer/Flat</option>
+                                            <option value="Rotary">Rotary</option>
+                                            <option value="Electric Motor">Electric Motor</option>
+                                            <option value="Hybrid">Hybrid</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Engine Capacity</label>
+                                        <input type="text" name="engineCapacity" class="form-control" placeholder="e.g., 2.0L, 3.5L, 250kW">
+                                        <span class="form-text">Liters (L) or kW for electric</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- SECTION 5: Ownership -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fas fa-user"></i>
+                                    <h2 class="section-title">Ownership Information</h2>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Number of Previous Owners *</label>
+                                    <input type="number" name="previousOwners" class="form-control" min="0" max="20" value="0" required>
+                                    <span class="form-text">Enter 0 if first owner/new vehicle</span>
+                                </div>
+                            </div>
+                            
+                            <!-- SECTION 6: Vehicle History -->
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <i class="fas fa-history"></i>
+                                    <h2 class="section-title">Vehicle History</h2>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Service History *</label>
+                                    <textarea name="serviceHistory" class="form-control" rows="5" required placeholder="Detail all service records with dates and mileage..."></textarea>
+                                    <span class="form-text">Example: "15,000 km service on 2023-05-15 at authorized dealer. Oil change, filter replacement. 30,000 km service on 2024-01-20..."</span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Accident History *</label>
+                                    <textarea name="accidentHistory" class="form-control" rows="3" required placeholder="No accidents OR detail any accidents with dates and repairs..."></textarea>
+                                    <span class="form-text">Be honest - this builds trust. Include dates, damage details, and repair documentation.</span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Recall Information *</label>
+                                    <textarea name="recallInformation" class="form-control" rows="2" required placeholder="No open recalls OR list completed recalls..."></textarea>
+                                    <span class="form-text">Check manufacturer website for recall history by VIN.</span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Additional Features</label>
+                                    <textarea name="additionalFeatures" class="form-control" rows="4" placeholder="List additional features (e.g., Leather seats, Navigation system, Sunroof, Parking sensors, Bluetooth, Cruise control, etc.)"></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Vehicle Description</label>
+                                    <textarea name="description" class="form-control" rows="4" placeholder="Provide a detailed description of the vehicle condition and any notable features..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Section -->
+                            <div class="submit-section">
+                                <p class="submit-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    By submitting this vehicle, you confirm that all information provided is accurate and complete.
+                                </p>
+                                <div class="submit-actions">
+                                    <button type="submit" class="primary-button" style="font-size: 1rem; padding: 12px 24px;">
+                                        <i class="fas fa-qrcode"></i> Add Vehicle & Generate QR Code
+                                    </button>
+                                    <a href="/dealership/vehicles" class="btn-secondary">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-  </div>
-  
-  <%- include('../partials/footer') %>
-  
-  <script>
-    // Auto-uppercase for specific fields
-    const uppercaseFields = ['vin', 'plateNumber', 'engineNumber', 'licenseNumber1', 'licenseNumber2', 'licenseNumber3'];
-    uppercaseFields.forEach(fieldName => {
-      const field = document.querySelector(`input[name="${fieldName}"]`);
-      if (field) {
-        field.addEventListener('input', function(e) {
-          this.value = this.value.toUpperCase();
+
+    <script>
+        // Auto-uppercase for specific fields
+        const uppercaseFields = ['vin', 'plateNumber', 'engineNumber', 'licenseNumber1', 'licenseNumber2', 'licenseNumber3'];
+        uppercaseFields.forEach(fieldName => {
+            const field = document.querySelector(`input[name="${fieldName}"]`);
+            if (field) {
+                field.addEventListener('input', function(e) {
+                    this.value = this.value.toUpperCase();
+                });
+            }
         });
-      }
-    });
-    
-    // Form validation feedback
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const vin = document.querySelector('input[name="vin"]').value;
-      if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-        e.preventDefault();
-        alert('Invalid VIN format. Must be exactly 17 characters with no I, O, or Q.');
-        return false;
-      }
-    });
-  </script>
+        
+        // Form validation feedback
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const vin = document.querySelector('input[name="vin"]').value;
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                e.preventDefault();
+                alert('Invalid VIN format. Must be exactly 17 characters with no I, O, or Q.');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Vehicle...';
+            submitBtn.disabled = true;
+            
+            // Revert after 5 seconds if still on page (fallback)
+            setTimeout(() => {
+                if (submitBtn.disabled) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }, 5000);
+        });
+    </script>
 </body>
 </html>

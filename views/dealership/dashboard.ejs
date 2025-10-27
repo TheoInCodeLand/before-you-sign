@@ -1,55 +1,1324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales CRM - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<style>
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --radius: 0.75rem;
+  }
+
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    line-height: 1.5;
+  }
+
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar Styles */
+  .sidebar {
+    width: 280px;
+    background-color: hsl(var(--card));
+    border-right: 1px solid hsl(var(--border));
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    padding: 24px;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 0 16px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    color: hsl(var(--foreground));
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+
+  .nav-item:hover {
+    background-color: hsl(var(--secondary));
+  }
+
+  .nav-item.active {
+    background-color: hsl(var(--secondary));
+    font-weight: 500;
+  }
+
+  .nav-item svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .user-name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  /* Topbar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+  }
+
+  .search-container {
+    position: relative;
+    flex: 1;
+    max-width: 448px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: hsl(var(--muted-foreground));
+    width: 16px;
+    height: 16px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 8px 12px 8px 40px;
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .search-input:focus {
+    border-color: hsl(var(--primary));
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .icon-button {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+
+  .icon-button:hover {
+    background-color: hsl(var(--secondary));
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+
+  .user-button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .user-avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  /* Dropdown */
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 50;
+    display: none;
+  }
+
+  .dropdown-menu.show {
+    display: block;
+  }
+
+  .dropdown-header {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .dropdown-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+
+  .dropdown-item:hover {
+    background-color: hsl(var(--secondary));
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background-color: hsl(var(--border));
+    margin: 4px 0;
+  }
+
+  .notification-title {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .notification-text {
+    font-size: 12px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Dashboard Content */
+  .dashboard-content {
+    padding: 32px;
+  }
+
+  .dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .date-range-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .date-range-button:hover {
+    background-color: hsl(var(--secondary));
+  }
+
+  .primary-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .primary-button:hover {
+    opacity: 0.9;
+  }
+
+  .outline-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .outline-button:hover {
+    background-color: hsl(var(--secondary));
+  }
+
+  /* Tabs */
+  .tabs {
+    margin-top: 16px;
+  }
+
+  .tabs-list {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid hsl(var(--border));
+    margin-bottom: 24px;
+  }
+
+  .tab-trigger {
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: hsl(var(--muted-foreground));
+    transition: all 0.2s;
+  }
+
+  .tab-trigger:hover {
+    color: hsl(var(--foreground));
+  }
+
+  .tab-trigger.active {
+    color: hsl(var(--foreground));
+    border-bottom-color: hsl(var(--primary));
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background-color: rgb(243, 248, 255);
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .stat-title {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .stat-icon {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .stat-description {
+    font-size: 12px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Content Grid */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .chart-card {
+    grid-column: span 1;
+  }
+
+  /* Card */
+  .card {
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 24px;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .card-description {
+    font-size: 14px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .card-content {
+    padding: 24px;
+  }
+
+  /* Recent Sales */
+  .recent-sales {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .sale-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sale-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .sale-info {
+    flex: 1;
+  }
+
+  .sale-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .sale-company {
+    font-size: 14px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .sale-amount {
+    font-weight: 500;
+  }
+
+  /* Table */
+  .table-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .table-filter {
+    max-width: 320px;
+    padding: 8px 12px;
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .table-filter:focus {
+    border-color: hsl(var(--primary));
+  }
+
+  .table-container {
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    overflow: auto;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .data-table th {
+    font-weight: 600;
+    font-size: 14px;
+    background-color: hsl(var(--muted));
+  }
+
+  .data-table tbody tr:hover {
+    background-color: hsl(var(--muted));
+  }
+
+  .data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .sortable {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sort-icon {
+    margin-left: 4px;
+    opacity: 0.5;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .badge-lead {
+    background-color: #f3f4f6;
+    color: #1f2937;
+  }
+
+  .badge-qualified {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+
+  .badge-proposal {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+  .badge-negotiation {
+    background-color: #fed7aa;
+    color: #9a3412;
+  }
+
+  .badge-closed-won {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  .badge-closed-lost {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+
+  .owner-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .owner-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+  }
+
+  .table-info {
+    font-size: 14px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .pagination {
+    display: flex;
+    gap: 8px;
+  }
+
+  .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .chart-card {
+      grid-column: span 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      display: none;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dashboard-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .date-range-button,
+    .primary-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  /* Footer Styles */
+</style>
+<style>
+  /* Vehicle items styling */
+.vehicle-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.vehicle-item:last-child {
+    border-bottom: none;
+}
+
+.vehicle-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 1rem;
+}
+
+.vehicle-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vehicle-info {
+    flex: 1;
+}
+
+.vehicle-name {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.vehicle-details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.vehicle-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.vehicle-status.verified {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+/* Empty and loading states */
+.empty-state, .loading-state, .error-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6b7280;
+}
+
+.empty-state svg, .loading-state svg {
+    margin-bottom: 1rem;
+    color: #9ca3af;
+}
+
+/* Status colors for dealership certification */
+.certification-status {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.certification-status.active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.certification-status.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.certification-status.suspended {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+</style>
 <body>
-  <%- include('../partials/header') %>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" style="text-decoration: none; color: inherit;">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
+                    </div>
+                    <span class="logo-text">Before You Sign</span>
+                </div>
+              </a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dealership/dashboard" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/dealership/vehicles" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span>Manage Vehicle</span>
+                </a>
   
-  <div class="container">
-    <h1>Welcome, <%= dealership.business_name %></h1>
-    
-    <div class="card">
-      <p><strong>Certification Status:</strong>
-        <% if (dealership.certification_status === 'active') { %>
-          <span class="badge badge-success">Active Certified</span>
-        <% } else if (dealership.certification_status === 'pending') { %>
-          <span class="badge badge-warning">Pending Approval</span>
-        <% } else { %>
-          <span class="badge badge-danger">Suspended</span>
-        <% } %>
-      </p>
+                <a href="/dealership/add-vehicle" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <span>Add Vehicle</span>
+                </a>
+                <a href="/dealership/profile" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <span>Dealership Profile</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+              <a href="/logout" style="color: inherit; text-decoration: none;">
+                <div class="user-info">
+                    <img src="https://media.istockphoto.com/id/1018739074/vector/power-turn-off-icon-vector-illustration.jpg?s=612x612&w=0&k=20&c=VbwdvU0oVPP2vPDqLod2AWi5Gws6QwALYzZ6bV0oYSc=" alt="John Doe" class="user-avatar">
+                    <div class="user-details">
+                        <span class="user-name">Logout</span>
+                        <span class="user-role"><%= dealership.business_name %></span>
+                    </div>
+                </div>
+              </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="search-container">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    <input type="text" placeholder="Search deals, contacts, tasks..." class="search-input">
+                </div>
+
+                <div class="topbar-actions">
+                    <!-- Notifications -->
+                    <div class="dropdown">
+                        <button class="icon-button" id="notificationBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        <div class="dropdown-menu" id="notificationMenu">
+                            
+                        </div>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="dropdown">
+                        <button class="user-button" id="userBtn">
+                          <% if (dealership.certification_status === 'active') { %>
+                              <img src="https://png.pngtree.com/png-clipart/20250708/original/pngtree-verified-check-logo-vector-png-image_21292418.png" alt="John Doe" class="user-avatar-small">
+                            <% } else if (dealership.certification_status === 'pending') { %>
+                              <img src="https://thumbs.dreamstime.com/b/pending-pending-gold-badge-blue-ribbon-pending-120418122.jpg" alt="John Doe" class="user-avatar-small">
+                            <% } else { %>
+                              <img src="https://images.vexels.com/media/users/3/141976/isolated/preview/8176e4a43370ce1216c04d7a8421877d-rejected-red-rounded.png" alt="John Doe" class="user-avatar-small">
+                            <% } %>
+                            <!-- <img src="https://png.pngtree.com/png-clipart/20250708/original/pngtree-verified-check-logo-vector-png-image_21292418.png" alt="John Doe" class="user-avatar-small"> -->
+                        </button>
+                        <div class="dropdown-menu" id="userMenu">
+                            <div class="dropdown-header">My Account</div>
+                            <div class="dropdown-item">Profile</div>
+                            <div class="dropdown-item">Settings</div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item">Log out</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title"><%= dealership.business_name %></h1>
+                    <div class="header-actions">
+                        <button class="date-range-button" id="dateRangeBtn">
+                            <% if (dealership.certification_status === 'active') { %>
+                              <span style="color: #065f46;"> <i class="fa-solid fa-check-double"></i> Approved</span>
+                            <% } else if (dealership.certification_status === 'pending') { %>
+                              <span style="color: orange;"> <i class="fa-regular fa-hourglass-half"></i> Pending Approval</span>
+                            <% } else { %>
+                              <span style="color: red;"><i class="fa-solid fa-exclamation"></i> Suspended</span>
+                            <% } %>
+                        </button>
+                        <a href="/dealership/add-vehicle" style="text-decoration: none;">
+                          <button class="primary-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Add New Car
+                          </button>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tabs-list">
+                        <button class="tab-trigger active" data-tab="overview">Overview</button>
+                        <button class="tab-trigger" data-tab="analytics">Analytics</button>
+                        <button class="tab-trigger" data-tab="deals">All Deals</button>
+                        <button class="tab-trigger" data-tab="reports">Reports</button>
+                    </div>
+
+                    <!-- Overview Tab -->
+                    <div class="tab-content active" id="overview">
+                        <!-- Stats Cards -->
+                        <div class="stats-grid">
+                          <div class="stat-card">
+                              <div class="stat-header">
+                                  <span class="stat-title">Total Vehicles</span>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                              </div>
+                              <div class="stat-value"><%= stats.total %></div>
+                              <div class="stat-description">All vehicles in your inventory</div>
+                          </div>
+
+                          <div class="stat-card">
+                              <div class="stat-header">
+                                  <span class="stat-title">Verified Vehicles</span>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                              </div>
+                              <div class="stat-value"><%= stats.verified %></div>
+                              <div class="stat-description">Approved by verifiers</div>
+                          </div>
+
+                          <div class="stat-card">
+                              <div class="stat-header">
+                                  <span class="stat-title">Pending Verification</span>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                              </div>
+                              <div class="stat-value"><%= stats.pending %></div>
+                              <div class="stat-description">Awaiting approval</div>
+                          </div>
+
+                          <div class="stat-card">
+                              <div class="stat-header">
+                                  <span class="stat-title">Inventory Value</span>
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                              </div>
+                              <div class="stat-value">R<%= (stats.total_value || 0).toLocaleString() %></div>
+                              <div class="stat-description">Total value of verified vehicles</div>
+                          </div>
+                        </div>
+
+                        <!-- Charts and Recent Sales -->
+                        <div class="content-grid">
+                          <div class="card chart-card">
+                              <div class="card-header">
+                                  <h3 class="card-title">Verification Status Overview</h3>
+                                  <p class="card-description">Vehicle verification trends over time</p>
+                              </div>
+                              <div class="card-content">
+                                  <canvas id="verificationChart" height="250"></canvas>
+                              </div>
+                          </div>
+
+                          <div class="card">
+                              <div class="card-header">
+                                  <h3 class="card-title">Recently Verified Vehicles</h3>
+                                  <p class="card-description">Latest approved vehicles in your inventory</p>
+                              </div>
+                              <div class="card-content">
+                                  <div class="recent-vehicles" id="recentVehicles">
+                                      <!-- Dynamic content will be loaded here -->
+                                      <div class="loading-state">Loading recent vehicles...</div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <!-- All Deals Tab -->
+                    <div class="tab-content" id="deals">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">All Deals</h3>
+                                <p class="card-description">Comprehensive view of all deals with advanced filtering and sorting</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="table-controls">
+                                    <input type="text" placeholder="Filter deals..." class="table-filter" id="dealFilter">
+                                    <button class="outline-button">
+                                        Columns
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    </button>
+                                </div>
+                                <div class="table-container">
+                                    <table class="data-table" id="dealsTable">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAll"></th>
+                                                <th class="sortable" data-sort="dealName">Deal Name <span class="sort-icon">↕</span></th>
+                                                <th class="sortable" data-sort="client">Client <span class="sort-icon">↕</span></th>
+                                                <th>Stage</th>
+                                                <th class="sortable" data-sort="value">Value <span class="sort-icon">↕</span></th>
+                                                <th class="sortable" data-sort="probability">Probability <span class="sort-icon">↕</span></th>
+                                                <th>Owner</th>
+                                                <th class="sortable" data-sort="expectedClose">Expected Close <span class="sort-icon">↕</span></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dealsTableBody">
+                                            <!-- Table rows will be populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="table-footer">
+                                    <div class="table-info">
+                                        <span id="selectedCount">0</span> of <span id="totalCount">8</span> row(s) selected.
+                                    </div>
+                                    <div class="pagination">
+                                        <button class="outline-button" id="prevPage">Previous</button>
+                                        <button class="outline-button" id="nextPage">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Tab -->
+                    <div class="tab-content" id="analytics">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <span class="stat-title">Monthly Revenue</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                </div>
+                                <div class="stat-value">$48,500</div>
+                                <div class="stat-description">+12.5% from last month</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <span class="stat-title">New Deals Closed</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                                </div>
+                                <div class="stat-value">12</div>
+                                <div class="stat-description">+3 from last month</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <span class="stat-title">Pipeline Value</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+                                </div>
+                                <div class="stat-value">$320,000</div>
+                                <div class="stat-description">+8.2% total pipeline</div>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <span class="stat-title">Conversion Rate</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                </div>
+                                <div class="stat-value">18.4%</div>
+                                <div class="stat-description">+2.1% lead to close</div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Analytics Dashboard</h3>
+                                <p class="card-description">Detailed analytics and performance metrics coming soon</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="empty-state">
+                                    Advanced analytics features will be available here
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Tab -->
+                    <div class="tab-content" id="reports">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Reports</h3>
+                                <p class="card-description">Generate and download comprehensive sales reports</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="empty-state">
+                                    Report generation features will be available here
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Dashboard functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Load recent vehicles
+    loadRecentVehicles();
     
-    <h2>Statistics</h2>
-    <div class="dashboard-grid">
-      <div class="stat-card">
-        <div class="stat-label">Total Vehicles</div>
-        <div class="stat-value"><%= stats.total %></div>
-      </div>
-      
-      <div class="stat-card success">
-        <div class="stat-label">Verified</div>
-        <div class="stat-value"><%= stats.verified %></div>
-      </div>
-      
-      <div class="stat-card warning">
-        <div class="stat-label">Pending Verification</div>
-        <div class="stat-value"><%= stats.pending %></div>
-      </div>
-    </div>
+    // Load verification analytics
+    loadVerificationAnalytics();
     
-    <h2>Quick Actions</h2>
-    <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
-      <a href="/dealership/add-vehicle" class="btn btn-primary">Add New Vehicle</a>
-      <a href="/dealership/vehicles" class="btn btn-secondary">View All Vehicles</a>
-      <a href="/dealership/profile" class="btn btn-secondary">Edit Profile</a>
-    </div>
-  </div>
-  
-  <%- include('../partials/footer') %>
+    // Initialize tabs
+    initTabs();
+});
+
+async function loadRecentVehicles() {
+    try {
+        const response = await fetch('/dealership/api/recent-vehicles');
+        const vehicles = await response.json();
+        
+        const container = document.getElementById('recentVehicles');
+        
+        if (vehicles.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <p>No verified vehicles yet</p>
+                    <a href="/dealership/add-vehicle" class="primary-button">Add Your First Vehicle</a>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = vehicles.map(vehicle => `
+            <div class="vehicle-item">
+                <div class="vehicle-image">
+                    <img src="https://img.freepik.com/premium-vector/green-certified-isolated-rubber-stamp-sticker-seal-with-stars-tick-icon-vector-illustration_723710-1553.jpg?semt=ais_hybrid&w=740&q=80" alt="${vehicle.make} ${vehicle.model}" onerror="this.src='/images/vehicle-default.jpg'">
+                </div>
+                <div class="vehicle-info">
+                    <div class="vehicle-name">${vehicle.year} ${vehicle.make} ${vehicle.model}</div>
+                    <div class="vehicle-details">
+                        <span class="vehicle-vin">VIN: ${vehicle.vin}</span>
+                        <span class="vehicle-price">R${parseInt(vehicle.price).toLocaleString()}</span>
+                    </div>
+                </div>
+                <div class="vehicle-status verified">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    Verified
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading recent vehicles:', error);
+        document.getElementById('recentVehicles').innerHTML = `
+            <div class="error-state">
+                Error loading vehicles. Please try again.
+            </div>
+        `;
+    }
+}
+
+async function loadVerificationAnalytics() {
+    try {
+        const response = await fetch('/dealership/api/verification-analytics');
+        const analytics = await response.json();
+        
+        // Process data for chart
+        const chartData = processAnalyticsData(analytics);
+        renderVerificationChart(chartData);
+        
+    } catch (error) {
+        console.error('Error loading analytics:', error);
+    }
+}
+
+function processAnalyticsData(analytics) {
+    // Group by month and status
+    const months = [...new Set(analytics.map(a => a.month))].sort();
+    const statuses = ['verified', 'pending_verification', 'rejected'];
+    
+    const datasets = statuses.map(status => {
+        const data = months.map(month => {
+            const record = analytics.find(a => a.month === month && a.status === status);
+            return record ? record.count : 0;
+        });
+        
+        return {
+            label: formatStatusLabel(status),
+            data: data,
+            backgroundColor: getStatusColor(status),
+            borderColor: getStatusColor(status),
+            borderWidth: 1
+        };
+    });
+    
+    return {
+        labels: months.map(month => {
+            const date = new Date(month + '-01');
+            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        }),
+        datasets: datasets
+    };
+}
+
+function formatStatusLabel(status) {
+    const labels = {
+        'verified': 'Verified',
+        'pending_verification': 'Pending',
+        'rejected': 'Rejected'
+    };
+    return labels[status] || status;
+}
+
+function getStatusColor(status) {
+    const colors = {
+        'verified': '#10b981', // Green
+        'pending_verification': '#f59e0b', // Amber
+        'rejected': '#ef4444' // Red
+    };
+    return colors[status] || '#6b7280';
+}
+
+function renderVerificationChart(data) {
+    const ctx = document.getElementById('verificationChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Month'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Vehicles'
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Vehicle Verification Status Over Time'
+                }
+            }
+        }
+    });
+}
+
+function initTabs() {
+    const tabTriggers = document.querySelectorAll('.tab-trigger');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabTriggers.forEach(trigger => {
+        trigger.addEventListener('click', () => {
+            const tabId = trigger.getAttribute('data-tab');
+            
+            // Update active tab
+            tabTriggers.forEach(t => t.classList.remove('active'));
+            trigger.classList.add('active');
+            
+            // Show active content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                }
+            });
+        });
+    });
+}
+    </script>
 </body>
 </html>

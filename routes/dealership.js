@@ -26,20 +26,32 @@ router.get('/dashboard', (req, res) => {
       return res.send('Dealership profile not found');
     }
     
-    // Get statistics
+    // Get statistics - UPDATED QUERY TO INCLUDE total_value
     db.all(`
       SELECT 
         COUNT(*) as total,
         SUM(CASE WHEN status = 'verified' THEN 1 ELSE 0 END) as verified,
-        SUM(CASE WHEN status = 'pending_verification' THEN 1 ELSE 0 END) as pending
+        SUM(CASE WHEN status = 'pending_verification' THEN 1 ELSE 0 END) as pending,
+        SUM(CASE WHEN status = 'verified' THEN price ELSE 0 END) as total_value
       FROM vehicles
       WHERE dealership_id = ?
-    `, [dealershipId], (err, stats) => {
+    `, [dealershipId], (err, statsRows) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send('Database error');
+      }
+      
+      const stats = statsRows[0] || { total: 0, verified: 0, pending: 0, total_value: 0 };
       
       db.get('SELECT * FROM dealerships WHERE id = ?', [dealershipId], (err, dealership) => {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).send('Database error');
+        }
+        
         res.render('dealership/dashboard', {
           title: 'Dealership Dashboard',
-          stats: stats || { total: 0, verified: 0, pending: 0 },
+          stats: stats,
           dealership: dealership
         });
       });
@@ -245,6 +257,55 @@ router.post('/vehicle/:id/delete', (req, res) => {
         res.redirect('/dealership/vehicles');
       }
     );
+  });
+});
+
+function getDealershipStats(dealershipId, callback) {
+  db.all(`
+    SELECT 
+      COUNT(*) as total,
+      SUM(CASE WHEN status = 'verified' THEN 1 ELSE 0 END) as verified,
+      SUM(CASE WHEN status = 'pending_verification' THEN 1 ELSE 0 END) as pending,
+      SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected,
+      SUM(CASE WHEN status = 'verified' THEN price ELSE 0 END) as total_value
+    FROM vehicles
+    WHERE dealership_id = ?
+  `, [dealershipId], (err, stats) => {
+    callback(stats ? stats[0] : { total: 0, verified: 0, pending: 0, rejected: 0, total_value: 0 });
+  });
+}
+
+// Get recent verified vehicles
+router.get('/api/recent-vehicles', (req, res) => {
+  getDealershipId(req.session.userId, (dealershipId) => {
+    db.all(`
+      SELECT v.*, d.business_name 
+      FROM vehicles v 
+      LEFT JOIN dealerships d ON v.dealership_id = d.id 
+      WHERE v.dealership_id = ? AND v.status = 'verified'
+      ORDER BY v.updated_at DESC 
+      LIMIT 5
+    `, [dealershipId], (err, vehicles) => {
+      res.json(vehicles || []);
+    });
+  });
+});
+
+// Get verification analytics
+router.get('/api/verification-analytics', (req, res) => {
+  getDealershipId(req.session.userId, (dealershipId) => {
+    db.all(`
+      SELECT 
+        strftime('%Y-%m', created_at) as month,
+        status,
+        COUNT(*) as count
+      FROM vehicles 
+      WHERE dealership_id = ? AND created_at >= date('now', '-6 months')
+      GROUP BY strftime('%Y-%m', created_at), status
+      ORDER BY month DESC
+    `, [dealershipId], (err, analytics) => {
+      res.json(analytics || []);
+    });
   });
 });
 
