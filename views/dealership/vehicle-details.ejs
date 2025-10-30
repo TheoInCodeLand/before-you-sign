@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <%- include('../partials/favicon.ejs') %>
     <style>
         *{
             margin: 0;
@@ -534,6 +535,195 @@
             }
         }
     </style>
+    <style>
+        /* Image Gallery Styles */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid hsl(var(--border));
+            aspect-ratio: 4/3;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .image-overlay i {
+            color: white;
+            font-size: 2rem;
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 50px;
+            font-weight: 300;
+            cursor: pointer;
+            z-index: 10002;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #ccc;
+        }
+
+        .modal-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .modal-navigation {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10001;
+            pointer-events: none;
+        }
+
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 10002;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { 
+            opacity: 0;
+            transform: scale(0.8);
+            }
+            to { 
+            opacity: 1;
+            transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .image-gallery {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            }
+
+            .modal-close {
+            top: 10px;
+            right: 20px;
+            font-size: 40px;
+            }
+
+            .nav-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            }
+
+            .modal-navigation {
+            padding: 0 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -617,6 +807,7 @@
                         <h3 class="card-title">Vehicle Overview</h3>
                         <p class="card-description">Current status and key information</p>
                     </div>
+                    
                     <div class="card-content">
                         <div class="info-grid">
                             <div class="info-section">
@@ -680,6 +871,49 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- hello -->
+                 <% if (vehicle.image_urls) { %>
+                 <% try { %>
+                    <% const images = JSON.parse(vehicle.image_urls); %>
+                    <% if (images && images.length > 0) { %>
+                    <div class="card">
+                        <div class="card-header">
+                        <h3 class="card-title">Vehicle Photos</h3>
+                        <p class="card-description">High-quality images of the vehicle (<%= images.length %> photo<%= images.length !== 1 ? 's' : '' %>)</p>
+                        </div>
+                        <div class="card-content">
+                        <div class="image-gallery">
+                            <% images.forEach((img, index) => { %>
+                            <div class="gallery-item" onclick="openImageModal('<%= img %>', <%= index %>)">
+                                <img src="<%= img %>" alt="Vehicle image <%= index + 1 %>" loading="lazy">
+                                <div class="image-overlay">
+                                <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <% }); %>
+                        </div>
+                        </div>
+                    </div>
+                    <% } %>
+                <% } catch(e) { %>
+                    <!-- Error parsing images -->
+                <% } %>
+                <% } %>
+
+                <!-- Image Modal (Add before closing </body> tag) -->
+                <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+                <span class="modal-close">&times;</span>
+                <div class="modal-navigation">
+                    <button class="nav-btn prev-btn" onclick="event.stopPropagation(); navigateImage(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-btn next-btn" onclick="event.stopPropagation(); navigateImage(1)">
+                    <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <img id="modalImage" class="modal-image" onclick="event.stopPropagation()">
+                <div class="image-counter" id="imageCounter"></div>
                 </div>
 
                 <!-- Registration & Legal Information -->
@@ -885,6 +1119,94 @@
                     }
                 }, 3000);
             });
+        });
+    </script>
+    <script>
+        let currentImageIndex = 0;
+        let imageArray = [];
+
+        function openImageModal(imageSrc, index) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const counter = document.getElementById('imageCounter');
+            
+            // Get all images if not already stored
+            if (imageArray.length === 0) {
+            <% if (vehicle.image_urls) { %>
+                <% try { %>
+                <% const imgs = JSON.parse(vehicle.image_urls); %>
+                imageArray = <%= JSON.stringify(imgs) %>;
+                <% } catch(e) {} %>
+            <% } %>
+            }
+            
+            currentImageIndex = index;
+            modal.classList.add('active');
+            modalImg.src = imageSrc;
+            counter.textContent = `${currentImageIndex + 1} / ${imageArray.length}`;
+            
+            // Update navigation buttons
+            updateNavigationButtons();
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateImage(direction) {
+            currentImageIndex += direction;
+            
+            // Loop around
+            if (currentImageIndex < 0) {
+            currentImageIndex = imageArray.length - 1;
+            } else if (currentImageIndex >= imageArray.length) {
+            currentImageIndex = 0;
+            }
+            
+            const modalImg = document.getElementById('modalImage');
+            const counter = document.getElementById('imageCounter');
+            
+            // Add fade effect
+            modalImg.style.opacity = '0';
+            setTimeout(() => {
+            modalImg.src = imageArray[currentImageIndex];
+            modalImg.style.opacity = '1';
+            counter.textContent = `${currentImageIndex + 1} / ${imageArray.length}`;
+            updateNavigationButtons();
+            }, 150);
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            
+            // Disable buttons if only one image
+            if (imageArray.length <= 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            } else {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('imageModal');
+            if (modal.classList.contains('active')) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            } else if (e.key === 'ArrowLeft') {
+                navigateImage(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateImage(1);
+            }
+            }
         });
     </script>
 </body>

@@ -1,8 +1,16 @@
 
 <nav>
+    <style>
+        .nav__logo__img {
+            max-width: 75%;
+            height: auto;
+        }
+    </style>
     <div class="nav__header">
         <div class="nav__logo">            
-            <a href="/">Before You Sign</a>
+            <a href="/">
+                <img src="/assets/Screenshot 2025-10-30 183918.png" alt="Logo" class="nav__logo__img">
+            </a>
         </div>
         <div class="nav__menu__btn" id="menu-btn">
         <i class="ri-menu-line"></i>
@@ -37,7 +45,7 @@
             
             <li class="nav__links__btn">
               <button class="btn" onclick="window.location.href='/logout'">Sign Out</button>
-            </li>
+            </li>   
         <% } else if (role === 'customer') {%>
             <li><a href="/customer/dashboard">Dashboard</a></li>
             <li><a href="/customer/vehicles">Vehicles</a></li>

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <%- include('../partials/favicon.ejs') %>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *{
@@ -641,6 +642,34 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- SECTION: VEHICLE IMAGES -->
+                            <h3 style="margin-top: 40px; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 10px;">
+                                <i class="fa-solid fa-images"></i> Vehicle Images
+                            </h3>
+
+                            <div class="form-group">
+                                <label class="form-label">Upload Vehicle Photos (Up to 10 images) *</label>
+                                <div id="imageUploadContainer" style="border: 2px dashed #d1d5db; border-radius: 8px; padding: 30px; text-align: center; background: #f9fafb; cursor: pointer; transition: all 0.3s;">
+                                    <input type="file" name="vehicleImages" id="vehicleImages" accept="image/*" multiple style="display: none;" onchange="handleImageSelect(event)">
+                                    <label for="vehicleImages" style="cursor: pointer; display: block;">
+                                    <i class="fa-solid fa-cloud-upload" style="font-size: 3rem; color: #9ca3af; margin-bottom: 10px;"></i>
+                                    <p style="margin: 10px 0; color: #6b7280; font-weight: 500;">Click to upload vehicle images</p>
+                                    <p style="font-size: 0.875rem; color: #9ca3af;">PNG, JPG, GIF, WEBP up to 5MB each</p>
+                                    <p style="font-size: 0.875rem; color: #9ca3af; margin-top: 5px;">Maximum 10 images</p>
+                                    </label>
+                                </div>
+                                <small style="color: var(--text-light); display: block; margin-top: 10px;">
+                                    Add multiple photos from different angles: front, back, sides, interior, engine, etc.
+                                </small>
+                            </div>
+
+                            <!-- Image Preview Container -->
+                            <div id="imagePreviewContainer" style="display: none; margin-top: 20px;">
+                            <h4 style="margin-bottom: 15px;">Selected Images (<span id="imageCount">0</span>/10)</h4>
+                            <div id="imagePreviews" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;"></div>
+                            </div>
+
                             
                             <!-- SECTION 2: Basic Vehicle Information -->
                             <div class="form-section">
@@ -931,5 +960,107 @@
             }, 5000);
         });
     </script>
+    <script>
+        let selectedFiles = [];
+
+        function handleImageSelect(event) {
+        const files = Array.from(event.target.files);
+        const container = document.getElementById('imageUploadContainer');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const previews = document.getElementById('imagePreviews');
+        const imageCount = document.getElementById('imageCount');
+        
+        // Limit to 10 images
+        const remainingSlots = 10 - selectedFiles.length;
+        const filesToAdd = files.slice(0, remainingSlots);
+        
+        if (files.length > remainingSlots) {
+            alert(`You can only upload ${remainingSlots} more image(s). Maximum is 10 images.`);
+        }
+        
+        // Add new files to selectedFiles array
+        selectedFiles = selectedFiles.concat(filesToAdd);
+        
+        // Update UI
+        if (selectedFiles.length > 0) {
+            container.style.borderColor = '#10b981';
+            container.style.background = '#ecfdf5';
+            previewContainer.style.display = 'block';
+            imageCount.textContent = selectedFiles.length;
+            
+            // Clear and rebuild previews
+            previews.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewDiv = document.createElement('div');
+                previewDiv.style.cssText = 'position: relative; border-radius: 8px; overflow: hidden; border: 2px solid #e5e7eb;';
+                
+                previewDiv.innerHTML = `
+                <img src="${e.target.result}" style="width: 100%; height: 150px; object-fit: cover;">
+                <button type="button" onclick="removeImage(${index})" style="position: absolute; top: 5px; right: 5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    ×
+                </button>
+                <div style="padding: 8px; background: rgba(0,0,0,0.6); color: white; font-size: 0.75rem; text-align: center;">
+                    ${file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name}
+                </div>
+                `;
+                
+                previews.appendChild(previewDiv);
+            };
+            reader.readAsDataURL(file);
+            });
+        }
+        }
+
+        function removeImage(index) {
+        selectedFiles.splice(index, 1);
+        
+        const container = document.getElementById('imageUploadContainer');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const imageCount = document.getElementById('imageCount');
+        
+        if (selectedFiles.length === 0) {
+            container.style.borderColor = '#d1d5db';
+            container.style.background = '#f9fafb';
+            previewContainer.style.display = 'none';
+        } else {
+            imageCount.textContent = selectedFiles.length;
+        }
+        
+        // Update file input
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        document.getElementById('vehicleImages').files = dataTransfer.files;
+        
+        // Trigger re-render
+        handleImageSelect({ target: { files: selectedFiles } });
+        }
+
+        // Drag and drop functionality
+        const uploadContainer = document.getElementById('imageUploadContainer');
+
+        uploadContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadContainer.style.borderColor = '#10b981';
+        uploadContainer.style.background = '#ecfdf5';
+        });
+
+        uploadContainer.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        if (selectedFiles.length === 0) {
+            uploadContainer.style.borderColor = '#d1d5db';
+            uploadContainer.style.background = '#f9fafb';
+        }
+        });
+
+        uploadContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        document.getElementById('vehicleImages').files = files;
+        handleImageSelect({ target: { files } });
+        });
+    </script>
+
 </body>
 </html>

@@ -5,11 +5,51 @@ const db = require('../database/init-db');
 const QRCode = require('qrcode');
 const path = require('path');
 const fs = require('fs');
+const multer = require('multer');
 const { isAuthenticated, hasRole } = require('./auth');
 
 // Apply authentication middleware to all dealership routes
 router.use(isAuthenticated);
 router.use(hasRole('dealership'));
+
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, '../public/uploads/vehicles');
+    
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    // Generate unique filename: timestamp-random-originalname
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'vehicle-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png|gif|webp/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype);
+  
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed (jpeg, jpg, png, gif, webp)'));
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit per file
+  },
+  fileFilter: fileFilter
+});
 
 // Get dealership ID helper
 function getDealershipId(userId, callback) {
@@ -107,17 +147,24 @@ router.get('/add-vehicle', (req, res) => {
 });
 
 // Add vehicle POST - UPDATED VERSION
-router.post('/add-vehicle', async (req, res) => {
+// POST Add Vehicle - WITH IMAGE UPLOAD
+router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) => {
   getDealershipId(req.session.userId, async (dealershipId) => {
+    if (!dealershipId) {
+      return res.render('dealership/add-vehicle', {
+        title: 'Add Vehicle',
+        error: 'Dealership profile not found',
+        success: null
+      });
+    }
+
     const {
       vin, make, model, year, mileage, price, color,
       bodyType, fuelType, transmission, previousOwners,
-      // NEW FIELDS
       registrationAuthority, plateNumber, engineNumber, tareWeight,
       dateLiabilityLicensing, vehicleStatus, dateLiableRegistration,
       licenseNumber1, licenseNumber2, licenseNumber3,
       engineType, engineCapacity,
-      // EXISTING FIELDS
       serviceHistory, accidentHistory, recallInformation,
       additionalFeatures, description
     } = req.body;
@@ -125,6 +172,9 @@ router.post('/add-vehicle', async (req, res) => {
     try {
       // Validate VIN
       if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+        if (req.files) {
+          req.files.forEach(file => fs.unlinkSync(file.path));
+        }
         return res.render('dealership/add-vehicle', {
           title: 'Add Vehicle',
           error: 'Invalid VIN format (17 characters, no I, O, Q)',
@@ -132,14 +182,21 @@ router.post('/add-vehicle', async (req, res) => {
         });
       }
       
-      // Prepare license numbers array (most recent first)
+      // Process uploaded images
+      let imageUrls = [];
+      if (req.files && req.files.length > 0) {
+        imageUrls = req.files.map(file => `/uploads/vehicles/${file.filename}`);
+      }
+      const imageUrlsJson = JSON.stringify(imageUrls);
+      
+      // Prepare license numbers
       const licenseNumbers = [];
       if (licenseNumber1) licenseNumbers.push(licenseNumber1);
       if (licenseNumber2) licenseNumbers.push(licenseNumber2);
       if (licenseNumber3) licenseNumbers.push(licenseNumber3);
       const licenseNumbersJson = JSON.stringify(licenseNumbers);
       
-      // Insert vehicle with all fields
+      // Insert vehicle
       db.run(`
         INSERT INTO vehicles 
         (dealership_id, vin, make, model, year, mileage, price, color,
@@ -148,8 +205,8 @@ router.post('/add-vehicle', async (req, res) => {
          date_liability_licensing, vehicle_status, date_liable_registration,
          license_numbers, engine_type, engine_capacity,
          service_history, accident_history, recall_information,
-         additional_features, description)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         additional_features, description, image_urls)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         dealershipId, vin, make, model, year, mileage, price, color,
         bodyType, fuelType, transmission, previousOwners || 0,
@@ -157,11 +214,16 @@ router.post('/add-vehicle', async (req, res) => {
         dateLiabilityLicensing, vehicleStatus, dateLiableRegistration,
         licenseNumbersJson, engineType, engineCapacity,
         serviceHistory, accidentHistory, recallInformation,
-        additionalFeatures, description
+        additionalFeatures, description, imageUrlsJson
       ],
       async function(err) {
         if (err) {
           console.error('Database error:', err);
+          if (req.files) {
+            req.files.forEach(file => {
+              try { fs.unlinkSync(file.path); } catch(e) {}
+            });
+          }
           return res.render('dealership/add-vehicle', {
             title: 'Add Vehicle',
             error: 'Error adding vehicle. VIN or Plate Number may already exist.',
@@ -175,7 +237,6 @@ router.post('/add-vehicle', async (req, res) => {
         const qrData = JSON.stringify({ vehicleId, vin, plateNumber, dealershipId });
         const qrPath = path.join(__dirname, '../public/qr-codes', `vehicle_${vehicleId}.png`);
         
-        // Ensure qr-codes directory exists
         const qrDir = path.join(__dirname, '../public/qr-codes');
         if (!fs.existsSync(qrDir)) {
           fs.mkdirSync(qrDir, { recursive: true });
@@ -183,7 +244,6 @@ router.post('/add-vehicle', async (req, res) => {
         
         await QRCode.toFile(qrPath, qrData);
         
-        // Update vehicle with QR code path
         db.run(
           'UPDATE vehicles SET qr_code_path = ? WHERE id = ?',
           [`/qr-codes/vehicle_${vehicleId}.png`, vehicleId]
@@ -193,6 +253,11 @@ router.post('/add-vehicle', async (req, res) => {
       });
     } catch (error) {
       console.error('Error:', error);
+      if (req.files) {
+        req.files.forEach(file => {
+          try { fs.unlinkSync(file.path); } catch(e) {}
+        });
+      }
       res.render('dealership/add-vehicle', {
         title: 'Add Vehicle',
         error: 'An error occurred while adding the vehicle',
@@ -201,6 +266,7 @@ router.post('/add-vehicle', async (req, res) => {
     }
   });
 });
+
 
 
 // View all vehicles
@@ -228,24 +294,64 @@ router.get('/vehicles', (req, res) => {
 });
 
 // View vehicle details
+// View vehicle details
 router.get('/vehicle/:id', (req, res) => {
   getDealershipId(req.session.userId, (dealershipId) => {
-    db.get(
-      'SELECT * FROM vehicles WHERE id = ? AND dealership_id = ?',
-      [req.params.id, dealershipId],
-      (err, vehicle) => {
-        if (!vehicle) {
-          return res.send('Vehicle not found');
-        }
-        
-        res.render('dealership/vehicle-details', {
-          title: 'Vehicle Details',
-          vehicle: vehicle
+    if (!dealershipId) {
+      return res.status(404).render('error', {
+        title: 'Error',
+        message: 'Dealership profile not found'
+      });
+    }
+
+    db.get(`
+      SELECT 
+        v.*,
+        d.business_name,
+        d.website,
+        d.phone,
+        d.email,
+        d.certification_status,
+        vc.vin_verified,
+        vc.plate_number_verified,
+        vc.engine_number_verified,
+        vc.mileage_verified,
+        vc.service_history_verified,
+        vc.ownership_verified,
+        vc.accident_history_verified,
+        vc.recall_verified,
+        vc.registration_verified,
+        vc.engine_specs_verified,
+        u.username as verified_by_username
+      FROM vehicles v
+      LEFT JOIN dealerships d ON v.dealership_id = d.id
+      LEFT JOIN verification_checklist vc ON v.id = vc.vehicle_id
+      LEFT JOIN users u ON v.verified_by = u.id
+      WHERE v.id = ? AND v.dealership_id = ?
+    `, [req.params.id, dealershipId], (err, vehicle) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).render('error', {
+          title: 'Error',
+          message: 'An error occurred while retrieving vehicle details'
         });
       }
-    );
+
+      if (!vehicle) {
+        return res.status(404).render('error', {
+          title: 'Not Found',
+          message: 'Vehicle not found or you do not have permission to view it'
+        });
+      }
+
+      res.render('dealership/vehicle-details', {
+        title: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
+        vehicle: vehicle
+      });
+    });
   });
 });
+
 
 // Delete vehicle
 router.post('/vehicle/:id/delete', (req, res) => {

@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Before You Sign - Verified Vehicles</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
 
+  <title>Before You Sign - Verified Vehicles</title>
+  <%- include('../partials/favicon.ejs') %>
   <!-- 
     - favicon
   -->
@@ -25,21 +27,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&family=Open+Sans&display=swap"
     rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
 </head>
 
 <body>
-
-  <!-- 
-    - #HEADER
-  -->
-
   <header class="header" data-header>
     <div class="container">
 
       <div class="overlay" data-overlay></div>
-
+      <style>
+        .nav__logo__img {
+          width: 40px;
+          height: auto;
+        }
+      </style>
       <a href="/" class="logo">
-        <img src="./assets/images/logo.svg" alt="Before You Sign logo">
+        <img src="/assets/logo.png" alt="Logo" class="nav__logo__img">
       </a>
 
       <nav class="navbar" data-navbar>
@@ -89,26 +93,38 @@
             </p>
           </div>
 
-          <form action="/vehicles" method="GET" class="hero-form">
+          <div class="hero-form" style="display: flex; justify-content: center; align-items: center; width: 50%;">
+            <button id="scanQrBtn" class="btn" type="button" style="border-radius: 0.5rem; padding: 12px 24px;">
+              <i class="ri-qr-scan-2-line"></i> Scan QR
+            </button>
+          </div>
 
-            <div class="input-wrapper">
-              <label for="input-1" class="input-label">Car, model, or brand</label>
 
-              <input type="text" name="make" id="input-1" class="input-field"
-                placeholder="What car are you looking for?" value="<%= filters.make || '' %>">
+          <div id="qrModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8);">
+            <div style="max-width:500px; margin:40px auto; background:#fff; border-radius:12px; padding:30px; position:relative; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="margin:0; color:#1f2937;">
+                  <i class="ri-qr-scan-2-line" style="color:var(--primary); margin-right:10px;"></i>
+                  Scan Vehicle QR Code
+                </h3>
+                <button onclick="closeQrModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#6b7280;">
+                  ×
+                </button>
+              </div>
+              
+              <div id="qr-reader" style="width:100%; max-width:400px; margin:0 auto;"></div>
+              
+              <div id="qr-status" style="margin-top:15px; padding:12px; background:#f3f4f6; border-radius:6px; color:#374151; font-size:0.9rem; display:none;">
+                Initializing camera...
+              </div>
+              
+              <div style="margin-top:20px; display:flex; gap:10px;">
+                <button onclick="closeQrModal()" class="btn btn-secondary" style="flex:1;">
+                  <i class="ri-close-line"></i> Close
+                </button>
+              </div>
             </div>
-            <div class="input-wrapper" id>
-              <label for="input-1" class="input-label">Vin</label>
-
-              <input type="text" name="make" id="input-2" class="input-field"
-                placeholder="Search by VIN" value="<%= filters.make || '' %>">
-            </div>
-            <button type="submit" class="btn">Search</button>
-            <button type="submit" class="btn">Scan QR</button>
-
-
-          </form>
-
+          </div>
         </div>
       </section>
 
@@ -140,7 +156,7 @@
                   <div class="featured-car-card">
 
                     <figure class="card-banner">
-                      <img src="<%= vehicle.image_url || 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80' %>" 
+                      <img src="/assets/car-placeholder.jpg" 
                            alt="<%= vehicle.make %> <%= vehicle.model %>" loading="lazy" width="440" height="300"
                            class="w-100">
                       <div style="position: absolute; top: 10px; left: 10px; background: #00a859; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
@@ -580,6 +596,113 @@
   -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+  const scanQrBtn = document.getElementById('scanQrBtn');
+  const qrModal = document.getElementById('qrModal');
+  const qrStatus = document.getElementById('qr-status');
+  let html5QrcodeScanner;
+
+  scanQrBtn.addEventListener('click', function() {
+    qrModal.style.display = 'block';
+    qrStatus.style.display = 'block';
+    
+    // Initialize scanner
+    html5QrcodeScanner = new Html5Qrcode("qr-reader");
+    
+    // Request camera access and start scanning
+    html5QrcodeScanner.start(
+      { facingMode: "environment" }, // Use back camera on mobile
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 }
+      },
+      onQrCodeScanned,
+      onQrCodeError
+    );
+    
+    qrStatus.innerHTML = 'Camera ready - Point at QR code';
+    qrStatus.style.background = '#d1fae5';
+    qrStatus.style.color = '#065f46';
+  });
+
+  function onQrCodeScanned(qrCodeMessage) {
+    qrStatus.innerHTML = '✓ QR code detected - Loading vehicle...';
+    qrStatus.style.background = '#dbeafe';
+    qrStatus.style.color = '#1e40af';
+    
+    try {
+      let vin;
+      
+      // Try to parse as JSON first
+      if (qrCodeMessage.startsWith('{')) {
+        const parsed = JSON.parse(qrCodeMessage);
+        vin = parsed.vin || parsed.VIN || parsed.vehicleId;
+      } else {
+        // Assume it's a raw VIN
+        vin = qrCodeMessage;
+      }
+      
+      if (!vin) {
+        throw new Error('No VIN found in QR code');
+      }
+      
+      // Stop scanner and redirect
+      html5QrcodeScanner.stop().then(() => {
+        // Redirect to vehicle details by VIN
+        window.location.href = `/vehicle/vin/${vin.toUpperCase()}`;
+      }).catch(err => {
+        console.error('Error stopping scanner:', err);
+        // Still redirect even if scanner stop fails
+        window.location.href = `/vehicle/vin/${vin.toUpperCase()}`;
+      });
+      
+    } catch (e) {
+      qrStatus.innerHTML = '⚠ Error: ' + e.message;
+      qrStatus.style.background = '#fee2e2';
+      qrStatus.style.color = '#991b1b';
+      
+      // Try as raw VIN anyway
+      setTimeout(() => {
+        const vin = qrCodeMessage.toUpperCase();
+        html5QrcodeScanner.stop().then(() => {
+          window.location.href = `/vehicle/vin/${vin}`;
+        });
+      }, 2000);
+    }
+  }
+
+  function onQrCodeError(errorMessage) {
+    // Silently ignore scanning errors - it's normal while scanning
+    // console.log('QR scanning error:', errorMessage);
+  }
+
+  window.closeQrModal = function() {
+    qrModal.style.display = 'none';
+    if (html5QrcodeScanner) {
+      html5QrcodeScanner.stop().catch(err => {
+        console.error('Error stopping scanner:', err);
+      });
+    }
+  };
+
+  // Close modal when clicking outside
+  qrModal.addEventListener('click', function(e) {
+    if (e.target === qrModal) {
+      closeQrModal();
+    }
+  });
+
+  // Close modal on ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && qrModal.style.display === 'block') {
+      closeQrModal();
+    }
+  });
+</script>
+
+
 
 </body>
 
