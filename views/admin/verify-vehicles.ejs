@@ -1,44 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Vehicles - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGgPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --primary: 0 0% 0%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --radius: 0.75rem;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: hsl(var(--card));
+            border-right: 1px solid hsl(var(--border));
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 0 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        .nav-item.active {
+            background-color: hsl(var(--secondary));
+            font-weight: 500;
+        }
+
+        .nav-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid hsl(var(--border));
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px;
+            border-bottom: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 448px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: hsl(var(--muted-foreground));
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 40px;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: hsl(var(--primary));
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-button {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .user-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 32px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+        }
+
+        .primary-button:hover {
+            opacity: 0.9;
+        }
+
+        .outline-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .outline-button:hover {
+            background-color: hsl(var(--secondary));
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Table Styles */
+        .table-container {
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            overflow: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .data-table th {
+            font-weight: 600;
+            font-size: 14px;
+            background-color: hsl(var(--muted));
+        }
+
+        .data-table tbody tr:hover {
+            background-color: hsl(var(--muted));
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: hsl(var(--muted-foreground));
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .primary-button, .outline-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
 </head>
 <body>
-  <%- include('../partials/header') %>
-  <div class="container">
-    <h1>Verify Vehicles</h1>
-    
-    <% if (vehicles.length > 0) { %>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>VIN</th>
-            <th>Vehicle</th>
-            <th>Dealership</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% vehicles.forEach(function(v) { %>
-            <tr>
-              <td><%= v.vin %></td>
-              <td><%= v.year %> <%= v.make %> <%= v.model %></td>
-              <td><%= v.business_name %></td>
-              <td>R <%= v.price.toLocaleString() %></td>
-              <td><a href="/admin/verify-vehicle/<%= v.id %>" class="btn btn-primary">Verify</a></td>
-            </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    <% } else { %>
-      <div class="card">
-        <p>No vehicles pending verification.</p>
-      </div>
-    <% } %>
-  </div>
-  <%- include('../partials/footer') %>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" style="text-decoration: none; color: inherit;">
+                    <div class="logo-container">
+                        <div class="logo-icon" style="background: transparent;">
+                            <img src="/assets/logo.png" alt="" width="85%" height="auto">
+                        </div>
+                        <span class="logo-text">Before You Sign</span>
+                    </div>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/verify-vehicles" class="nav-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <span>Verify Vehicles</span>
+                </a>
+                <a href="/admin/dealerships" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span>Manage Dealerships</span>
+                </a>
+                <a href="/admin/disputes" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <span>View Disputes</span>
+                </a>
+                <a href="/admin/reports" class="nav-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
+                    <span>Reports</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/logout" style="color: inherit; text-decoration: none;">
+                    <div class="user-info">
+                        <img src="https://media.istockphoto.com/id/1018739074/vector/power-turn-off-icon-vector-illustration.jpg?s=612x612&w=0&k=20&c=VbwdvU0oVPP2vPDqLod2AWi5Gws6QwALYzZ6bV0oYSc=" alt="Logout" class="user-avatar">
+                        <div class="user-details">
+                            <span class="user-name">Logout</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="search-container">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    <input type="text" placeholder="Search vehicles, VINs, or dealerships..." class="search-input">
+                </div>
+
+                <div class="topbar-actions">
+                    <!-- Notifications -->
+                    <div class="dropdown">
+                        <button class="icon-button" id="notificationBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                            <span class="notification-badge"><%= vehicles.length > 0 ? vehicles.length : '0' %></span>
+                        </button>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="dropdown">
+                        <button class="user-button" id="userBtn">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Admin" class="user-avatar-small">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1 class="page-title">Verify Vehicles</h1>
+                    <div class="header-actions">
+                        <div class="outline-button">
+                            <i class="fas fa-filter"></i>
+                            Filter
+                        </div>
+                        <div class="outline-button">
+                            <i class="fas fa-sort"></i>
+                            Sort
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Pending Vehicle Verifications</h3>
+                        <p class="card-description">
+                            <%= vehicles.length %> vehicle(s) awaiting verification and approval
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <% if (vehicles.length > 0) { %>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>VIN</th>
+                                            <th>Vehicle Details</th>
+                                            <th>Dealership</th>
+                                            <th>Price</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% vehicles.forEach(function(v) { %>
+                                            <tr>
+                                                <td><strong><%= v.vin %></strong></td>
+                                                <td>
+                                                    <div>
+                                                        <strong><%= v.year %> <%= v.make %> <%= v.model %></strong>
+                                                    </div>
+                                                    <div style="font-size: 12px; color: hsl(var(--muted-foreground));">
+                                                        <%= v.color %> • <%= v.mileage ? v.mileage.toLocaleString() + ' km' : 'N/A' %>
+                                                    </div>
+                                                </td>
+                                                <td><%= v.business_name %></td>
+                                                <td><strong>R <%= v.price ? v.price.toLocaleString() : '0' %></strong></td>
+                                                <td>
+                                                    <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; background-color: #fef3c7; color: #92400e; border-radius: 12px; font-size: 12px; font-weight: 500;">
+                                                        <i class="fas fa-clock"></i>
+                                                        Pending
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="/admin/verify-vehicle/<%= v.id %>" class="btn btn-primary">
+                                                        <i class="fas fa-search"></i>
+                                                        Review
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <div>
+                                    <i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 16px; color: #10b981;"></i>
+                                    <h3 style="margin-bottom: 8px; color: hsl(var(--foreground));">All Caught Up!</h3>
+                                    <p>No vehicles pending verification at this time.</p>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Simple notification dropdown functionality
+        document.getElementById('notificationBtn')?.addEventListener('click', function() {
+            alert('Notification feature would be implemented here');
+        });
+
+        // Simple user dropdown functionality
+        document.getElementById('userBtn')?.addEventListener('click', function() {
+            alert('User menu would be implemented here');
+        });
+    </script>
 </body>
 </html>

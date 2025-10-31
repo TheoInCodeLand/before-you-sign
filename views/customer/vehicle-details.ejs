@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <%- include('../partials/favicon.ejs')%>
     <style>
         *{
             margin: 0;
@@ -665,10 +666,7 @@
             <div class="header-container">
                 <a href="/" style="text-decoration: none; color: inherit;">
                     <div class="logo-container">
-                        <div class="logo-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>
-                        </div>
-                        <span class="logo-text">Before You Sign</span>
+                        <img src="/assets/logo-no-bg.png" alt="" style="width: 250px; height: auto;">
                     </div>
                 </a>
                 
@@ -700,7 +698,7 @@
                 </div>
 
                 <!-- Hero Section with Price and QR Code -->
-                <div class="hero-section">
+                <div class="hero-section" style="background: black">
                     <div class="hero-content">
                         <div class="hero-info">
                             <div class="vehicle-price">
