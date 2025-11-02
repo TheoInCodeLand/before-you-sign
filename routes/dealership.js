@@ -8,24 +8,20 @@ const fs = require('fs');
 const multer = require('multer');
 const { isAuthenticated, hasRole } = require('./auth');
 
-// Apply authentication middleware to all dealership routes
-router.use(isAuthenticated);
-router.use(hasRole('dealership'));
+// Detect production (Vercel) vs local dev
+const isProd = process.env.NODE_ENV === 'production';
+const uploadDir = isProd ? '/tmp/uploads/vehicles' : path.join(__dirname, '../public/uploads/vehicles');
+const qrDir = isProd ? '/tmp/qr-codes' : path.join(__dirname, '../public/qr-codes');
 
-// Configure multer for image uploads
+// Multer storage config (uses /tmp for prod)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, '../public/uploads/vehicles');
-    
-    // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
-    
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    // Generate unique filename: timestamp-random-originalname
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, 'vehicle-' + uniqueSuffix + path.extname(file.originalname));
   }
@@ -35,7 +31,7 @@ const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = allowedTypes.test(file.mimetype);
-  
+
   if (mimetype && extname) {
     return cb(null, true);
   } else {
@@ -51,7 +47,11 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-// Get dealership ID helper
+// Auth middleware for all dealership routes
+router.use(isAuthenticated);
+router.use(hasRole('dealership'));
+
+// Helper: Get dealership ID for current user
 function getDealershipId(userId, callback) {
   db.get('SELECT id FROM dealerships WHERE user_id = ?', [userId], (err, row) => {
     if (err || !row) return callback(null);
@@ -65,8 +65,7 @@ router.get('/dashboard', (req, res) => {
     if (!dealershipId) {
       return res.send('Dealership profile not found');
     }
-    
-    // Get statistics - UPDATED QUERY TO INCLUDE total_value
+
     db.all(`
       SELECT 
         COUNT(*) as total,
@@ -80,15 +79,15 @@ router.get('/dashboard', (req, res) => {
         console.error('Database error:', err);
         return res.status(500).send('Database error');
       }
-      
+
       const stats = statsRows[0] || { total: 0, verified: 0, pending: 0, total_value: 0 };
-      
+
       db.get('SELECT * FROM dealerships WHERE id = ?', [dealershipId], (err, dealership) => {
         if (err) {
           console.error('Database error:', err);
           return res.status(500).send('Database error');
         }
-        
+
         res.render('dealership/dashboard', {
           title: 'Dealership Dashboard',
           stats: stats,
@@ -117,7 +116,7 @@ router.get('/profile', (req, res) => {
 router.post('/profile/update', (req, res) => {
   getDealershipId(req.session.userId, (dealershipId) => {
     const { businessName, phone, address, city, postalCode, website, operatingHours, description } = req.body;
-    
+
     db.run(`
       UPDATE dealerships 
       SET business_name = ?, phone = ?, address = ?, city = ?, postal_code = ?,
@@ -146,8 +145,7 @@ router.get('/add-vehicle', (req, res) => {
   });
 });
 
-// Add vehicle POST - UPDATED VERSION
-// POST Add Vehicle - WITH IMAGE UPLOAD
+// Add vehicle POST, with file uploads and QR generation (all using /tmp for prod)
 router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) => {
   getDealershipId(req.session.userId, async (dealershipId) => {
     if (!dealershipId) {
@@ -168,7 +166,7 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
       serviceHistory, accidentHistory, recallInformation,
       additionalFeatures, description
     } = req.body;
-    
+
     try {
       // Validate VIN
       if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
@@ -181,21 +179,21 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
           success: null
         });
       }
-      
+
       // Process uploaded images
       let imageUrls = [];
       if (req.files && req.files.length > 0) {
         imageUrls = req.files.map(file => `/uploads/vehicles/${file.filename}`);
       }
       const imageUrlsJson = JSON.stringify(imageUrls);
-      
+
       // Prepare license numbers
       const licenseNumbers = [];
       if (licenseNumber1) licenseNumbers.push(licenseNumber1);
       if (licenseNumber2) licenseNumbers.push(licenseNumber2);
       if (licenseNumber3) licenseNumbers.push(licenseNumber3);
       const licenseNumbersJson = JSON.stringify(licenseNumbers);
-      
+
       // Insert vehicle
       db.run(`
         INSERT INTO vehicles 
@@ -230,25 +228,21 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
             success: null
           });
         }
-        
+
         const vehicleId = this.lastID;
-        
-        // Generate QR code
         const qrData = JSON.stringify({ vehicleId, vin, plateNumber, dealershipId });
-        const qrPath = path.join(__dirname, '../public/qr-codes', `vehicle_${vehicleId}.png`);
-        
-        const qrDir = path.join(__dirname, '../public/qr-codes');
+        const qrFilePath = path.join(qrDir, `vehicle_${vehicleId}.png`);
+
         if (!fs.existsSync(qrDir)) {
           fs.mkdirSync(qrDir, { recursive: true });
         }
-        
-        await QRCode.toFile(qrPath, qrData);
-        
+        await QRCode.toFile(qrFilePath, qrData);
+
         db.run(
           'UPDATE vehicles SET qr_code_path = ? WHERE id = ?',
           [`/qr-codes/vehicle_${vehicleId}.png`, vehicleId]
         );
-        
+
         res.redirect('/dealership/vehicles');
       });
     } catch (error) {
@@ -267,22 +261,20 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
   });
 });
 
-
-
 // View all vehicles
 router.get('/vehicles', (req, res) => {
   getDealershipId(req.session.userId, (dealershipId) => {
     const status = req.query.status || 'all';
     let query = 'SELECT * FROM vehicles WHERE dealership_id = ?';
     const params = [dealershipId];
-    
+
     if (status !== 'all') {
       query += ' AND status = ?';
       params.push(status);
     }
-    
+
     query += ' ORDER BY created_at DESC';
-    
+
     db.all(query, params, (err, vehicles) => {
       res.render('dealership/vehicles', {
         title: 'My Vehicles',
@@ -293,8 +285,7 @@ router.get('/vehicles', (req, res) => {
   });
 });
 
-// View vehicle details
-// View vehicle details
+// Single vehicle details
 router.get('/vehicle/:id', (req, res) => {
   getDealershipId(req.session.userId, (dealershipId) => {
     if (!dealershipId) {
@@ -306,22 +297,10 @@ router.get('/vehicle/:id', (req, res) => {
 
     db.get(`
       SELECT 
-        v.*,
-        d.business_name,
-        d.website,
-        d.phone,
-        d.email,
-        d.certification_status,
-        vc.vin_verified,
-        vc.plate_number_verified,
-        vc.engine_number_verified,
-        vc.mileage_verified,
-        vc.service_history_verified,
-        vc.ownership_verified,
-        vc.accident_history_verified,
-        vc.recall_verified,
-        vc.registration_verified,
-        vc.engine_specs_verified,
+        v.*, d.business_name, d.website, d.phone, d.email, d.certification_status,
+        vc.vin_verified, vc.plate_number_verified, vc.engine_number_verified, vc.mileage_verified,
+        vc.service_history_verified, vc.ownership_verified, vc.accident_history_verified, vc.recall_verified,
+        vc.registration_verified, vc.engine_specs_verified,
         u.username as verified_by_username
       FROM vehicles v
       LEFT JOIN dealerships d ON v.dealership_id = d.id
@@ -352,7 +331,6 @@ router.get('/vehicle/:id', (req, res) => {
   });
 });
 
-
 // Delete vehicle
 router.post('/vehicle/:id/delete', (req, res) => {
   getDealershipId(req.session.userId, (dealershipId) => {
@@ -381,7 +359,7 @@ function getDealershipStats(dealershipId, callback) {
   });
 }
 
-// Get recent verified vehicles
+// Recent verified vehicles API
 router.get('/api/recent-vehicles', (req, res) => {
   getDealershipId(req.session.userId, (dealershipId) => {
     db.all(`
@@ -397,7 +375,7 @@ router.get('/api/recent-vehicles', (req, res) => {
   });
 });
 
-// Get verification analytics
+// Verification analytics API
 router.get('/api/verification-analytics', (req, res) => {
   getDealershipId(req.session.userId, (dealershipId) => {
     db.all(`
