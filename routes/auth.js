@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const db = require('../database/init-db');
+const pool = require('../database/init-db');
 
 // Middleware to check if authenticated
 function isAuthenticated(req, res, next) {
@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
 
 // Login page
 router.get('/login', (req, res) => {
-  if (req.session.userId) {
+  if (req.session && req.session.userId) {
     return res.redirect(`/${req.session.role}`);
   }
   res.render('login', { title: 'Login', error: null });
@@ -40,36 +40,34 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   
   try {
-    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
-      if (err) {
-        return res.render('login', { title: 'Login', error: 'Database error' });
-      }
+    const { rows } = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    const user = rows[0];
       
-      if (!user) {
-        return res.render('login', { title: 'Login', error: 'Invalid username or password' });
-      }
-      
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        return res.render('login', { title: 'Login', error: 'Invalid username or password' });
-      }
-      
-      // Set session
-      req.session.userId = user.id;
-      req.session.username = user.username;
-      req.session.role = user.role;
-      req.session.email = user.email;
-      
-      // Redirect based on role
-      if (user.role === 'admin') {
-        res.redirect('/admin/dashboard');
-      } else if (user.role === 'dealership') {
-        res.redirect('/dealership/dashboard');
-      } else {
-        res.redirect('/customer/dashboard');
-      }
-    });
+    if (!user) {
+      return res.render('login', { title: 'Login', error: 'Invalid username or password' });
+    }
+    
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.render('login', { title: 'Login', error: 'Invalid username or password' });
+    }
+    
+    // Set session
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.role = user.role;
+    req.session.email = user.email;
+    
+    // Redirect based on role
+    if (user.role === 'admin') {
+      res.redirect('/admin/dashboard');
+    } else if (user.role === 'dealership') {
+      res.redirect('/dealership/dashboard');
+    } else {
+      res.redirect('/customer/dashboard');
+    }
   } catch (error) {
+    console.error(error);
     res.render('login', { title: 'Login', error: 'An error occurred' });
   }
 });
@@ -95,47 +93,49 @@ router.post('/register/dealership', async (req, res) => {
     });
   }
   
+  const client = await pool.connect();
+
   try {
+    await client.query('BEGIN');
+
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    db.run(
-      'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
-      [username, email, hashedPassword, 'dealership'],
-      function(err) {
-        if (err) {
-          return res.render('register-dealership', { 
-            title: 'Dealership Registration', 
-            error: 'Username or email already exists' 
-          });
-        }
-        
-        const userId = this.lastID;
-        
-        db.run(`
-          INSERT INTO dealerships 
-          (user_id, business_name, registration_number, license_number, year_established,
-           email, phone, address, city, postal_code, website, operating_hours, description)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [userId, businessName, registrationNumber, licenseNumber, yearEstablished,
-           email, phone, address, city, postalCode, website, operatingHours, description],
-          (err) => {
-            if (err) {
-              return res.render('register-dealership', { 
-                title: 'Dealership Registration', 
-                error: 'Error creating dealership profile' 
-              });
-            }
-            
-            res.redirect('/login');
-          }
-        );
-      }
+    // Insert User
+    const userRes = await client.query(
+      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id',
+      [username, email, hashedPassword, 'dealership']
     );
-  } catch (error) {
+    const userId = userRes.rows[0].id;
+
+    // Insert Dealership Profile
+    await client.query(`
+      INSERT INTO dealerships 
+      (user_id, business_name, registration_number, license_number, year_established,
+       email, phone, address, city, postal_code, website, operating_hours, description)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+      [userId, businessName, registrationNumber, licenseNumber, yearEstablished,
+       email, phone, address, city, postalCode, website, operatingHours, description]
+    );
+
+    await client.query('COMMIT');
+    res.redirect('/login');
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    // Check for unique constraint violation code '23505'
+    if (err.code === '23505') {
+        return res.render('register-dealership', { 
+            title: 'Dealership Registration', 
+            error: 'Username, Email, or Registration Number already exists' 
+        });
+    }
     res.render('register-dealership', { 
       title: 'Dealership Registration', 
       error: 'An error occurred' 
     });
+  } finally {
+    client.release();
   }
 });
 
@@ -155,43 +155,44 @@ router.post('/register/customer', async (req, res) => {
     });
   }
   
+  const client = await pool.connect();
+  
   try {
+    await client.query('BEGIN');
+
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    db.run(
-      'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
-      [username, email, hashedPassword, 'customer'],
-      function(err) {
-        if (err) {
-          return res.render('register-customer', { 
+    // Insert User
+    const userRes = await client.query(
+      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id',
+      [username, email, hashedPassword, 'customer']
+    );
+    const userId = userRes.rows[0].id;
+
+    // Insert Customer Profile
+    await client.query(
+      'INSERT INTO customers (user_id, full_name, phone, address, city, postal_code) VALUES ($1, $2, $3, $4, $5, $6)',
+      [userId, fullName, phone, address, city, postalCode]
+    );
+
+    await client.query('COMMIT');
+    res.redirect('/login');
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    if (err.code === '23505') {
+        return res.render('register-customer', { 
             title: 'Customer Registration', 
             error: 'Username or email already exists' 
-          });
-        }
-        
-        const userId = this.lastID;
-        
-        db.run(
-          'INSERT INTO customers (user_id, full_name, phone, address, city, postal_code) VALUES (?, ?, ?, ?, ?, ?)',
-          [userId, fullName, phone, address, city, postalCode],
-          (err) => {
-            if (err) {
-              return res.render('register-customer', { 
-                title: 'Customer Registration', 
-                error: 'Error creating customer profile' 
-              });
-            }
-            
-            res.redirect('/login');
-          }
-        );
-      }
-    );
-  } catch (error) {
+        });
+    }
     res.render('register-customer', { 
       title: 'Customer Registration', 
       error: 'An error occurred' 
     });
+  } finally {
+    client.release();
   }
 });
 

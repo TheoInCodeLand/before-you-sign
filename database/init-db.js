@@ -1,82 +1,88 @@
 // database/init-db.js
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const { Pool } = require('pg');
+require('dotenv').config();
 
-const dbPath = path.join(__dirname, 'dealership.db');
-const db = new sqlite3.Database(dbPath);
+// Create the connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Required for Neon connection
+  }
+});
 
 // Initialize database schema
-function initializeDatabase() {
-  db.serialize(() => {
-    
-    // Users table
-    db.run(`
+async function initializeDatabase() {
+  const client = await pool.connect();
+  try {
+    console.log('🔄 Connecting to Neon PostgreSQL...');
+    await client.query('BEGIN');
+
+    // 1. Users table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        role TEXT NOT NULL CHECK(role IN ('dealership', 'admin', 'customer')),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL CHECK(role IN ('dealership', 'admin', 'customer')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
-    // Dealerships table
-    db.run(`
+    // 2. Dealerships table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS dealerships (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        business_name TEXT NOT NULL,
-        registration_number TEXT UNIQUE NOT NULL,
-        license_number TEXT,
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        business_name VARCHAR(255) NOT NULL,
+        registration_number VARCHAR(100) UNIQUE NOT NULL,
+        license_number VARCHAR(100),
         year_established INTEGER,
-        email TEXT NOT NULL,
-        phone TEXT NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
         address TEXT NOT NULL,
-        city TEXT NOT NULL,
-        postal_code TEXT,
-        website TEXT,
-        operating_hours TEXT,
+        city VARCHAR(100) NOT NULL,
+        postal_code VARCHAR(20),
+        website VARCHAR(255),
+        operating_hours VARCHAR(255),
         description TEXT,
-        certification_status TEXT DEFAULT 'pending' CHECK(certification_status IN ('pending', 'active', 'suspended')),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-      )
+        certification_status VARCHAR(50) DEFAULT 'pending' CHECK(certification_status IN ('pending', 'active', 'suspended')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
-    // Customers table
-    db.run(`
+    // 3. Customers table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS customers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        full_name TEXT NOT NULL,
-        phone TEXT,
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        full_name VARCHAR(255) NOT NULL,
+        phone VARCHAR(50),
         address TEXT,
-        city TEXT,
-        postal_code TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-      )
+        city VARCHAR(100),
+        postal_code VARCHAR(20),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
-    // Vehicles table
-    db.run(`
+    // 4. Vehicles table (Includes fields from your migrate-add-fields.js)
+    await client.query(`
       CREATE TABLE IF NOT EXISTS vehicles (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        dealership_id INTEGER NOT NULL,
-        vin TEXT UNIQUE NOT NULL,
-        make TEXT NOT NULL,
-        model TEXT NOT NULL,
+        id SERIAL PRIMARY KEY,
+        dealership_id INTEGER NOT NULL REFERENCES dealerships(id) ON DELETE CASCADE,
+        vin VARCHAR(100) UNIQUE NOT NULL,
+        make VARCHAR(100) NOT NULL,
+        model VARCHAR(100) NOT NULL,
         year INTEGER NOT NULL,
         mileage INTEGER NOT NULL,
-        price REAL NOT NULL,
-        color TEXT,
-        body_type TEXT,
-        fuel_type TEXT,
-        transmission TEXT,
+        price DECIMAL(12, 2) NOT NULL,
+        color VARCHAR(50),
+        body_type VARCHAR(50),
+        fuel_type VARCHAR(50),
+        transmission VARCHAR(50),
         previous_owners INTEGER DEFAULT 0,
         service_history TEXT,
         accident_history TEXT,
@@ -85,60 +91,73 @@ function initializeDatabase() {
         description TEXT,
         image_urls TEXT,
         qr_code_path TEXT,
-        status TEXT DEFAULT 'pending_verification' CHECK(status IN ('pending_verification', 'verified', 'rejected')),
+        status VARCHAR(50) DEFAULT 'pending_verification' CHECK(status IN ('pending_verification', 'verified', 'rejected')),
         verification_notes TEXT,
-        verified_by INTEGER,
-        verified_at DATETIME,
+        verified_by INTEGER REFERENCES users(id),
+        verified_at TIMESTAMP,
         rejection_reason TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (dealership_id) REFERENCES dealerships(id) ON DELETE CASCADE,
-        FOREIGN KEY (verified_by) REFERENCES users(id)
-      )
+        registration_authority TEXT,
+        plate_number TEXT,
+        engine_number TEXT,
+        tare_weight INTEGER,
+        date_liability_licensing TEXT,
+        vehicle_status TEXT,
+        date_liable_registration TEXT,
+        license_numbers TEXT,
+        engine_type TEXT,
+        engine_capacity TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
-    // Disputes table
-    db.run(`
+    // 5. Disputes table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS disputes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_id INTEGER NOT NULL,
-        vehicle_id INTEGER NOT NULL,
-        discrepancy_type TEXT NOT NULL,
+        id SERIAL PRIMARY KEY,
+        customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+        vehicle_id INTEGER NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
+        discrepancy_type VARCHAR(100) NOT NULL,
         description TEXT NOT NULL,
         supporting_documents TEXT,
-        status TEXT DEFAULT 'submitted' CHECK(status IN ('submitted', 'under_review', 'resolved', 'closed')),
+        status VARCHAR(50) DEFAULT 'submitted' CHECK(status IN ('submitted', 'under_review', 'resolved', 'closed')),
         admin_response TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        resolved_at DATETIME,
-        FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
-        FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
-      )
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        resolved_at TIMESTAMP
+      );
     `);
 
-    // Verification checklist table
-    db.run(`
+    // 6. Verification checklist table (Includes fields from migrate-checklist.js)
+    await client.query(`
       CREATE TABLE IF NOT EXISTS verification_checklist (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        vehicle_id INTEGER NOT NULL,
-        vin_verified BOOLEAN DEFAULT 0,
-        mileage_verified BOOLEAN DEFAULT 0,
-        service_history_verified BOOLEAN DEFAULT 0,
-        ownership_verified BOOLEAN DEFAULT 0,
-        accident_history_verified BOOLEAN DEFAULT 0,
-        recall_verified BOOLEAN DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
-      )
+        id SERIAL PRIMARY KEY,
+        vehicle_id INTEGER NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
+        vin_verified BOOLEAN DEFAULT FALSE,
+        mileage_verified BOOLEAN DEFAULT FALSE,
+        service_history_verified BOOLEAN DEFAULT FALSE,
+        ownership_verified BOOLEAN DEFAULT FALSE,
+        accident_history_verified BOOLEAN DEFAULT FALSE,
+        recall_verified BOOLEAN DEFAULT FALSE,
+        plate_number_verified BOOLEAN DEFAULT FALSE,
+        engine_number_verified BOOLEAN DEFAULT FALSE,
+        registration_verified BOOLEAN DEFAULT FALSE,
+        engine_specs_verified BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
-    console.log('Database tables created successfully!');
-  });
-
-  return db;
+    await client.query('COMMIT');
+    console.log('✅ Database tables created successfully!');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.error('❌ Error initializing database:', e);
+  } finally {
+    client.release();
+  }
 }
 
-// Export database connection
-const database = initializeDatabase();
+initializeDatabase();
 
-module.exports = database;
+// Export the pool for use in routes
+module.exports = pool;

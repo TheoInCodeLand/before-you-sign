@@ -1,24 +1,26 @@
-// routes/vehicle.js - Public vehicle routes with QR scanning support
-
+// routes/vehicle.js - Public vehicle routes (PostgreSQL Verified)
 const express = require('express');
 const router = express.Router();
-const db = require('../database/init-db');
+const pool = require('../database/init-db');
 
 // View vehicle details by ID
-router.get('/:id', (req, res) => {
-  db.get(`
-    SELECT v.*, d.business_name, d.certification_status, d.phone, d.email, d.website,
-           vc.vin_verified, vc.plate_number_verified, vc.engine_number_verified,
-           vc.mileage_verified, vc.service_history_verified,
-           vc.ownership_verified, vc.accident_history_verified, vc.recall_verified,
-           vc.registration_verified, vc.engine_specs_verified,
-           u.username as verified_by_username
-    FROM vehicles v
-    JOIN dealerships d ON v.dealership_id = d.id
-    LEFT JOIN verification_checklist vc ON v.id = vc.vehicle_id
-    LEFT JOIN users u ON v.verified_by = u.id
-    WHERE v.id = ? AND v.status = 'verified'
-  `, [req.params.id], (err, vehicle) => {
+router.get('/:id', async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT v.*, d.business_name, d.certification_status, d.phone, d.email, d.website,
+             vc.vin_verified, vc.plate_number_verified, vc.engine_number_verified,
+             vc.mileage_verified, vc.service_history_verified,
+             vc.ownership_verified, vc.accident_history_verified, vc.recall_verified,
+             vc.registration_verified, vc.engine_specs_verified,
+             u.username as verified_by_username
+      FROM vehicles v
+      JOIN dealerships d ON v.dealership_id = d.id
+      LEFT JOIN verification_checklist vc ON v.id = vc.vehicle_id
+      LEFT JOIN users u ON v.verified_by = u.id
+      WHERE v.id = $1 AND v.status = 'verified'
+    `, [req.params.id]);
+
+    const vehicle = rows[0];
     if (!vehicle) {
       return res.status(404).send('Vehicle not found or not verified');
     }
@@ -28,11 +30,14 @@ router.get('/:id', (req, res) => {
       vehicle: vehicle,
       role: req.session?.role || null
     });
-  });
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).send('Database error');
+  }
 });
 
 // View vehicle details by VIN (for QR scanning)
-router.get('/vin/:vin', (req, res) => {
+router.get('/vin/:vin', async (req, res) => {
   const vin = req.params.vin.toUpperCase();
   
   // Validate VIN format
@@ -43,27 +48,23 @@ router.get('/vin/:vin', (req, res) => {
     });
   }
   
-  db.get(`
-    SELECT v.*, d.business_name, d.certification_status, d.phone, d.email, d.website,
-           d.id as dealership_id,
-           vc.vin_verified, vc.plate_number_verified, vc.engine_number_verified,
-           vc.mileage_verified, vc.service_history_verified,
-           vc.ownership_verified, vc.accident_history_verified, vc.recall_verified,
-           vc.registration_verified, vc.engine_specs_verified,
-           u.username as verified_by_username
-    FROM vehicles v
-    JOIN dealerships d ON v.dealership_id = d.id
-    LEFT JOIN verification_checklist vc ON v.id = vc.vehicle_id
-    LEFT JOIN users u ON v.verified_by = u.id
-    WHERE v.vin = ? AND v.status = 'verified'
-  `, [vin], (err, vehicle) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({
-        error: 'Database error',
-        message: 'An error occurred while retrieving vehicle information'
-      });
-    }
+  try {
+    const { rows } = await pool.query(`
+      SELECT v.*, d.business_name, d.certification_status, d.phone, d.email, d.website,
+             d.id as dealership_id,
+             vc.vin_verified, vc.plate_number_verified, vc.engine_number_verified,
+             vc.mileage_verified, vc.service_history_verified,
+             vc.ownership_verified, vc.accident_history_verified, vc.recall_verified,
+             vc.registration_verified, vc.engine_specs_verified,
+             u.username as verified_by_username
+      FROM vehicles v
+      JOIN dealerships d ON v.dealership_id = d.id
+      LEFT JOIN verification_checklist vc ON v.id = vc.vehicle_id
+      LEFT JOIN users u ON v.verified_by = u.id
+      WHERE v.vin = $1 AND v.status = 'verified'
+    `, [vin]);
+
+    const vehicle = rows[0];
     
     if (!vehicle) {
       return res.status(404).json({
@@ -87,11 +88,14 @@ router.get('/vin/:vin', (req, res) => {
       vehicle: vehicle,
       role: req.session?.role || null
     });
-  });
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).json({ error: 'Database error', message: 'Error retrieving vehicle' });
+  }
 });
 
-// Search by VIN (backward compatibility)
-router.get('/search/vin', (req, res) => {
+// Search by VIN
+router.get('/search/vin', async (req, res) => {
   const vin = req.query.vin;
   
   if (!vin) {
@@ -102,19 +106,24 @@ router.get('/search/vin', (req, res) => {
     });
   }
   
-  db.get(`
-    SELECT v.*, d.business_name, d.certification_status
-    FROM vehicles v
-    JOIN dealerships d ON v.dealership_id = d.id
-    WHERE v.vin = ? AND v.status = 'verified'
-  `, [vin.toUpperCase()], (err, vehicle) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT v.*, d.business_name, d.certification_status
+      FROM vehicles v
+      JOIN dealerships d ON v.dealership_id = d.id
+      WHERE v.vin = $1 AND v.status = 'verified'
+    `, [vin.toUpperCase()]);
+
     res.render('search-vin', {
       title: 'Search Vehicle',
-      vehicle: vehicle || null,
+      vehicle: rows[0] || null,
       searched: true,
       searchedVin: vin
     });
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { title: 'Error', message: 'Database error' });
+  }
 });
 
 module.exports = router;
