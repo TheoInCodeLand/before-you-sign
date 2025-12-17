@@ -45,6 +45,8 @@
         /* Sidebar Styles */
         .sidebar {
             width: 280px;
+            max-height: 100vh;
+            overflow: auto;
             background-color: hsl(var(--card));
             border-right: 1px solid hsl(var(--border));
             display: flex;
@@ -144,6 +146,7 @@
         /* Main Content */
         .main-content {
             flex: 1;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: auto;
@@ -352,13 +355,15 @@
 
         /* Action Cards */
         .action-cards {
+            text-decoration: none;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
         }
 
+
         .action-card {
-            background-color: hsl(var(--card));
+            background-color: rgba(0, 221, 255, 0.037);
             border: 1px solid hsl(var(--border));
             border-radius: 12px;
             padding: 24px;
@@ -368,6 +373,7 @@
             text-align: center;
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
+            text-decoration: none;
         }
 
         .action-card:hover {
