@@ -46,6 +46,8 @@
         /* Sidebar Styles */
         .sidebar {
             width: 280px;
+            max-height: 100vh;
+            overflow: auto;
             background-color: hsl(var(--card));
             border-right: 1px solid hsl(var(--border));
             display: flex;
@@ -145,6 +147,7 @@
         /* Main Content */
         .main-content {
             flex: 1;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: auto;
