@@ -132,7 +132,7 @@ function initializeDatabase() {
       )
     `);
 
-    console.log('✅ Database tables created successfully!');
+    console.log('Database tables created successfully!');
   });
 
   return db;

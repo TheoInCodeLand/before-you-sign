@@ -121,7 +121,8 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running and listening on port ${PORT}`);
+  console.log(`The Before-You-Sign Server is running and listening on port ${PORT}`);
+  console.log(`Visit http://localhost:${PORT}`);
 }); 
 
 module.exports = app;

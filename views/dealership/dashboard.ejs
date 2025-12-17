@@ -48,6 +48,7 @@
   /* Sidebar Styles */
   .sidebar {
     width: 280px;
+    max-height: 100vh;
     background-color: hsl(var(--card));
     border-right: 1px solid hsl(var(--border));
     display: flex;
@@ -150,6 +151,7 @@
     display: flex;
     flex-direction: column;
     overflow: auto;
+    max-height: 100vh;
   }
 
   /* Topbar */
@@ -727,97 +729,97 @@
 </style>
 <style>
   /* Vehicle items styling */
-.vehicle-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #e5e7eb;
-}
+  .vehicle-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+  }
 
-.vehicle-item:last-child {
-    border-bottom: none;
-}
+  .vehicle-item:last-child {
+      border-bottom: none;
+  }
 
-.vehicle-image {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-right: 1rem;
-}
+  .vehicle-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-right: 1rem;
+  }
 
-.vehicle-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+  .vehicle-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
 
-.vehicle-info {
-    flex: 1;
-}
+  .vehicle-info {
+      flex: 1;
+  }
 
-.vehicle-name {
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 0.25rem;
-}
+  .vehicle-name {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.25rem;
+  }
 
-.vehicle-details {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.875rem;
-    color: #6b7280;
-}
+  .vehicle-details {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+  }
 
-.vehicle-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
+  .vehicle-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+  }
 
-.vehicle-status.verified {
-    background-color: #d1fae5;
-    color: #065f46;
-}
+  .vehicle-status.verified {
+      background-color: #d1fae5;
+      color: #065f46;
+  }
 
-/* Empty and loading states */
-.empty-state, .loading-state, .error-state {
-    text-align: center;
-    padding: 3rem 2rem;
-    color: #6b7280;
-}
+  /* Empty and loading states */
+  .empty-state, .loading-state, .error-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6b7280;
+  }
 
-.empty-state svg, .loading-state svg {
-    margin-bottom: 1rem;
-    color: #9ca3af;
-}
+  .empty-state svg, .loading-state svg {
+      margin-bottom: 1rem;
+      color: #9ca3af;
+  }
 
-/* Status colors for dealership certification */
-.certification-status {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.875rem;
-}
+  /* Status colors for dealership certification */
+  .certification-status {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.875rem;
+  }
 
-.certification-status.active {
-    background-color: #d1fae5;
-    color: #065f46;
-}
+  .certification-status.active {
+      background-color: #d1fae5;
+      color: #065f46;
+  }
 
-.certification-status.pending {
-    background-color: #fef3c7;
-    color: #92400e;
-}
+  .certification-status.pending {
+      background-color: #fef3c7;
+      color: #92400e;
+  }
 
-.certification-status.suspended {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
+  .certification-status.suspended {
+      background-color: #fee2e2;
+      color: #991b1b;
+  }
 </style>
 <body>
     <div class="app-container">
