@@ -376,15 +376,21 @@ button, a { transition: var(--transition); }
 }
 
 .featured-car-card .card-banner {
-  background: hsla(0, 0%, 0%, 0.2);
+  background: hsla(124, 100%, 21%, 0.452);
   aspect-ratio: 3 / 2;
   border-radius: var(--radius-18);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .featured-car-card .card-banner > img {
   height: 100%;
   object-fit: cover;
+  width: 40%;
+  height: auto;
+  
 }
 
 .featured-car-card .card-content { padding: 20px 10px 10px; }
