@@ -98,6 +98,15 @@
               <i class="ri-qr-scan-2-line"></i> Scan QR
             </button>
           </div>
+          <form action="/vehicles" method="GET" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+              <input type="text" name="vin" placeholder="Enter Vehicle VIN" 
+                value="<%= locals.filters && filters.vin ? filters.vin : '' %>"
+                style="padding: 12px 20px; border-radius: 0.5rem; border: 1px solid #ddd; width: 250px; color: #333;">
+              
+              <button type="submit" class="btn" style="border-radius: 0.5rem; padding: 12px 24px;">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+              </button>
+            </form>
 
 
           <div id="qrModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8);">

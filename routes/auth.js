@@ -1,4 +1,4 @@
-// routes/auth.js - Authentication routes
+// routes/auth.js - Main Public Routes & Authentication
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
@@ -27,6 +27,93 @@ router.get('/', (req, res) => {
   res.render('index', { title: 'Before You Sign - Home' });
 });
 
+// ==========================================
+//  NEW: PUBLIC VEHICLE SEARCH ROUTE
+// ==========================================
+router.get('/vehicles', async (req, res) => {
+  try {
+    // 1. Smart Redirect: If searching VIN, check for exact match
+    if (req.query.vin) {
+      const searchVin = `%${req.query.vin.trim()}%`;
+      const matchRes = await pool.query(
+        "SELECT id FROM vehicles WHERE vin ILIKE $1 AND status = 'verified'", 
+        [searchVin]
+      );
+      
+      // If exactly one car is found, go straight to details page
+      if (matchRes.rows.length === 1) {
+        return res.redirect(`/vehicle/${matchRes.rows[0].id}`);
+      }
+    }
+
+    // 2. Standard Search & Filter Logic
+    const page = parseInt(req.query.page) || 1;
+    const limit = 9; 
+    const offset = (page - 1) * limit;
+    
+    let query = `
+      SELECT v.*, d.business_name, d.certification_status
+      FROM vehicles v
+      JOIN dealerships d ON v.dealership_id = d.id
+      WHERE v.status = 'verified'
+    `;
+    
+    const params = [];
+    
+    // Filters
+    if (req.query.vin) {
+      params.push(`%${req.query.vin.trim()}%`);
+      query += ` AND v.vin ILIKE $${params.length}`;
+    }
+    if (req.query.make) {
+      params.push(`%${req.query.make}%`);
+      query += ` AND v.make ILIKE $${params.length}`;
+    }
+    if (req.query.minPrice) {
+      params.push(req.query.minPrice);
+      query += ` AND v.price >= $${params.length}`;
+    }
+    if (req.query.maxPrice) {
+      params.push(req.query.maxPrice);
+      query += ` AND v.price <= $${params.length}`;
+    }
+    if (req.query.bodyType && req.query.bodyType !== 'all') {
+      params.push(req.query.bodyType);
+      query += ` AND v.body_type = $${params.length}`;
+    }
+    
+    // Pagination
+    const countQuery = `SELECT COUNT(*) as total FROM (${query}) as sub`;
+    const totalRes = await pool.query(countQuery, params);
+    const totalVehicles = parseInt(totalRes.rows[0].total);
+    const totalPages = Math.ceil(totalVehicles / limit);
+    
+    params.push(limit);
+    query += ` ORDER BY v.created_at DESC LIMIT $${params.length}`;
+    
+    params.push(offset);
+    query += ` OFFSET $${params.length}`;
+    
+    const { rows } = await pool.query(query, params);
+    
+    res.render('customer/vehicles', {
+      title: 'Browse Vehicles',
+      vehicles: rows || [],
+      filters: req.query,
+      currentPage: page,
+      totalPages: totalPages,
+      totalVehicles: totalVehicles
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Database error');
+  }
+});
+
+// ==========================================
+//  AUTH ROUTES
+// ==========================================
+
 // Login page
 router.get('/login', (req, res) => {
   if (req.session && req.session.userId) {
@@ -52,13 +139,11 @@ router.post('/login', async (req, res) => {
       return res.render('login', { title: 'Login', error: 'Invalid username or password' });
     }
     
-    // Set session
     req.session.userId = user.id;
     req.session.username = user.username;
     req.session.role = user.role;
     req.session.email = user.email;
     
-    // Redirect based on role
     if (user.role === 'admin') {
       res.redirect('/admin/dashboard');
     } else if (user.role === 'dealership') {
@@ -100,14 +185,12 @@ router.post('/register/dealership', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    // Insert User
     const userRes = await client.query(
       'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id',
       [username, email, hashedPassword, 'dealership']
     );
     const userId = userRes.rows[0].id;
 
-    // Insert Dealership Profile
     await client.query(`
       INSERT INTO dealerships 
       (user_id, business_name, registration_number, license_number, year_established,
@@ -123,7 +206,6 @@ router.post('/register/dealership', async (req, res) => {
   } catch (err) {
     await client.query('ROLLBACK');
     console.error(err);
-    // Check for unique constraint violation code '23505'
     if (err.code === '23505') {
         return res.render('register-dealership', { 
             title: 'Dealership Registration', 
@@ -162,14 +244,12 @@ router.post('/register/customer', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    // Insert User
     const userRes = await client.query(
       'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id',
       [username, email, hashedPassword, 'customer']
     );
     const userId = userRes.rows[0].id;
 
-    // Insert Customer Profile
     await client.query(
       'INSERT INTO customers (user_id, full_name, phone, address, city, postal_code) VALUES ($1, $2, $3, $4, $5, $6)',
       [userId, fullName, phone, address, city, postalCode]
@@ -202,7 +282,7 @@ router.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-// Export middleware along with router
+// Export middleware
 router.isAuthenticated = isAuthenticated;
 router.hasRole = hasRole;
 
