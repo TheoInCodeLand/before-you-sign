@@ -211,7 +211,9 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
     ]);
 
     const vehicleId = insertRes.rows[0].id;
-    const qrData = JSON.stringify({ vehicleId, vin, plateNumber, dealershipId });
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    // const qrData = JSON.stringify({ vehicleId, vin, plateNumber, dealershipId });
+    const qrData = `${baseUrl}/vehicle/${vin}`;
     const qrFilePath = path.join(qrDir, `vehicle_${vehicleId}.png`);
 
     if (!fs.existsSync(qrDir)) fs.mkdirSync(qrDir, { recursive: true });
