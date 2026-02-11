@@ -850,37 +850,60 @@
                 <!-- VEHICLE HISTORY -->
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title"><i class="ri-file-history-line"></i> Vehicle History</h2>
+                        <h2 class="card-title"><i class="ri-file-history-line"></i> Vehicle History Documents</h2>
+                        <p class="card-description">Review the uploaded PDF evidence for service and accident history</p>
                     </div>
                     <div class="card-content">
-                        <h3 style="margin-top: 20px;"><i class="ri-tools-line"></i> Service History</h3>
-                        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
-                            <%= vehicle.service_history || 'Not provided' %>
+                        <div class="grid-2">
+                            <div class="info-box">
+                                <div class="info-box-label"><i class="ri-tools-line"></i> Service History</div>
+                                <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                    <% if (vehicle.service_history && vehicle.service_history.includes('cloudinary')) { %>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <i class="ri-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
+                                            <span style="font-size: 14px;">Service_Records.pdf</span>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="<%= vehicle.service_history %>" target="_blank" class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;">
+                                                <i class="ri-eye-line"></i> View
+                                            </a>
+                                            <a href="<%= vehicle.service_history %>" download class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;">
+                                                <i class="ri-download-line"></i>
+                                            </a>
+                                        </div>
+                                    <% } else { %>
+                                        <p style="color: hsl(var(--muted-foreground)); font-style: italic;">No PDF provided: <%= vehicle.service_history || 'N/A' %></p>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div class="info-box">
+                                <div class="info-box-label"><i class="ri-alarm-warning-line"></i> Accident History Report</div>
+                                <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                    <% if (vehicle.accident_history && vehicle.accident_history.includes('cloudinary')) { %>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <i class="ri-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
+                                            <span style="font-size: 14px;">Accident_Report.pdf</span>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="<%= vehicle.accident_history %>" target="_blank" class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;">
+                                                <i class="ri-eye-line"></i> View
+                                            </a>
+                                            <a href="<%= vehicle.accident_history %>" download class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;">
+                                                <i class="ri-download-line"></i>
+                                            </a>
+                                        </div>
+                                    <% } else { %>
+                                        <p style="color: hsl(var(--muted-foreground)); font-style: italic;">No PDF provided: <%= vehicle.accident_history || 'N/A' %></p>
+                                    <% } %>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <h3 style="margin-top: 20px;"><i class="ri-alarm-warning-line"></i> Accident History</h3>
-                        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
-                            <%= vehicle.accident_history || 'Not provided' %>
-                        </div>
-                        
-                        <h3 style="margin-top: 20px;"><i class="ri-error-warning-line"></i> Recall Information</h3>
-                        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
+
+                        <h3 style="margin-top: 24px;"><i class="ri-error-warning-line"></i> Recall Information</h3>
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap; margin-top: 8px;">
                             <%= vehicle.recall_information || 'Not provided' %>
                         </div>
-                        
-                        <% if (vehicle.additional_features) { %>
-                            <h3 style="margin-top: 20px;"><i class="ri-star-line"></i> Additional Features</h3>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
-                                <%= vehicle.additional_features %>
-                            </div>
-                        <% } %>
-                        
-                        <% if (vehicle.description) { %>
-                            <h3 style="margin-top: 20px;"><i class="ri-file-text-line"></i> Vehicle Description</h3>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 6px; white-space: pre-wrap;">
-                                <%= vehicle.description %>
-                            </div>
-                        <% } %>
                     </div>
                 </div>
                 

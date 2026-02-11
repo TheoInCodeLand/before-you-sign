@@ -998,28 +998,60 @@
                 <!-- Vehicle History -->
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Vehicle History</h3>
-                        <p class="card-description">Service, accident, and recall history</p>
+                        <h3 class="card-title">Vehicle History & Documents</h3>
+                        <p class="card-description">Official service records and accident reports (PDF)</p>
                     </div>
                     <div class="card-content">
-                        <div class="history-section">
-                            <h4 class="history-title">Service History</h4>
-                            <div class="history-content">
-                                <%= vehicle.service_history || 'Not provided' %>
+                        <div class="info-grid">
+                            
+                            <div class="history-section">
+                                <h4 class="history-title"><i class="fas fa-tools"></i> Service History</h4>
+                                <div class="history-content" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;">
+                                    <% if (vehicle.service_history && vehicle.service_history.startsWith('http')) { %>
+                                        <span style="font-size: 14px; color: hsl(var(--muted-foreground));">
+                                            <i class="fas fa-file-pdf" style="color: #ef4444; margin-right: 8px;"></i> Service_Records.pdf
+                                        </span>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="<%= vehicle.service_history %>" target="_blank" class="outline-button" style="padding: 6px 12px; font-size: 12px;">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <a href="<%= vehicle.service_history %>" download class="primary-button" style="padding: 6px 12px; font-size: 12px;">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        </div>
+                                    <% } else { %>
+                                        <span style="color: hsl(var(--muted-foreground)); font-style: italic;">No PDF document uploaded</span>
+                                    <% } %>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="history-section">
-                            <h4 class="history-title">Accident History</h4>
-                            <div class="history-content">
-                                <%= vehicle.accident_history || 'Not provided' %>
+
+                            <div class="history-section">
+                                <h4 class="history-title"><i class="fas fa-car-crash"></i> Accident History Report</h4>
+                                <div class="history-content" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;">
+                                    <% if (vehicle.accident_history && vehicle.accident_history.startsWith('http')) { %>
+                                        <span style="font-size: 14px; color: hsl(var(--muted-foreground));">
+                                            <i class="fas fa-file-pdf" style="color: #ef4444; margin-right: 8px;"></i> Accident_Report.pdf
+                                        </span>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="<%= vehicle.accident_history %>" target="_blank" class="outline-button" style="padding: 6px 12px; font-size: 12px;">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <a href="<%= vehicle.accident_history %>" download class="primary-button" style="padding: 6px 12px; font-size: 12px;">
+                                                <i class="fas fa-download"></i> Download
+                                            </a>
+                                        </div>
+                                    <% } else { %>
+                                        <span style="color: hsl(var(--muted-foreground)); font-style: italic;">No PDF document uploaded</span>
+                                    <% } %>
+                                </div>
                             </div>
+
                         </div>
-                        
-                        <div class="history-section">
-                            <h4 class="history-title">Recall Information</h4>
+
+                        <div class="history-section" style="margin-top: 24px;">
+                            <h4 class="history-title"><i class="fas fa-exclamation-triangle"></i> Recall Information</h4>
                             <div class="history-content">
-                                <%= vehicle.recall_information || 'Not provided' %>
+                                <%= vehicle.recall_information || 'No recall information provided' %>
                             </div>
                         </div>
                     </div>

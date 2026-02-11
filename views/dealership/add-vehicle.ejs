@@ -609,7 +609,7 @@
                         <p class="card-description">Fill in all required details to add a new vehicle to your inventory</p>
                     </div>
                     <div class="card-content">
-                        <form method="POST" action="/dealership/add-vehicle" class="form-container">
+                        <form method="POST" action="/dealership/add-vehicle" enctype="multipart/form-data" class="form-container">
                             
                             <!-- SECTION 1: Vehicle Identification -->
                             <div class="form-section">
@@ -870,21 +870,20 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">Service History *</label>
-                                    <textarea name="serviceHistory" class="form-control" rows="5" required placeholder="Detail all service records with dates and mileage..."></textarea>
-                                    <span class="form-text">Example: "15,000 km service on 2023-05-15 at authorized dealer. Oil change, filter replacement. 30,000 km service on 2024-01-20..."</span>
+                                    <label class="form-label">Service History (PDF) *</label>
+                                    <input type="file" name="serviceHistoryPdf" class="form-control" accept=".pdf" required>
+                                    <span class="form-text">Upload official service book scans or invoices as a single PDF.</span>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="form-label">Accident History *</label>
-                                    <textarea name="accidentHistory" class="form-control" rows="3" required placeholder="No accidents OR detail any accidents with dates and repairs..."></textarea>
-                                    <span class="form-text">Be honest - this builds trust. Include dates, damage details, and repair documentation.</span>
+                                    <label class="form-label">Accident History Report (PDF) *</label>
+                                    <input type="file" name="accidentHistoryPdf" class="form-control" accept=".pdf" required>
+                                    <span class="form-text">Upload police reports or insurance clearance documents.</span>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="form-label">Recall Information *</label>
                                     <textarea name="recallInformation" class="form-control" rows="2" required placeholder="No open recalls OR list completed recalls..."></textarea>
-                                    <span class="form-text">Check manufacturer website for recall history by VIN.</span>
                                 </div>
                                 
                                 <div class="form-group">

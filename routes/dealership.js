@@ -6,6 +6,7 @@ const QRCode = require('qrcode');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const { storage } = require('../config/cloudinary');
 const { isAuthenticated, hasRole } = require('./auth');
 
 // Detect production vs local dev
@@ -14,18 +15,18 @@ const uploadDir = isProd ? '/tmp/uploads/vehicles' : path.join(__dirname, '../pu
 const qrDir = isProd ? '/tmp/qr-codes' : path.join(__dirname, '../public/qr-codes');
 
 // Multer storage config
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'vehicle-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     if (!fs.existsSync(uploadDir)) {
+//       fs.mkdirSync(uploadDir, { recursive: true });
+//     }
+//     cb(null, uploadDir);
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     cb(null, 'vehicle-' + uniqueSuffix + path.extname(file.originalname));
+//   }
+// });
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -39,11 +40,16 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
+const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: fileFilter
+  limits: { fileSize: 50 * 1024 * 1024 } // Optional: increase limit for PDFs if needed
 });
+
+const uploadFields = upload.fields([
+  { name: 'vehicleImages', maxCount: 10 },
+  { name: 'serviceHistoryPdf', maxCount: 1 },
+  { name: 'accidentHistoryPdf', maxCount: 1 }
+]);
 
 // Auth middleware
 router.use(isAuthenticated);
@@ -147,13 +153,11 @@ router.get('/add-vehicle', (req, res) => {
   });
 });
 
-// Add vehicle POST
-router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) => {
+// Add vehicle POST - Updated for Cloudinary
+router.post('/add-vehicle', uploadFields, async (req, res) => {
   try {
     const dealershipId = await getDealershipId(req.session.userId);
-    if (!dealershipId) {
-        throw new Error('Dealership profile not found');
-    }
+    if (!dealershipId) throw new Error('Dealership profile not found');
 
     const {
       vin, make, model, year, mileage, price, color,
@@ -162,13 +166,11 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
       dateLiabilityLicensing, vehicleStatus, dateLiableRegistration,
       licenseNumber1, licenseNumber2, licenseNumber3,
       engineType, engineCapacity,
-      serviceHistory, accidentHistory, recallInformation,
-      additionalFeatures, description
+      additionalFeatures, description // Service and Accident History removed from text body
     } = req.body;
 
-    // Validate VIN
+    // VIN Validation
     if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-      if (req.files) req.files.forEach(file => fs.unlinkSync(file.path));
       return res.render('dealership/add-vehicle', {
         title: 'Add Vehicle',
         error: 'Invalid VIN format (17 characters, no I, O, Q)',
@@ -176,19 +178,24 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
       });
     }
 
-    let imageUrls = [];
-    if (req.files && req.files.length > 0) {
-      imageUrls = req.files.map(file => `/uploads/vehicles/${file.filename}`);
-    }
+    // Capture Cloudinary URLs
+    const imageUrls = req.files['vehicleImages'] 
+      ? req.files['vehicleImages'].map(f => f.path) 
+      : [];
     const imageUrlsJson = JSON.stringify(imageUrls);
 
-    const licenseNumbers = [];
-    if (licenseNumber1) licenseNumbers.push(licenseNumber1);
-    if (licenseNumber2) licenseNumbers.push(licenseNumber2);
-    if (licenseNumber3) licenseNumbers.push(licenseNumber3);
+    const serviceHistoryUrl = req.files['serviceHistoryPdf'] 
+      ? req.files['serviceHistoryPdf'][0].path 
+      : null;
+      
+    const accidentHistoryUrl = req.files['accidentHistoryPdf'] 
+      ? req.files['accidentHistoryPdf'][0].path 
+      : null;
+
+    const licenseNumbers = [licenseNumber1, licenseNumber2, licenseNumber3].filter(Boolean);
     const licenseNumbersJson = JSON.stringify(licenseNumbers);
 
-    // INSERT with RETURNING id
+    // Database Insertion (Storing URLs in the existing TEXT columns)
     const insertRes = await pool.query(`
       INSERT INTO vehicles 
       (dealership_id, vin, make, model, year, mileage, price, color,
@@ -206,16 +213,18 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
       registrationAuthority, plateNumber, engineNumber, tareWeight,
       dateLiabilityLicensing, vehicleStatus, dateLiableRegistration,
       licenseNumbersJson, engineType, engineCapacity,
-      serviceHistory, accidentHistory, recallInformation,
+      serviceHistoryUrl, // Cloudinary URL
+      accidentHistoryUrl, // Cloudinary URL
+      req.body.recallInformation, // Keep recall as text or update to PDF as needed
       additionalFeatures, description, imageUrlsJson
     ]);
 
     const vehicleId = insertRes.rows[0].id;
     const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
-    // const qrData = JSON.stringify({ vehicleId, vin, plateNumber, dealershipId });
-    const qrData = `${baseUrl}/vehicle/${vin}`;
-    const qrFilePath = path.join(qrDir, `vehicle_${vehicleId}.png`);
+    const qrData = `${baseUrl}/vehicle/${vehicleId}`;
 
+    // QR Generation
+    const qrFilePath = path.join(qrDir, `vehicle_${vehicleId}.png`);
     if (!fs.existsSync(qrDir)) fs.mkdirSync(qrDir, { recursive: true });
     await QRCode.toFile(qrFilePath, qrData);
 
@@ -228,19 +237,9 @@ router.post('/add-vehicle', upload.array('vehicleImages', 10), async (req, res) 
 
   } catch (error) {
     console.error('Error adding vehicle:', error);
-    if (req.files) {
-      req.files.forEach(file => { try { fs.unlinkSync(file.path); } catch(e) {} });
-    }
-    
-    // Check for Postgres duplicate key error
-    let errorMessage = 'An error occurred while adding the vehicle';
-    if (error.code === '23505') {
-        errorMessage = 'Error adding vehicle. VIN or Plate Number may already exist.';
-    }
-
     res.render('dealership/add-vehicle', {
       title: 'Add Vehicle',
-      error: errorMessage,
+      error: 'An error occurred while adding the vehicle',
       success: null
     });
   }
@@ -275,7 +274,7 @@ router.get('/vehicles', async (req, res) => {
   }
 });
 
-// Single vehicle details
+// Single vehicle details - routes/dealership.js
 router.get('/vehicle/:id', async (req, res) => {
   try {
     const dealershipId = await getDealershipId(req.session.userId);

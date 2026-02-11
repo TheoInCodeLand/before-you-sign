@@ -646,15 +646,20 @@
         .header__container::before {
           right: 5rem;
           width: calc(50% - 4rem);
-          height: 100%;
+          height: 85%;
         }
 
         .header__image {
           grid-column: 3/6;
         }
 
+        .header__image img {
+          height: 22rem;
+          width: auto;
+          border-radius: 0.5rem;
+        }
         .header__content {
-          grid-area: 1/1/2/3;
+          grid-area: 1/1/2/2;
         }
 
         .steps__grid {
@@ -758,23 +763,23 @@
       <div class="section__container header__container" id="home">
         <div class="header__image">
           <img 
-            src="https://images.netdirector.co.uk/gforces-auto/image/upload/q_auto,c_fill,f_auto,fl_lossy/auto-client/db34bc6d7896380da1d7befaffde9a7a/sclassmaybach.png" 
+            src="/assets/generate.png" 
             alt="Mercedes-Benz S-Class Maybach - Verified vehicle available through Before You Sign certified ethical dealership programme" 
             loading="eager"
           />
         </div>
         <div class="header__content">
-          <h1>Empowering the people one signature at a time.</h1>
+          <h1>Don't Sign Until You Scan</h1>
           <p>
-            are you a first time buyer in the market for a used vehicle?  
+            Every certified vehicle comes with a transparent history you can verify in seconds. No hidden stories. No surprises.
           </p>
           <!-- VISIT LATER TO SEE THE DYNAMIC -->
           <div class="header__links">
             <a href="/customer/vehicles" aria-label="Browse our verified vehicles">
-              <button class="btn btn__primary" style="padding: 15px 30px; font-size: 1rem;">Verified Vehicles</button>
+              <button class="btn btn__primary" style="padding: 15px 30px; font-size: 1rem;">Find A certified Dealership</button>
             </a>
             <a href="/register/dealership" aria-label="Register your dealership with Before You Sign">
-              <button class="btn btn__secondary" style="padding: 15px 30px; font-size: 1rem;">Register Dealership</button>
+              <button class="btn btn__secondary" style="padding: 15px 30px; font-size: 1rem;">See How It Works</button>
             </a>
           </div>
         </div>
