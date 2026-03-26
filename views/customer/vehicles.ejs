@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verified Vehicles | Before You Sign</title>
+  <meta name="description" content="Browse certified vehicles with verified histories from ethical dealerships. Scan QR codes for instant vehicle verification.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- QR Scanner -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <%- include('../partials/favicon.ejs')%>
+  
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --accent-dark: #059669;
+      --gray-50: #fafafa;
+      --gray-100: #f4f4f5;
+      --gray-200: #e4e4e7;
+      --gray-300: #d4d4d8;
+      --gray-400: #a1a1aa;
+      --gray-500: #71717a;
+      --gray-600: #52525b;
+      --gray-700: #3f3f46;
+      --gray-800: #27272a;
+      --gray-900: #18181b;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --radius: 0.75rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gray-50);
+      color: var(--black);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background: rgba(16, 185, 129, 0.2);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--gray-100);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--gray-400);
+      border-radius: 4px;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--black);
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      background: var(--black);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 1.125rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--gray-600);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--black);
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .nav-cta {
+      background: var(--black);
+      color: var(--white);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+      border: 2px solid var(--black);
+    }
+
+    .nav-cta:hover {
+      background: transparent;
+      color: var(--black);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--black);
+      padding: 0.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 120px 2rem 4rem;
+      background: linear-gradient(135deg, var(--black) 0%, var(--gray-900) 100%);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-light);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-title span {
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--gray-400);
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Search Box */
+    .search-container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .search-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
+
+    .search-tab {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--gray-400);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-tab:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      color: var(--white);
+    }
+
+    .search-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--white);
+    }
+
+    .search-form {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius);
+      color: var(--white);
+      font-size: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .search-input::placeholder {
+      color: var(--gray-500);
+      text-transform: none;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+    }
+
+    .search-btn {
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+    }
+
+    .scan-btn {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 1rem 2rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scan-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--white);
+    }
+
+    /* Filter Section */
+    .filter-section {
+      padding: 2rem;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 73px;
+      z-index: 100;
+    }
+
+    .filter-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-weight: 600;
+      color: var(--gray-700);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-select {
+      padding: 0.625rem 1rem;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--gray-700);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .filter-clear {
+      margin-left: auto;
+      color: var(--gray-500);
+      text-decoration: none;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .filter-clear:hover {
+      color: var(--danger);
+    }
+
+    .results-count {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    /* Vehicle Grid */
+    .vehicles-section {
+      padding: 3rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .vehicles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Vehicle Card */
+    .vehicle-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 1px solid var(--gray-200);
+      position: relative;
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--accent);
+    }
+
+    .vehicle-image {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+    }
+
+    .vehicle-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .vehicle-card:hover .vehicle-image img {
+      transform: scale(1.05);
+    }
+
+    .verified-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: var(--accent);
+      color: var(--white);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-lg);
+      z-index: 2;
+    }
+
+    .verified-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--white);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .vehicle-year {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--white);
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .vehicle-content {
+      padding: 1.5rem;
+    }
+
+    .vehicle-header {
+      margin-bottom: 1rem;
+    }
+
+    .vehicle-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 0.25rem;
+      text-decoration: none;
+      display: block;
+      transition: color 0.2s;
+    }
+
+    .vehicle-title:hover {
+      color: var(--accent);
+    }
+
+    .vehicle-dealer {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .vehicle-dealer i {
+      color: var(--accent);
+    }
+
+    .vehicle-specs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .spec-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .spec-item i {
+      color: var(--gray-400);
+      width: 16px;
+    }
+
+    .vehicle-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vehicle-price {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--black);
+    }
+
+    .vehicle-price span {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray-500);
+    }
+
+    .view-btn {
+      background: var(--black);
+      color: var(--white);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .view-btn:hover {
+      background: var(--accent);
+      transform: translateX(4px);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .empty-icon {
+      width: 120px;
+      height: 120px;
+      background: var(--gray-100);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 3rem;
+      color: var(--gray-400);
+    }
+
+    .empty-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+      color: var(--gray-500);
+      margin-bottom: 1.5rem;
+    }
+
+    .empty-btn {
+      background: var(--accent);
+      color: var(--white);
+      padding: 0.875rem 2rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .empty-btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      min-width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 1rem;
+      background: var(--white);
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      color: var(--gray-700);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .page-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .page-btn.active {
+      background: var(--black);
+      border-color: var(--black);
+      color: var(--white);
+    }
+
+    .page-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* QR Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      animation: modalSlide 0.3s ease;
+    }
+
+    @keyframes modalSlide {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .modal-title i {
+      color: var(--accent);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray-500);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--gray-100);
+      color: var(--danger);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    #qr-reader {
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .qr-status {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .qr-status.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-dark);
+    }
+
+    .qr-status.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--black);
+      color: var(--gray-400);
+      padding: 3rem 2rem 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-brand {
+      color: var(--white);
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .footer-desc {
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .social-link:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .footer-column h4 {
+      color: var(--white);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-links a {
+      color: var(--gray-400);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--white);
+    }
+
+    .footer-bottom {
+      max-width: 1400px;
+      margin: 3rem auto 0;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .vehicles-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding: 100px 1.5rem 3rem;
+      }
+
+      .search-form {
+        flex-direction: column;
+      }
+
+      .search-input-wrapper {
+        min-width: 100%;
+      }
+
+      .filter-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .filter-clear {
+        margin-left: 0;
+      }
+
+      .vehicles-section {
+        padding: 2rem 1rem;
+      }
+
+      .vehicles-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+
+    /* Loading Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+      background-size: 200% 100%;
+      animation: skeleton 1.5s infinite;
+    }
+
+    @keyframes skeleton {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--black);
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-xl);
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 3000;
+      animation: toastSlide 0.3s ease;
+    }
+
+    @keyframes toastSlide {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast.show {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo-original.png" alt="" height="40">
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/vehicles" class="nav-link active">Browse</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/register/dealership" class="nav-cta">Become Certified</a>
+      </div>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-badge">
+        <i class="fas fa-check-circle"></i>
+        <span><%= totalVehicles || vehicles.length %>+ Verified Vehicles</span>
+      </div>
+      <h1 class="hero-title">Find Your <span>Verified</span> Vehicle</h1>
+      <p class="hero-subtitle">
+        Browse certified vehicles with complete verified histories from ethical dealerships across South Africa
+      </p>
+
+      <div class="search-container">
+        <div class="search-tabs">
+          <button class="search-tab active" data-tab="vin">
+            <i class="fas fa-barcode"></i> Search by VIN
+          </button>
+          <button class="search-tab" data-tab="scan">
+            <i class="fas fa-qrcode"></i> Scan QR Code
+          </button>
+        </div>
+
+        <form action="/vehicles" method="GET" class="search-form" id="searchForm">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+              type="text" 
+              name="vin" 
+              class="search-input" 
+              placeholder="Enter 17-digit VIN number..."
+              maxlength="17"
+              value="<%= locals.filters && filters.vin ? filters.vin : '' %>"
+            >
+          </div>
+          <button type="submit" class="search-btn">
+            <i class="fas fa-shield-alt"></i> Verify Vehicle
+          </button>
+          <button type="button" class="scan-btn" id="scanBtn">
+            <i class="fas fa-camera"></i> Scan QR
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="filter-section">
+    <div class="filter-container">
+      <span class="filter-label">
+        <i class="fas fa-filter"></i> Filters:
+      </span>
+      
+      <select class="filter-select" name="make" onchange="applyFilter('make', this.value)">
+        <option value="">All Makes</option>
+        <option value="BMW" <%= locals.filters && filters.make === 'BMW' ? 'selected' : '' %>>BMW</option>
+        <option value="Mercedes" <%= locals.filters && filters.make === 'Mercedes' ? 'selected' : '' %>>Mercedes</option>
+        <option value="Audi" <%= locals.filters && filters.make === 'Audi' ? 'selected' : '' %>>Audi</option>
+        <option value="Toyota" <%= locals.filters && filters.make === 'Toyota' ? 'selected' : '' %>>Toyota</option>
+        <option value="VW" <%= locals.filters && filters.make === 'VW' ? 'selected' : '' %>>VW</option>
+      </select>
+
+      <select class="filter-select" name="year" onchange="applyFilter('year', this.value)">
+        <option value="">All Years</option>
+        <option value="2024" <%= locals.filters && filters.year === '2024' ? 'selected' : '' %>>2024</option>
+        <option value="2023" <%= locals.filters && filters.year === '2023' ? 'selected' : '' %>>2023</option>
+        <option value="2022" <%= locals.filters && filters.year === '2022' ? 'selected' : '' %>>2022</option>
+        <option value="2021" <%= locals.filters && filters.year === '2021' ? 'selected' : '' %>>2021</option>
+        <option value="2020" <%= locals.filters && filters.year === '2020' ? 'selected' : '' %>>2020</option>
+      </select>
+
+      <select class="filter-select" name="price" onchange="applyFilter('maxPrice', this.value)">
+        <option value="">Any Price</option>
+        <option value="200000" <%= locals.filters && filters.maxPrice === '200000' ? 'selected' : '' %>>Under R200k</option>
+        <option value="500000" <%= locals.filters && filters.maxPrice === '500000' ? 'selected' : '' %>>Under R500k</option>
+        <option value="1000000" <%= locals.filters && filters.maxPrice === '1000000' ? 'selected' : '' %>>Under R1M</option>
+        <option value="2000000" <%= locals.filters && filters.maxPrice === '2000000' ? 'selected' : '' %>>Under R2M</option>
+      </select>
+
+      <span class="results-count">
+        Showing <%= vehicles.length %> of <%= totalVehicles || vehicles.length %> vehicles
+      </span>
+
+      <% if (locals.filters && Object.keys(filters).some(k => filters[k])) { %>
+        <a href="/vehicles" class="filter-clear">
+          <i class="fas fa-times"></i> Clear Filters
+        </a>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- Vehicles Grid -->
+  <section class="vehicles-section">
+    <% if (vehicles.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3 class="empty-title">No vehicles found</h3>
+        <p class="empty-text">Try adjusting your search criteria or filters to find what you're looking for.</p>
+        <a href="/vehicles" class="empty-btn">
+          <i class="fas fa-undo"></i> Clear All Filters
+        </a>
+      </div>
+    <% } else { %>
+      <div class="vehicles-grid">
+        <% vehicles.forEach(function(vehicle) { %>
+          <article class="vehicle-card">
+            
+            <div class="vehicle-image">
+              <% 
+                let images = [];
+                if (vehicle.image_urls) {
+                  try {
+                    images = JSON.parse(vehicle.image_urls);
+                    if (!Array.isArray(images)) images = [images];
+                  } catch(e) {
+                    images = vehicle.image_urls ? [vehicle.image_urls] : [];
+                  }
+                }
+                const mainImage = images[0] || '/assets/car-placeholder.jpg';
+                const imageCount = images.length;
+              %>
+              <img src="<%= mainImage %>" alt="..." loading="lazy" onerror="this.src='/assets/car-placeholder.jpg'">
+              
+              <% if (imageCount > 1) { %>
+                <div style="position: absolute; bottom: 1rem; right: 1rem; background: rgba(0,0,0,0.7); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius); font-size: 0.75rem; font-weight: 600;">
+                  <i class="fas fa-images"></i> <%= imageCount %> photos
+                </div>
+              <% } %>
+              
+              <div class="verified-badge">...</div>
+              <span class="vehicle-year">...</span>
+            </div>
+
+            <!-- Vehicle Content -->
+            <div class="vehicle-content">
+              <div class="vehicle-header">
+                <a href="/vehicle/<%= vehicle.id %>" class="vehicle-title">
+                  <%= vehicle.make %> <%= vehicle.model %>
+                </a>
+                <div class="vehicle-dealer">
+                  <i class="fas fa-store"></i>
+                  <%= vehicle.business_name || 'Certified Dealer' %>
+                </div>
+              </div>
+
+              <div class="vehicle-specs">
+                <div class="spec-item">
+                  <i class="fas fa-tachometer-alt"></i>
+                  <span><%= vehicle.mileage ? vehicle.mileage.toLocaleString() + ' km' : 'N/A' %></span>
+                </div>
+                <div class="spec-item">
+                  <i class="fas fa-gas-pump"></i>
+                  <span><%= vehicle.fuel_type || 'N/A' %></span>
+                </div>
+                <div class="spec-item">
+                  <i class="fas fa-cog"></i>
+                  <span><%= vehicle.transmission || 'N/A' %></span>
+                </div>
+                <div class="spec-item">
+                  <i class="fas fa-palette"></i>
+                  <span><%= vehicle.color || 'N/A' %></span>
+                </div>
+              </div>
+
+              <div class="vehicle-footer">
+                <div class="vehicle-price">
+                  <!-- <%= vehicle.price ? 'R' + vehicle.price.toLocaleString() : 'POA' %>
+                  <span><%= vehicle.price ? '' : 'Contact for price' %></span> -->
+                </div>
+                <a href="/vehicle/<%= vehicle.id %>" class="view-btn">
+                  View Details <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+
+      <!-- Pagination -->
+      <% if (locals.totalPages && totalPages > 1) { %>
+        <div class="pagination">
+          <% if (currentPage > 1) { %>
+            <a href="/vehicles?page=<%= currentPage - 1 %><%= buildQueryString(filters) %>" class="page-btn">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          <% } %>
+
+          <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+            <% if (i === currentPage) { %>
+              <span class="page-btn active"><%= i %></span>
+            <% } else { %>
+              <a href="/vehicles?page=<%= i %><%= buildQueryString(filters) %>" class="page-btn"><%= i %></a>
+            <% } %>
+          <% } %>
+
+          <% if (currentPage < totalPages) { %>
+            <a href="/vehicles?page=<%= currentPage + 1 %><%= buildQueryString(filters) %>" class="page-btn">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+  </section>
+
+  <!-- QR Scanner Modal -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-qrcode"></i> Scan Vehicle QR Code
+        </h3>
+        <button class="modal-close" onclick="closeQrModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="qr-reader"></div>
+        <div class="qr-status" id="qrStatus">
+          <i class="fas fa-info-circle"></i> Point your camera at the vehicle's QR code
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Success!</span>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div>
+        <div class="footer-brand">
+          <img src="/assets/logo-original.png" alt="" height="40">
+        </div>
+        <p class="footer-desc">
+          Empowering car buyers with verified data and holding dealerships accountable through transparent verification.
+        </p>
+        <div class="footer-social">
+          <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Platform</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/vehicles">Browse Vehicles</a></li>
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/register/dealership">For Dealerships</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Legal</h4>
+        <ul class="footer-links">
+          <li><a href="#">Consumer Protection Act</a></li>
+          <li><a href="#">Dispute Resolution</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Contact</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:mxolisimkhonza23@gmail.com">mxolisimkhonza23@gmail.com</a></li>
+          <li><a href="tel:+27837440206">+27 83 744 0206</a></li>
+          <li><a href="#">Johannesburg, South Africa</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; <%= new Date().getFullYear() %> Before You Sign. All rights reserved.</div>
+      <div>
+        <i class="fas fa-lock"></i> Secure SSL &bull; <i class="fas fa-shield-alt"></i> POPIA Compliant
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.search-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const tabType = tab.dataset.tab;
+        const searchForm = document.getElementById('searchForm');
+        const scanBtn = document.getElementById('scanBtn');
+        
+        if (tabType === 'scan') {
+          openQrModal();
+        }
+      });
+    });
+
+    // QR Scanner
+    let html5QrcodeScanner;
+    const qrModal = document.getElementById('qrModal');
+    const qrStatus = document.getElementById('qrStatus');
+
+    document.getElementById('scanBtn').addEventListener('click', openQrModal);
+
+    function openQrModal() {
+      qrModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      setTimeout(() => {
+        initQrScanner();
+      }, 300);
+    }
+
+    function closeQrModal() {
+      qrModal.classList.remove('active');
+      document.body.style.overflow = '';
+      
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().catch(() => {});
+      }
+    }
+
+    function initQrScanner() {
+      html5QrcodeScanner = new Html5Qrcode('qr-reader');
+      
+      html5QrcodeScanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        onScanSuccess,
+        onScanError
+      ).then(() => {
+        qrStatus.innerHTML = '<i class="fas fa-camera"></i> Camera ready - Point at QR code';
+        qrStatus.className = 'qr-status';
+      }).catch(err => {
+        qrStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Camera access denied';
+        qrStatus.className = 'qr-status error';
+      });
+    }
+
+    function onScanSuccess(qrCodeMessage) {
+      qrStatus.innerHTML = '<i class="fas fa-check-circle"></i> QR code detected!';
+      qrStatus.className = 'qr-status success';
+      
+      let vin;
+      try {
+        if (qrCodeMessage.startsWith('{')) {
+          const parsed = JSON.parse(qrCodeMessage);
+          vin = parsed.vin || parsed.VIN || parsed.vehicleId;
+        } else {
+          vin = qrCodeMessage;
+        }
+        
+        if (vin) {
+          setTimeout(() => {
+            window.location.href = `/vehicle/vin/${vin.toUpperCase()}`;
+          }, 500);
+        }
+      } catch (e) {
+        qrStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid QR code';
+        qrStatus.className = 'qr-status error';
+      }
+    }
+
+    function onScanError(errorMessage) {
+      // Silent - scanning errors are normal
+    }
+
+    // Close modal on overlay click
+    qrModal.addEventListener('click', (e) => {
+      if (e.target === qrModal) closeQrModal();
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && qrModal.classList.contains('active')) {
+        closeQrModal();
+      }
+    });
+
+    // Filter functionality
+    function applyFilter(key, value) {
+      const url = new URL(window.location.href);
+      if (value) {
+        url.searchParams.set(key, value);
+      } else {
+        url.searchParams.delete(key);
+      }
+      url.searchParams.delete('page');
+      window.location.href = url.toString();
+    }
+
+    // Build query string helper
+    function buildQueryString(filters) {
+      if (!filters) return '';
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value && key !== 'page') params.append(key, value);
+      });
+      const query = params.toString();
+      return query ? '&' + query : '';
+    }
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // VIN input validation
+    const vinInput = document.querySelector('input[name="vin"]');
+    if (vinInput) {
+      vinInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
+      });
+    }
+  </script>
+</body>
+</html>

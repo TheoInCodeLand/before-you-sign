@@ -1,0 +1,2068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Before You Sign | Certified Vehicle History Verification</title>
+    <meta name="description" content="Scan. Verify. Buy with Confidence. The only vehicle verification platform that holds dealerships accountable with blockchain-ready QR codes and 10-point verification.">
+    <meta name="keywords" content="vehicle verification, VIN check, car history, QR code verification, certified dealership, consumer protection">
+    <meta property="og:title" content="Before You Sign | The Trust Layer for Vehicle Commerce">
+    <meta property="og:description" content="Blockchain-verified vehicle histories. Every scan reveals the truth.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <%- include('partials/favicon.ejs') %>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #ffffff;
+            --accent: #10b981;
+            --accent-light: #34d399;
+            --accent-dark: #059669;
+            --gray-50: #fafafa;
+            --gray-100: #f4f4f5;
+            --gray-200: #e4e4e7;
+            --gray-300: #d4d4d8;
+            --gray-400: #a1a1aa;
+            --gray-500: #71717a;
+            --gray-600: #52525b;
+            --gray-700: #3f3f46;
+            --gray-800: #27272a;
+            --gray-900: #18181b;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 40px rgba(16, 185, 129, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-400);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-500);
+        }
+
+        /* Selection */
+        ::selection {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--black);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom-color: var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--black);
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--black);
+            color: var(--white);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand:hover .nav-logo-icon {
+            background: var(--accent);
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--black);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--black);
+            color: var(--white);
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            border: 2px solid var(--black);
+        }
+
+        .nav-cta:hover {
+            background: transparent;
+            color: var(--black);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--black);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            transition: background 0.2s;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--gray-100);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--white);
+            z-index: 1001;
+            padding: 1.5rem;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mobile-nav-links a {
+            text-decoration: none;
+            color: var(--black);
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+
+        .mobile-nav-links a:hover {
+            background: var(--gray-100);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            padding-top: 100px;
+            background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-bg-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(0, 0, 0, 0.02) 0%, transparent 30%);
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title .line span {
+            display: inline-block;
+            animation: slideUp 0.8s ease-out forwards;
+            animation-delay: 0.2s;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        .hero-title .line:nth-child(2) span {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .accent-text {
+            color: var(--accent);
+            position: relative;
+        }
+
+        .accent-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(16, 185, 129, 0.2);
+            z-index: -1;
+            border-radius: 4px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            margin-bottom: 2.5rem;
+            max-width: 540px;
+            line-height: 1.7;
+        }
+
+        /* VIN Scanner */
+        .vin-scanner {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl), 0 0 0 1px var(--gray-200);
+            max-width: 480px;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .scanner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .scanner-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9375rem;
+        }
+
+        .scanner-status {
+            background: var(--accent);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .scanner-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--white);
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .vin-input-wrapper {
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+
+        .vin-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 1.125rem;
+        }
+
+        .vin-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .vin-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .vin-input.valid {
+            border-color: var(--accent);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .vin-input.error {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .vin-validator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .vin-validator.show {
+            display: flex;
+        }
+
+        .vin-submit {
+            width: 100%;
+            background: var(--accent);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .vin-submit:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .vin-submit:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .vin-helper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        /* Hero Visual - QR Card */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .qr-card-3d {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl), 0 0 0 1px var(--gray-200);
+            max-width: 320px;
+            width: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+            transition: transform 0.3s ease;
+        }
+
+        .qr-card-3d:hover {
+            transform: rotateY(5deg) rotateX(-5deg) scale(1.02);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .qr-sticker {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-lg);
+            animation: pulse 2s infinite;
+        }
+
+        .qr-code-large {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 1.5rem;
+            background: 
+                linear-gradient(45deg, var(--gray-100) 25%, transparent 25%),
+                linear-gradient(-45deg, var(--gray-100) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, var(--gray-100) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--gray-100) 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-code-large::after {
+            content: '';
+            position: absolute;
+            inset: 20px;
+            background: var(--black);
+            border-radius: 8px;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='25' height='25' fill='black'/%3E%3Crect x='65' y='10' width='25' height='25' fill='black'/%3E%3Crect x='10' y='65' width='25' height='25' fill='black'/%3E%3Crect x='40' y='40' width='20' height='20' fill='black'/%3E%3C/svg%3E") center/contain no-repeat;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='25' height='25' fill='black'/%3E%3Crect x='65' y='10' width='25' height='25' fill='black'/%3E%3Crect x='10' y='65' width='25' height='25' fill='black'/%3E%3Crect x='40' y='40' width='20' height='20' fill='black'/%3E%3C/svg%3E") center/contain no-repeat;
+        }
+
+        .qr-info {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .qr-info h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .qr-info p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .qr-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .qr-meta-item {
+            text-align: center;
+        }
+
+        .qr-meta-label {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .qr-meta-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .qr-meta-value.verified {
+            color: var(--accent);
+        }
+
+        /* Trust Bar */
+        .trust-bar {
+            background: var(--black);
+            padding: 1rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .trust-bar::before,
+        .trust-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .trust-bar::before {
+            left: 0;
+            background: linear-gradient(90deg, var(--black), transparent);
+        }
+
+        .trust-bar::after {
+            right: 0;
+            background: linear-gradient(-90deg, var(--black), transparent);
+        }
+
+        .trust-scroll {
+            display: flex;
+            gap: 3rem;
+            animation: scroll 30s linear infinite;
+            width: max-content;
+        }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--gray-400);
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .trust-item i {
+            color: var(--accent);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .container-narrow {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            max-width: 600px;
+            margin: 0 auto 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--gray-500);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 6rem 0;
+            background: var(--white);
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 16.66%;
+            right: 16.66%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 50%, var(--gray-200) 50%, var(--gray-200) 100%);
+            z-index: 0;
+        }
+
+        .timeline-step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            color: var(--gray-600);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-step:hover .timeline-icon {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: scale(1.1);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .timeline-number {
+            position: absolute;
+            bottom: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .timeline-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .timeline-content p {
+            color: var(--gray-500);
+            font-size: 0.9375rem;
+            line-height: 1.7;
+        }
+
+        /* Comparison Section */
+        .comparison {
+            padding: 6rem 0;
+            background: var(--gray-50);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .comparison-side {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-side.before {
+            border: 1px solid var(--gray-200);
+        }
+
+        .comparison-side.after {
+            background: var(--black);
+            color: var(--white);
+            border: 1px solid var(--gray-800);
+        }
+
+        .comparison-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .comparison-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .comparison-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.875rem;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        .comparison-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .comparison-side.before .comparison-icon {
+            color: var(--danger);
+        }
+
+        .comparison-side.after .comparison-icon {
+            color: var(--accent);
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--gray-50);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: var(--white);
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon-large {
+            width: 56px;
+            height: 56px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon-large {
+            background: var(--accent);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--gray-500);
+            font-size: 0.9375rem;
+            line-height: 1.7;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 6rem 0;
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-card-large {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card-large:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .stat-number-large {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label-large {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-desc {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 6rem 0;
+            background: var(--white);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .testimonial-card {
+            background: var(--gray-50);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            background: var(--white);
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .testimonial-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--gray-700);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-content::before {
+            content: '"';
+            font-size: 3rem;
+            color: var(--accent);
+            line-height: 1;
+            display: block;
+            margin-bottom: -1rem;
+            opacity: 0.5;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .author-info h4 {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            margin-bottom: 0.125rem;
+        }
+
+        .author-info p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .cta-text {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: var(--white);
+            color: var(--accent-dark);
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline-white {
+            background: transparent;
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline-white:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--white);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--black);
+            color: var(--gray-400);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-desc {
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            max-width: 300px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .footer-column h4 {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 0.9375rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .trust-badges {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--black);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .vin-scanner {
+                margin: 0 auto;
+            }
+
+            .timeline {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .timeline::before {
+                display: none;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: 2.25rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .trust-badges {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn-white,
+            .btn-outline-white {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+              <img src="/assets/logo-original.png" alt="" height="40">
+            </a>
+            <div class="nav-links">
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#for-dealers" class="nav-link">For Dealers</a>
+                <a href="/vehicles" class="nav-link">Browse</a>
+                <a href="/register/dealership" class="nav-cta">Become Certified</a>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <a href="/" class="nav-brand">
+                <div class="nav-logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                Before You Sign
+            </a>
+            <button onclick="toggleMobileMenu()" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-nav-links">
+            <a href="#how-it-works" onclick="toggleMobileMenu()">How It Works</a>
+            <a href="#features" onclick="toggleMobileMenu()">Features</a>
+            <a href="#for-dealers" onclick="toggleMobileMenu()">For Dealers</a>
+            <a href="/vehicles" onclick="toggleMobileMenu()">Browse Vehicles</a>
+            <a href="/register/dealership" class="nav-cta" style="text-align: center; margin-top: 1rem;">Become Certified</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg-pattern"></div>
+        <div class="hero-grid">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Now Protecting 12,000+ Vehicles</span>
+                </div>
+                <h1 class="hero-title">
+                    <div class="line"><span>The Trust Layer for</span></div>
+                    <div class="line"><span>Vehicle <span class="accent-text">Commerce</span></span></div>
+                </h1>
+                <p class="hero-subtitle">
+                    Blockchain-verified vehicle histories. Zero-trust automotive marketplace.
+                    Every scan reveals the truth—mileage, accidents, service records, ownership.
+                </p>
+                
+                <!-- Interactive VIN Scanner -->
+                <div class="vin-scanner">
+                    <div class="scanner-header">
+                        <div class="scanner-label">
+                            <i class="fas fa-search" style="color: var(--accent);"></i>
+                            Instant VIN Verification
+                        </div>
+                        <div class="scanner-status">Live</div>
+                    </div>
+                    <form action="/vehicles" method="GET" id="vinForm">
+                        <div class="vin-input-wrapper">
+                            <i class="fas fa-barcode vin-icon"></i>
+                            <input
+                                type="text"
+                                name="vin"
+                                class="vin-input"
+                                id="vinInput"
+                                placeholder="Enter 17-digit VIN"
+                                maxlength="17"
+                                autocomplete="off"
+                                aria-label="Vehicle Identification Number"
+                            >
+                        </div>
+                        <div class="vin-validator" id="vinValidator">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Valid VIN format</span>
+                        </div>
+                        <button type="submit" class="vin-submit" id="vinSubmit">
+                            <i class="fas fa-shield-alt"></i>
+                            Generate Trust Report
+                        </button>
+                    </form>
+                    <div class="vin-helper">
+                        <span><i class="fas fa-lock" style="margin-right: 0.5rem;"></i>Free • No registration required</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--gray-400);">Powered by NHTSA & DMV</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="qr-card-3d">
+                    <div class="qr-sticker">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="qr-code-large"></div>
+                    <div class="qr-info">
+                        <h3>2019 BMW 3 Series</h3>
+                        <p>Certified Pre-Owned • Verified History</p>
+                    </div>
+                    <div class="qr-meta">
+                        <div class="qr-meta-item">
+                            <div class="qr-meta-label">VIN</div>
+                            <div class="qr-meta-value">WBA8E1G5...</div>
+                        </div>
+                        <div class="qr-meta-item">
+                            <div class="qr-meta-label">Status</div>
+                            <div class="qr-meta-value verified">
+                                <i class="fas fa-check-circle" style="margin-right: 0.25rem;"></i>Verified
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust Bar -->
+        <div class="trust-bar">
+            <div class="trust-scroll">
+                <div class="trust-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Bank-Level Encryption</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-check-double"></i>
+                    <span>10-Point Verification</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Consumer Protection Act Compliant</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-history"></i>
+                    <span>Complete Service History</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-undo"></i>
+                    <span>Money-Back Guarantee</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-user-shield"></i>
+                    <span>POPIA Compliant</span>
+                </div>
+                <!-- Duplicate for seamless loop -->
+                <div class="trust-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Bank-Level Encryption</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-check-double"></i>
+                    <span>10-Point Verification</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Consumer Protection Act Compliant</span>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-history"></i>
+                    <span>Complete Service History</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">The Process</div>
+                <h2 class="section-title">Transparency in Three Steps</h2>
+                <p class="section-subtitle">We've eliminated the guesswork from buying used vehicles. Every certified car comes with a complete digital history.</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-step reveal">
+                    <div class="timeline-icon">
+                        <i class="fas fa-qrcode"></i>
+                        <div class="timeline-number">1</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Scan</h3>
+                        <p>Point your camera at the QR code on any certified vehicle. No app download required—works with any smartphone camera.</p>
+                    </div>
+                </div>
+                <div class="timeline-step reveal">
+                    <div class="timeline-icon">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="timeline-number">2</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Verify</h3>
+                        <p>Instantly view the 10-point verification report. See service records, accident history, mileage validation, and ownership chain.</p>
+                    </div>
+                </div>
+                <div class="timeline-step reveal">
+                    <div class="timeline-icon">
+                        <i class="fas fa-handshake"></i>
+                        <div class="timeline-number">3</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Transact</h3>
+                        <p>Buy with absolute confidence. If reality doesn't match the report, our dispute resolution protects your investment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison" id="features">
+        <div class="container-narrow">
+            <div class="section-header reveal">
+                <div class="section-tag">Why Choose Us</div>
+                <h2 class="section-title">The Before You Sign Difference</h2>
+            </div>
+            <div class="comparison-grid reveal">
+                <div class="comparison-side before">
+                    <h3 class="comparison-title">
+                        <i class="fas fa-times-circle" style="color: var(--danger);"></i>
+                        Traditional Buying
+                    </h3>
+                    <ul class="comparison-list">
+                        <li class="comparison-item">
+                            <i class="fas fa-times-circle comparison-icon"></i>
+                            <span>Verbal promises, no documentation</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-times-circle comparison-icon"></i>
+                            <span>Hidden accident history</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-times-circle comparison-icon"></i>
+                            <span>Rolled-back odometers</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-times-circle comparison-icon"></i>
+                            <span>No recourse after purchase</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-times-circle comparison-icon"></i>
+                            <span>Days of research required</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="comparison-side after">
+                    <h3 class="comparison-title">
+                        <i class="fas fa-check-circle" style="color: var(--accent);"></i>
+                        Before You Sign
+                    </h3>
+                    <ul class="comparison-list">
+                        <li class="comparison-item">
+                            <i class="fas fa-check-circle comparison-icon"></i>
+                            <span>Blockchain-verified documentation</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-check-circle comparison-icon"></i>
+                            <span>Full accident & insurance history</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-check-circle comparison-icon"></i>
+                            <span>Mileage cross-referenced with service records</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-check-circle comparison-icon"></i>
+                            <span>Mediated dispute resolution guarantee</span>
+                        </li>
+                        <li class="comparison-item">
+                            <i class="fas fa-check-circle comparison-icon"></i>
+                            <span>Instant verification via QR scan</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section style="padding: 6rem 0; background: var(--white);">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">Features</div>
+                <h2 class="section-title">Everything You Need to Buy Safely</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h3>VIN Authentication</h3>
+                    <p>Every Vehicle Identification Number is validated against manufacturer databases and government registries to prevent cloning and fraud.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3>Mileage Verification</h3>
+                    <p>Cross-referenced service records, MOT history, and previous listings to detect odometer tampering and rollback fraud.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-car-crash"></i>
+                    </div>
+                    <h3>Accident History</h3>
+                    <p>Insurance claims, police reports, and structural damage assessments. Know if the vehicle was totaled or had airbag deployments.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon-large">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3>Dispute Resolution</h3>
+                    <p>If the car doesn't match the report, our neutral mediators enforce the Consumer Protection Act. Buy with legal confidence.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card-large reveal">
+                    <div class="stat-number-large" data-target="12400">0</div>
+                    <div class="stat-label-large">Vehicles Verified</div>
+                    <div class="stat-desc">And growing daily</div>
+                </div>
+                <div class="stat-card-large reveal">
+                    <div class="stat-number-large" data-target="98">0</div>
+                    <div class="stat-label-large">Trust Score</div>
+                    <div class="stat-desc">Industry-leading accuracy</div>
+                </div>
+                <div class="stat-card-large reveal">
+                    <div class="stat-number-large" data-target="0">0</div>
+                    <div class="stat-label-large">Unresolved Disputes</div>
+                    <div class="stat-desc">100% resolution rate</div>
+                </div>
+                <div class="stat-card-large reveal">
+                    <div class="stat-number-large" data-target="500">0</div>
+                    <div class="stat-label-large">Certified Dealers</div>
+                    <div class="stat-desc">Nationwide network</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-tag">Testimonials</div>
+                <h2 class="section-title">Trusted by Buyers & Dealers</h2>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-content">"I was about to buy a 'low mileage' BMW when the QR scan revealed it had 200,000km more than shown. Before You Sign saved me R150,000."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SK</div>
+                        <div class="author-info">
+                            <h4>Sarah Kruger</h4>
+                            <p>Buyer, Johannesburg</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-content">"Since becoming certified, our close rate increased 40%. Customers trust the QR code more than our sales pitch. It's become our best marketing tool."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">TM</div>
+                        <div class="author-info">
+                            <h4>Thabo Mokoena</h4>
+                            <p>Premium Auto Dealership</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-content">"The dispute resolution saved us from a lawsuit. A small misunderstanding about service history was mediated professionally. Worth every cent."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">LN</div>
+                        <div class="author-info">
+                            <h4>Linda Ndlovu</h4>
+                            <p>City Motors</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="for-dealers">
+        <div class="container">
+            <div class="cta-content reveal">
+                <h2 class="cta-title">Ready to Transform Your Dealership?</h2>
+                <p class="cta-text">
+                    Join South Africa's first ethical vehicle certification program.
+                    Differentiate your inventory, build customer trust, and close sales faster.
+                </p>
+                <div class="cta-buttons">
+                    <a href="/register/dealership" class="btn-white">
+                        <i class="fas fa-store"></i>
+                        Apply for Certification
+                    </a>
+                    <a href="#how-it-works" class="btn-outline-white">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">
+                      <img src="/assets/logo-original.png" alt="" height="40">
+                    </div>
+                    <p class="footer-desc">
+                        Empowering car buyers with verified data and holding dealerships accountable through transparent, blockchain-ready verification.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="/vehicles">Browse Vehicles</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="/register/dealership">For Dealerships</a></li>
+                        <li><a href="/register/customer">For Buyers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Consumer Protection Act</a></li>
+                        <li><a href="#">Dispute Resolution</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:mxolisimkhonza23@gmail.com">mxolisimkhonza23@gmail.com</a></li>
+                        <li><a href="tel:+27837440206">+27 83 744 0206</a></li>
+                        <li><a href="#">Johannesburg, South Africa</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; <%= new Date().getFullYear() %> Before You Sign. All rights reserved.</div>
+                <div class="trust-badges">
+                    <span><i class="fas fa-lock" style="margin-right: 0.5rem;"></i>Secure SSL</span>
+                    <span><i class="fas fa-shield-alt" style="margin-right: 0.5rem;"></i>PCI Compliant</span>
+                    <span><i class="fas fa-user-shield" style="margin-right: 0.5rem;"></i>POPIA Ready</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast" role="alert" aria-live="polite">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Action completed successfully</span>
+    </div>
+
+    <script>
+        // Navbar scroll effect
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            
+            if (currentScroll > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const isActive = menu.classList.toggle('active');
+            document.body.style.overflow = isActive ? 'hidden' : '';
+        }
+
+        // Close mobile menu on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const menu = document.getElementById('mobileMenu');
+                menu.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // VIN input validation
+        const vinInput = document.getElementById('vinInput');
+        const vinValidator = document.getElementById('vinValidator');
+        const vinSubmit = document.getElementById('vinSubmit');
+
+        // Valid VIN characters (excluding I, O, Q)
+        const validVinChars = /^[A-HJ-NPR-Z0-9]+$/;
+
+        vinInput.addEventListener('input', (e) => {
+            // Convert to uppercase and filter invalid characters
+            let value = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
+            e.target.value = value;
+
+            // Validate VIN format
+            if (value.length === 17) {
+                vinInput.classList.add('valid');
+                vinInput.classList.remove('error');
+                vinValidator.classList.add('show');
+                vinSubmit.disabled = false;
+            } else if (value.length > 0) {
+                vinInput.classList.remove('valid');
+                vinValidator.classList.remove('show');
+                vinSubmit.disabled = value.length < 17;
+            } else {
+                vinInput.classList.remove('valid', 'error');
+                vinValidator.classList.remove('show');
+                vinSubmit.disabled = false;
+            }
+        });
+
+        // Form submission
+        document.getElementById('vinForm').addEventListener('submit', (e) => {
+            const vin = vinInput.value;
+            if (vin.length !== 17) {
+                e.preventDefault();
+                vinInput.classList.add('error');
+                showToast('Please enter a valid 17-digit VIN');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = nav.offsetHeight;
+                    const targetPosition = target.getBoundingClientRect().top + window.scrollY - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Scroll reveal animation
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Animated counters
+        const statNumbers = document.querySelectorAll('.stat-number-large');
+        
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.dataset.target);
+                    animateCounter(entry.target, target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statNumbers.forEach(stat => counterObserver.observe(stat));
+
+        function animateCounter(element, target) {
+            const duration = 2000;
+            const start = 0;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const current = Math.floor(start + (target - start) * easeOutQuart);
+                
+                element.textContent = current.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    element.textContent = target.toLocaleString();
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        // Parallax effect for hero visual
+        const heroVisual = document.querySelector('.hero-visual');
+        
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.addEventListener('mousemove', (e) => {
+                if (window.innerWidth > 1024 && heroVisual) {
+                    const x = (e.clientX / window.innerWidth - 0.5) * 10;
+                    const y = (e.clientY / window.innerHeight - 0.5) * 10;
+                    heroVisual.style.transform = `translate(${x}px, ${y}px)`;
+                }
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (mobileMenu.classList.contains('active')) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+
+        // Prefers reduced motion
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.querySelectorAll('.trust-scroll').forEach(el => {
+                el.style.animation = 'none';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="nav-logo">Before You Sign</a>
+    
+    <ul class="nav-menu">
+      <% if (!role) { %>
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/customer/browse-dealerships" class="nav-link">Dealerships</a></li>
+        <li><a href="/customer/vehicles" class="nav-link">Browse Vehicles</a></li>
+        <li><a href="/login" class="nav-link">Login</a></li>
+        <li><a href="/register/dealership" class="nav-link">Register Dealership</a></li>
+      <% } else if (role === 'admin') { %>
+        <li><a href="/admin/dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="/admin/dealerships" class="nav-link">Dealerships</a></li>
+        <li><a href="/admin/verify-vehicles" class="nav-link">Verify Vehicles</a></li>
+        <li><a href="/admin/disputes" class="nav-link">Disputes</a></li>
+        <li><a href="/logout" class="nav-link">Logout</a></li>
+      <% } else if (role === 'dealership') { %>
+        <li><a href="/dealership/dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="/dealership/profile" class="nav-link">Profile</a></li>
+        <li><a href="/dealership/add-vehicle" class="nav-link">Add Vehicle</a></li>
+        <li><a href="/dealership/vehicles" class="nav-link">My Vehicles</a></li>
+        <li><a href="/logout" class="nav-link">Logout</a></li>
+      <% } else if (role === 'customer') { %>
+        <li><a href="/customer/dashboard" class="nav-link">Dashboard</a></li>
+        <li><a href="/customer/vehicles" class="nav-link">Browse Vehicles</a></li>
+        <li><a href="/customer/browse-dealerships" class="nav-link">Dealerships</a></li>
+        <li><a href="/customer/my-disputes" class="nav-link">My Disputes</a></li>
+        <li><a href="/logout" class="nav-link">Logout</a></li>
+      <% } %>
+    </ul>
+  </div>
+</nav>

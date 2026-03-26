@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container" style="max-width: 700px;">
+    <div class="card">
+      <h1>Report Discrepancy</h1>
+      
+      <% if (error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+      
+      <form method="POST" action="/customer/report-dispute">
+        <% if (vehicle) { %>
+          <input type="hidden" name="vehicleId" value="<%= vehicle.id %>">
+          <p><strong>Vehicle:</strong> <%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></p>
+        <% } else { %>
+          <div class="form-group">
+            <label class="form-label">Vehicle ID *</label>
+            <input type="number" name="vehicleId" class="form-control" required>
+          </div>
+        <% } %>
+        
+        <div class="form-group">
+          <label class="form-label">Discrepancy Type *</label>
+          <select name="discrepancyType" class="form-control" required>
+            <option value="">Select...</option>
+            <option value="Mileage">Mileage Discrepancy</option>
+            <option value="Service History">Service History Issue</option>
+            <option value="Accident History">Accident History Issue</option>
+            <option value="Ownership">Ownership History Issue</option>
+            <option value="Pricing">Pricing Issue</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Detailed Description *</label>
+          <textarea name="description" class="form-control" rows="6" required></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-danger">Submit Dispute</button>
+        <a href="/customer/vehicles" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>

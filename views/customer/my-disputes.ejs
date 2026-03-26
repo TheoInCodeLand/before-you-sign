@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  <div class="container">
+    <h1>My Disputes</h1>
+    
+    <% if (disputes.length > 0) { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Vehicle</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% disputes.forEach(function(dispute) { %>
+            <tr>
+              <td><%= dispute.year %> <%= dispute.make %> <%= dispute.model %></td>
+              <td><%= dispute.discrepancy_type %></td>
+              <td>
+                <% if (dispute.status === 'submitted') { %>
+                  <span class="badge badge-warning">Submitted</span>
+                <% } else if (dispute.status === 'under_review') { %>
+                  <span class="badge badge-info">Under Review</span>
+                <% } else { %>
+                  <span class="badge badge-success">Resolved</span>
+                <% } %>
+              </td>
+              <td><%= new Date(dispute.created_at).toLocaleDateString() %></td>
+              <td><a href="/vehicle/<%= dispute.vehicle_id %>" class="btn btn-secondary">View Vehicle</a></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <div class="card">
+        <p>You haven't reported any disputes yet.</p>
+        <a href="/customer/vehicles" class="btn btn-primary">Browse Vehicles</a>
+      </div>
+    <% } %>
+  </div>
+  <%- include('../partials/footer') %>
+</body>
+</html>
