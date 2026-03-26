@@ -29,9 +29,12 @@
             --border: 214.3 31.8% 91.4%;
             --input: 214.3 31.8% 91.4%;
             --radius: 0.75rem;
+<<<<<<< HEAD
             --accent: 16 185 129;
             --danger: 239 68 68;
             --warning: 245 158 11;
+=======
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
         }
 
         body {
@@ -471,7 +474,12 @@
                 text-align: center;
             }
         }
+<<<<<<< HEAD
 
+=======
+    </style>
+    <style>
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
         /* Image Gallery Styles */
         .image-gallery {
             display: grid;
@@ -636,6 +644,10 @@
             }
         }
 
+<<<<<<< HEAD
+=======
+        /* Responsive */
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
         @media (max-width: 768px) {
             .image-gallery {
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -658,6 +670,7 @@
             padding: 0 10px;
             }
         }
+<<<<<<< HEAD
 
         /* ============================================
            CPA COMPLIANCE & DISPUTE MODAL STYLES
@@ -1267,6 +1280,8 @@
                 width: 100%;
             }
         }
+=======
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
     </style>
 </head>
 <body>
@@ -1279,6 +1294,21 @@
                         <img src="/assets/logo-no-bg.png" alt="" style="width: 250px; height: auto;">
                     </div>
                 </a>
+<<<<<<< HEAD
+=======
+                
+                <nav class="nav-links">
+                    <a href="/customer/vehicles" class="nav-item">Browse Vehicles</a>
+                    <a href="/about" class="nav-item">How It Works</a>
+                    <a href="/dealerships" class="nav-item">Dealerships</a>
+                    <a href="/support" class="nav-item">Support</a>
+                </nav>
+                
+                <div class="user-actions">
+                    <a href="/login" class="outline-button">Login</a>
+                    <a href="/register" class="primary-button">Sign Up</a>
+                </div>
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
             </div>
         </header>
 
@@ -1295,6 +1325,7 @@
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 <!-- ============================================
                      CPA COMPLIANCE NOTICE & DISPUTE BUTTON
                      ============================================ -->
@@ -1339,6 +1370,8 @@
                     </div>
                 </div>
 
+=======
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
                 <!-- Hero Section with Price and QR Code -->
                 <div class="hero-section" style="background: black">
                     <div class="hero-content">
@@ -1407,15 +1440,334 @@
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 <!-- Rest of your existing content continues... -->
                 <!-- Verification Status, Vehicle Photos, Registration, Specifications, etc. -->
 
                 <!-- [Keep all your existing cards: Verification Status, Vehicle Photos, Registration & Legal, Specifications, Mileage, History, etc.] -->
 
+=======
+                <!-- Verification Status -->
+                <div class="card" style="background: #ecfdf5; border-left: 4px solid #10b981;">
+                    <div class="card-header">
+                        <h3 class="card-title" style="color: #065f46;">
+                            <i class="fas fa-shield-check"></i> Verification Details
+                        </h3>
+                        <p class="card-description" style="color: #047857;">Independent verification information</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="info-grid">
+                            <div>
+                                <p><strong>Status:</strong> <span class="badge badge-success">Verified</span></p>
+                                <p><strong>Verified Date:</strong> <%= new Date(vehicle.verified_at).toLocaleDateString() %></p>
+                                <% if (vehicle.verification_notes) { %>
+                                    <p><strong>Admin Notes:</strong> <%= vehicle.verification_notes %></p>
+                                <% } %>
+                            </div>
+                            <div>
+                                <p style="color: #065f46; line-height: 1.6;">
+                                    <i class="fas fa-info-circle"></i> 
+                                    This vehicle has been independently verified by our admin team. 
+                                    All information displayed has been checked against official records and documentation.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Photos -->
+                <% if (vehicle.image_urls) { %>
+                <% try { %>
+                    <% const images = JSON.parse(vehicle.image_urls); %>
+                    <% if (images && images.length > 0) { %>
+                    <div class="card">
+                        <div class="card-header">
+                        <h3 class="card-title">Vehicle Photos</h3>
+                        <p class="card-description">High-quality images of the vehicle (<%= images.length %> photo<%= images.length !== 1 ? 's' : '' %>)</p>
+                        </div>
+                        <div class="card-content">
+                        <div class="image-gallery">
+                            <% images.forEach((img, index) => { %>
+                            <div class="gallery-item" onclick="openImageModal('<%= img %>', <%= index %>)">
+                                <img src="<%= img %>" alt="Vehicle image <%= index + 1 %>" loading="lazy">
+                                <div class="image-overlay">
+                                <i class="fas fa-search-plus"></i>
+                                </div>
+                            </div>
+                            <% }); %>
+                        </div>
+                        </div>
+                    </div>
+                    <% } %>
+                <% } catch(e) { %>
+                    <!-- Error parsing images -->
+                <% } %>
+                <% } %>
+
+                <!-- Registration & Legal Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Registration & Legal Information</h3>
+                        <p class="card-description">Official registration details and legal status</p>
+                    </div>
+                    <div class="card-content">
+                        <table class="info-table">
+                            <tr>
+                                <td><strong>Registration Authority:</strong></td>
+                                <td><%= vehicle.registration_authority || 'Not provided' %></td>
+                                <td><strong>Vehicle Status:</strong></td>
+                                <td style="text-transform: capitalize;"><%= vehicle.vehicle_status || 'Not provided' %></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Date Liable for Licensing:</strong></td>
+                                <td>
+                                    <%= vehicle.date_liability_licensing ? new Date(vehicle.date_liability_licensing).toLocaleDateString() : 'Not provided' %>
+                                    <% if (vehicle.date_liability_licensing) { %>
+                                        <% const licensingDate = new Date(vehicle.date_liability_licensing); %>
+                                        <% const today = new Date(); %>
+                                        <% const daysUntil = Math.ceil((licensingDate - today) / (1000 * 60 * 60 * 24)); %>
+                                        <% if (daysUntil < 0) { %>
+                                            <span class="badge badge-danger">Overdue</span>
+                                        <% } else if (daysUntil < 30) { %>
+                                            <span class="badge badge-warning">Due Soon</span>
+                                        <% } else { %>
+                                            <span class="badge badge-success">Current</span>
+                                        <% } %>
+                                    <% } %>
+                                </td>
+                                <td><strong>Date Liable for Registration:</strong></td>
+                                <td><%= vehicle.date_liable_registration ? new Date(vehicle.date_liable_registration).toLocaleDateString() : 'Not provided' %></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tare Weight (kg):</strong></td>
+                                <td><%= vehicle.tare_weight ? vehicle.tare_weight + ' kg' : 'Not provided' %></td>
+                                <td><strong>Previous Owners:</strong></td>
+                                <td>
+                                    <%= vehicle.previous_owners %>
+                                    <% if (vehicle.previous_owners === 0) { %>
+                                        <span class="badge badge-success">First Owner</span>
+                                    <% } else if (vehicle.previous_owners === 1) { %>
+                                        <span class="badge badge-info">One Previous Owner</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <% if (vehicle.license_numbers) { 
+                            try {
+                                const licenseNums = JSON.parse(vehicle.license_numbers); 
+                                if (licenseNums.length > 0) { %>
+                        <div style="margin-top: 20px;">
+                            <h4 style="margin-bottom: 12px;">License Numbers (last 3, most recent first)</h4>
+                            <ul class="license-list">
+                                <% licenseNums.forEach((num, idx) => { %>
+                                    <li><strong><%= idx === 0 ? 'Current' : `Previous ${idx}` %>:</strong> <code class="monospace"><%= num %></code></li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                        <% } } catch(e) { } } %>
+                    </div>
+                </div>
+
+                <!-- Vehicle Specifications -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Vehicle Specifications</h3>
+                        <p class="card-description">Technical details and specifications</p>
+                    </div>
+                    <div class="card-content">
+                        <table class="info-table">
+                            <tr>
+                                <td><strong>Make:</strong></td>
+                                <td><%= vehicle.make %></td>
+                                <td><strong>Model:</strong></td>
+                                <td><%= vehicle.model %></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Year:</strong></td>
+                                <td><%= vehicle.year %></td>
+                                <td><strong>Color:</strong></td>
+                                <td><%= vehicle.color || '-' %></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Body Type:</strong></td>
+                                <td><%= vehicle.body_type || '-' %></td>
+                                <td><strong>Transmission:</strong></td>
+                                <td><%= vehicle.transmission || '-' %></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Engine Type:</strong></td>
+                                <td><%= vehicle.engine_type || '-' %></td>
+                                <td><strong>Engine Capacity:</strong></td>
+                                <td><%= vehicle.engine_capacity || '-' %></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fuel Type:</strong></td>
+                                <td>
+                                    <%= vehicle.fuel_type || '-' %>
+                                    <% if (vehicle.fuel_type === 'Electric') { %>
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-leaf"></i> Zero Emissions
+                                        </span>
+                                    <% } else if (vehicle.fuel_type === 'Hybrid' || vehicle.fuel_type === 'Plug-in Hybrid') { %>
+                                        <span class="badge badge-info">
+                                            <i class="fas fa-leaf"></i> Eco-Friendly
+                                        </span>
+                                    <% } %>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mileage Verification -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mileage Information</h3>
+                        <p class="card-description">Verified mileage details</p>
+                    </div>
+                    <div class="card-content">
+                        <div style="display: flex; align-items: center; gap: 20px; padding: 20px; background: hsl(var(--secondary)); border-radius: 8px; border-left: 4px solid hsl(var(--primary));">
+                            <div style="font-size: 3rem; color: hsl(var(--primary));">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <div>
+                                <p style="font-size: 2rem; font-weight: 700; color: hsl(var(--text)); margin: 0;">
+                                    <%= vehicle.mileage.toLocaleString() %> km
+                                </p>
+                                <p style="color: #1e40af; margin: 5px 0 0 0;">
+                                    <i class="fas fa-check-circle"></i> Mileage verified against service records
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle History -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Vehicle History</h3>
+                        <p class="card-description">Service, accident, and recall history</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="history-section">
+                            <h4 class="history-title">Service History</h4>
+                            <div class="history-content">
+                                <%= vehicle.service_history || 'Not provided' %>
+                            </div>
+                        </div>
+                        
+                        <div class="history-section">
+                            <h4 class="history-title">Accident History</h4>
+                            <div class="history-content">
+                                <%= vehicle.accident_history || 'Not provided' %>
+                            </div>
+                        </div>
+                        
+                        <div class="history-section">
+                            <h4 class="history-title">Recall Information</h4>
+                            <div class="history-content">
+                                <%= vehicle.recall_information || 'Not provided' %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Features -->
+                <% if (vehicle.additional_features) { %>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Additional Features</h3>
+                        <p class="card-description">Extra features and equipment</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="history-content">
+                            <%= vehicle.additional_features %>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+
+                <!-- Description -->
+                <% if (vehicle.description) { %>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Description</h3>
+                        <p class="card-description">Additional notes and description</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="history-content">
+                            <%= vehicle.description %>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+
+                <!-- Dealership Contact Information -->
+                <div class="contact-section">
+                    <h3 class="card-title"><i class="fas fa-building"></i> Contact Dealership</h3>
+                    <div class="contact-grid">
+                        <div>
+                            <h4 style="color: hsl(var(--primary)); margin-bottom: 10px;"><%= vehicle.business_name %></h4>
+                            <p><i class="fas fa-phone"></i> <strong>Phone:</strong> <%= vehicle.phone %></p>
+                            <p><i class="fas fa-envelope"></i> <strong>Email:</strong> <%= vehicle.email %></p>
+                            <% if (vehicle.website) { %>
+                                <p><i class="fas fa-globe"></i> <strong>Website:</strong> <a href="<%= vehicle.website %>" target="_blank"><%= vehicle.website %></a></p>
+                            <% } %>
+                        </div>
+                        <div>
+                            <% if (vehicle.certification_status === 'active') { %>
+                                <div style="padding: 15px; background: #ecfdf5; border-radius: 8px; border-left: 4px solid #10b981;">
+                                    <p style="margin: 0; color: #065f46; font-weight: 600;">
+                                        <i class="fas fa-check-circle" style="color: #10b981;"></i> 
+                                        Certified Ethical Dealership
+                                    </p>
+                                    <p style="margin: 8px 0 0 0; color: #047857; font-size: 0.9rem;">
+                                        This dealership has been verified and certified by Before You Sign for transparency and ethical practices.
+                                    </p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Discrepancy Section -->
+                <div class="report-section">
+                    <h3 style="color: #92400e;">
+                        <i class="fas fa-exclamation-triangle"></i> Found an Issue?
+                    </h3>
+                    <p style="color: #78350f; line-height: 1.6; margin-top: 10px;">
+                        If you find any discrepancies in the vehicle information or have concerns about this listing, 
+                        you can report it through our dispute resolution system. We take all reports seriously and 
+                        will investigate thoroughly.
+                    </p>
+                    <div style="margin-top: 20px;">
+                        <% if (role === 'customer') { %>
+                            <a href="/customer/report-dispute?vehicleId=<%= vehicle.id %>" class="primary-button" style="background-color: #dc2626; font-size: 1rem; padding: 12px 24px;">
+                                <i class="fas fa-exclamation-triangle"></i> Report Discrepancy
+                            </a>
+                        <% } else { %>
+                            <a href="/login?redirect=/customer/report-dispute?vehicleId=<%= vehicle.id %>" class="primary-button" style="background-color: #dc2626; font-size: 1rem; padding: 12px 24px;">
+                                <i class="fas fa-sign-in-alt"></i> Login to Report Issue
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Back to Browsing -->
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="/customer/vehicles" class="primary-button" style="font-size: 1rem; padding: 12px 30px;">
+                        <i class="fas fa-arrow-left"></i> Continue Browsing Vehicles
+                    </a>
+                </div>
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
             </div>
         </main>
     </div>
 
+<<<<<<< HEAD
     <!-- ============================================
          DISPUTE REPORTING MODAL
          ============================================ -->
@@ -1744,10 +2096,29 @@
         // EXISTING IMAGE GALLERY FUNCTIONS
         // ============================================
         
+=======
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="modal-close">&times;</span>
+        <div class="modal-navigation">
+            <button class="nav-btn prev-btn" onclick="event.stopPropagation(); navigateImage(-1)">
+            <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nav-btn next-btn" onclick="event.stopPropagation(); navigateImage(1)">
+            <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <img id="modalImage" class="modal-image" onclick="event.stopPropagation()">
+        <div class="image-counter" id="imageCounter"></div>
+    </div>
+
+    <script>
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
         let currentImageIndex = 0;
         let imageArray = [];
 
         function openImageModal(imageSrc, index) {
+<<<<<<< HEAD
             // ... your existing image modal code ...
         }
 
@@ -1758,6 +2129,90 @@
         function navigateImage(direction) {
             // ... your existing code ...
         }
+=======
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const counter = document.getElementById('imageCounter');
+            
+            // Get all images if not already stored
+            if (imageArray.length === 0) {
+            <% if (vehicle.image_urls) { %>
+                <% try { %>
+                <% const imgs = JSON.parse(vehicle.image_urls); %>
+                imageArray = <%= JSON.stringify(imgs) %>;
+                <% } catch(e) {} %>
+            <% } %>
+            }
+            
+            currentImageIndex = index;
+            modal.classList.add('active');
+            modalImg.src = imageSrc;
+            counter.textContent = `${currentImageIndex + 1} / ${imageArray.length}`;
+            
+            // Update navigation buttons
+            updateNavigationButtons();
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateImage(direction) {
+            currentImageIndex += direction;
+            
+            // Loop around
+            if (currentImageIndex < 0) {
+            currentImageIndex = imageArray.length - 1;
+            } else if (currentImageIndex >= imageArray.length) {
+            currentImageIndex = 0;
+            }
+            
+            const modalImg = document.getElementById('modalImage');
+            const counter = document.getElementById('imageCounter');
+            
+            // Add fade effect
+            modalImg.style.opacity = '0';
+            setTimeout(() => {
+            modalImg.src = imageArray[currentImageIndex];
+            modalImg.style.opacity = '1';
+            counter.textContent = `${currentImageIndex + 1} / ${imageArray.length}`;
+            updateNavigationButtons();
+            }, 150);
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            
+            // Disable buttons if only one image
+            if (imageArray.length <= 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            } else {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('imageModal');
+            if (modal.classList.contains('active')) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            } else if (e.key === 'ArrowLeft') {
+                navigateImage(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateImage(1);
+            }
+            }
+        });
+>>>>>>> 120f1f57f2a41d61941df0c9b17bdb5c2ca14a84
     </script>
 </body>
 </html>
