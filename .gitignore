@@ -4,7 +4,5 @@ node_modules/
 # !public/qr-codes/.gitkeep
 # public/uploads/*
 # !public/uploads/.gitkeep
-# .env
-# *.log
+.env
 # .DS_Store
-database/
