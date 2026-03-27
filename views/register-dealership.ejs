@@ -283,6 +283,16 @@
 
     .form-group {
       margin-bottom: 0;
+      position: relative;
+    }
+
+    .form-group.has-error .form-control {
+      border-color: var(--danger);
+      background: var(--danger-light);
+    }
+
+    .form-group.has-success .form-control {
+      border-color: var(--accent);
     }
 
     .form-group.full-width {
@@ -347,10 +357,59 @@
       transform: translateY(-50%);
       color: var(--gray-400);
       font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    .form-control:focus ~ .input-icon {
+      color: var(--accent);
     }
 
     .input-icon-wrapper .form-control {
       padding-left: 2.75rem;
+    }
+
+    /* Password toggle */
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    .password-toggle:hover {
+      color: var(--gray-600);
+    }
+
+    /* Validation Message */
+    .validation-message {
+      font-size: 0.8125rem;
+      margin-top: 0.375rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: all 0.2s;
+    }
+
+    .validation-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .validation-message.error {
+      color: var(--danger);
+    }
+
+    .validation-message.success {
+      color: var(--accent);
     }
 
     /* Alert Messages */
@@ -363,12 +422,30 @@
       gap: 0.75rem;
       font-size: 0.9375rem;
       font-weight: 500;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .alert-error {
       background: var(--danger-light);
       color: var(--danger);
       border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-dark);
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     /* Submit Button */
@@ -388,16 +465,46 @@
       justify-content: center;
       gap: 0.75rem;
       margin-top: 2.5rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    .btn-submit:hover {
+    .btn-submit:hover:not(:disabled) {
       background: var(--gray-800);
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
     }
 
-    .btn-submit:active {
+    .btn-submit:active:not(:disabled) {
       transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-submit.loading .btn-text {
+      opacity: 0;
+    }
+
+    .btn-spinner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      opacity: 0;
+    }
+
+    .btn-submit.loading .btn-spinner {
+      opacity: 1;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     /* Footer Note */
@@ -527,6 +634,37 @@
       background: rgba(16, 185, 129, 0.2);
       color: var(--black);
     }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--black);
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-xl);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 9999;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+      max-width: 400px;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.error {
+      background: var(--danger);
+    }
+
+    .toast.success {
+      background: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -535,7 +673,8 @@
   <nav class="nav" id="nav">
     <div class="nav-container">
       <a href="/" class="nav-brand">
-        <img src="/assets/logo-original.png" alt="" height="35">
+        <img src="/assets/logo-original.png" alt="Before You Sign" height="35" onerror="this.style.display='none'">
+        <span style="font-weight: 800; font-size: 1.25rem;">Before You Sign</span>
       </a>
       <div class="nav-links">
         <a href="/#how-it-works" class="nav-link">How It Works</a>
@@ -544,11 +683,28 @@
         <a href="/login" class="nav-link">Login</a>
         <a href="/register/dealership" class="nav-cta">Become Certified</a>
       </div>
-      <button class="mobile-menu-btn" aria-label="Toggle menu">
+      <button class="mobile-menu-btn" aria-label="Toggle menu" onclick="toggleMobileMenu()">
         <i class="fas fa-bars"></i>
       </button>
     </div>
   </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" style="display: none; position: fixed; inset: 0; background: var(--white); z-index: 1001; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <span style="font-weight: 800; font-size: 1.25rem;">Menu</span>
+      <button onclick="toggleMobileMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <a href="/#how-it-works" class="nav-link" style="font-size: 1.25rem; padding: 0.5rem 0;" onclick="toggleMobileMenu()">How It Works</a>
+      <a href="/#features" class="nav-link" style="font-size: 1.25rem; padding: 0.5rem 0;" onclick="toggleMobileMenu()">Features</a>
+      <a href="/vehicles" class="nav-link" style="font-size: 1.25rem; padding: 0.5rem 0;" onclick="toggleMobileMenu()">Browse</a>
+      <a href="/login" class="nav-link" style="font-size: 1.25rem; padding: 0.5rem 0;" onclick="toggleMobileMenu()">Login</a>
+      <a href="/register/dealership" class="nav-cta" style="text-align: center; margin-top: 1rem;" onclick="toggleMobileMenu()">Become Certified</a>
+    </div>
+  </div>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -565,13 +721,13 @@
         </div>
 
         <% if (error) { %>
-          <div class="alert alert-error">
+          <div class="alert alert-error" role="alert" id="serverError">
             <i class="fas fa-exclamation-circle"></i>
-            <%= error %>
+            <span><%= error %></span>
           </div>
         <% } %>
 
-        <form method="POST" action="/register/dealership" id="dealershipForm">
+        <form method="POST" action="/register/dealership" id="dealershipForm" novalidate>
           
           <!-- Account Information -->
           <div class="section-header-form">
@@ -582,38 +738,88 @@
           </div>
 
           <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label required">Username</label>
+            <div class="form-group" data-field="username">
+              <label class="form-label required" for="username">Username</label>
               <div class="input-icon-wrapper">
                 <i class="fas fa-user input-icon"></i>
-                <input type="text" name="username" class="form-control" required placeholder="johnsmith">
+                <input 
+                  type="text" 
+                  id="username"
+                  name="username" 
+                  class="form-control" 
+                  required 
+                  minlength="3"
+                  maxlength="30"
+                  pattern="[a-zA-Z0-9_]+"
+                  placeholder="johnsmith"
+                  autocomplete="username"
+                  aria-describedby="usernameHelp"
+                >
               </div>
+              <span class="validation-message" id="usernameHelp"></span>
             </div>
 
-            <div class="form-group">
-              <label class="form-label required">Email Address</label>
+            <div class="form-group" data-field="email">
+              <label class="form-label required" for="email">Email Address</label>
               <div class="input-icon-wrapper">
                 <i class="fas fa-envelope input-icon"></i>
-                <input type="email" name="email" class="form-control" required placeholder="john@dealership.com">
+                <input 
+                  type="email" 
+                  id="email"
+                  name="email" 
+                  class="form-control" 
+                  required 
+                  placeholder="john@dealership.com"
+                  autocomplete="email"
+                  aria-describedby="emailHelp"
+                >
               </div>
+              <span class="validation-message" id="emailHelp"></span>
             </div>
           </div>
 
           <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label required">Password</label>
-              <div class="input-icon-wrapper">
+            <div class="form-group" data-field="password">
+              <label class="form-label required" for="password">Password</label>
+              <div class="input-icon-wrapper" style="position: relative;">
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                <input 
+                  type="password" 
+                  id="password"
+                  name="password" 
+                  class="form-control" 
+                  required 
+                  minlength="8"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                  aria-describedby="passwordHelp"
+                >
+                <button type="button" class="password-toggle" onclick="togglePassword('password')" aria-label="Toggle password visibility">
+                  <i class="fas fa-eye" id="password-icon"></i>
+                </button>
               </div>
+              <span class="validation-message" id="passwordHelp"></span>
             </div>
 
-            <div class="form-group">
-              <label class="form-label required">Confirm Password</label>
-              <div class="input-icon-wrapper">
+            <div class="form-group" data-field="confirmPassword">
+              <label class="form-label required" for="confirmPassword">Confirm Password</label>
+              <div class="input-icon-wrapper" style="position: relative;">
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" name="confirmPassword" class="form-control" required placeholder="••••••••">
+                <input 
+                  type="password" 
+                  id="confirmPassword"
+                  name="confirmPassword" 
+                  class="form-control" 
+                  required 
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                  aria-describedby="confirmHelp"
+                >
+                <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')" aria-label="Toggle password visibility">
+                  <i class="fas fa-eye" id="confirmPassword-icon"></i>
+                </button>
               </div>
+              <span class="validation-message" id="confirmHelp"></span>
             </div>
           </div>
 
@@ -625,85 +831,180 @@
             <h3 class="section-title-form">Business Information</h3>
           </div>
 
-          <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label class="form-label required">Business Name</label>
+          <div class="form-group full-width" data-field="businessName" style="margin-bottom: 1.5rem;">
+            <label class="form-label required" for="businessName">Business Name</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-building input-icon"></i>
-              <input type="text" name="businessName" class="form-control" required placeholder="Premium Auto Dealership">
+              <input 
+                type="text" 
+                id="businessName"
+                name="businessName" 
+                class="form-control" 
+                required 
+                minlength="2"
+                placeholder="Premium Auto Dealership"
+                autocomplete="organization"
+              >
             </div>
+            <span class="validation-message" id="businessNameHelp"></span>
           </div>
 
           <div class="form-grid three-col">
-            <div class="form-group">
-              <label class="form-label required">Registration Number</label>
-              <input type="text" name="registrationNumber" class="form-control" required placeholder="CK2012/123456/07">
+            <div class="form-group" data-field="registrationNumber">
+              <label class="form-label required" for="registrationNumber">Registration Number</label>
+              <input 
+                type="text" 
+                id="registrationNumber"
+                name="registrationNumber" 
+                class="form-control" 
+                required 
+                placeholder="CK2012/123456/07"
+                aria-describedby="regHelp"
+              >
+              <span class="validation-message" id="regHelp"></span>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">License Number</label>
-              <input type="text" name="licenseNumber" class="form-control" placeholder="Optional">
+            <div class="form-group" data-field="licenseNumber">
+              <label class="form-label" for="licenseNumber">License Number</label>
+              <input 
+                type="text" 
+                id="licenseNumber"
+                name="licenseNumber" 
+                class="form-control" 
+                placeholder="Optional"
+              >
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Year Established</label>
-              <input type="number" name="yearEstablished" class="form-control" min="1900" max="2025" placeholder="2020">
+            <div class="form-group" data-field="yearEstablished">
+              <label class="form-label" for="yearEstablished">Year Established</label>
+              <input 
+                type="number" 
+                id="yearEstablished"
+                name="yearEstablished" 
+                class="form-control" 
+                min="1900" 
+                max="2026"
+                placeholder="2020"
+              >
+              <span class="validation-message" id="yearHelp"></span>
             </div>
           </div>
 
           <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label required">Phone Number</label>
+            <div class="form-group" data-field="phone">
+              <label class="form-label required" for="phone">Phone Number</label>
               <div class="input-icon-wrapper">
                 <i class="fas fa-phone input-icon"></i>
-                <input type="tel" name="phone" class="form-control" required placeholder="+27 83 744 0206">
+                <input 
+                  type="tel" 
+                  id="phone"
+                  name="phone" 
+                  class="form-control" 
+                  required 
+                  placeholder="+27 83 744 0206"
+                  autocomplete="tel"
+                  pattern="[\+]?[0-9\s\-\(\)]+"
+                  aria-describedby="phoneHelp"
+                >
               </div>
+              <span class="validation-message" id="phoneHelp"></span>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Website</label>
+            <div class="form-group" data-field="website">
+              <label class="form-label" for="website">Website</label>
               <div class="input-icon-wrapper">
                 <i class="fas fa-globe input-icon"></i>
-                <input type="url" name="website" class="form-control" placeholder="https://www.example.com">
+                <input 
+                  type="url" 
+                  id="website"
+                  name="website" 
+                  class="form-control" 
+                  placeholder="https://www.example.com"
+                  autocomplete="url"
+                >
               </div>
+              <span class="validation-message" id="websiteHelp"></span>
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label class="form-label required">Street Address</label>
+          <div class="form-group full-width" data-field="address" style="margin-bottom: 1.5rem;">
+            <label class="form-label required" for="address">Street Address</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-map-marker-alt input-icon"></i>
-              <input type="text" name="address" class="form-control" required placeholder="123 Main Street, Sandton">
+              <input 
+                type="text" 
+                id="address"
+                name="address" 
+                class="form-control" 
+                required 
+                placeholder="123 Main Street, Sandton"
+                autocomplete="street-address"
+              >
             </div>
           </div>
 
           <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label required">City</label>
-              <input type="text" name="city" class="form-control" required placeholder="Johannesburg">
+            <div class="form-group" data-field="city">
+              <label class="form-label required" for="city">City</label>
+              <input 
+                type="text" 
+                id="city"
+                name="city" 
+                class="form-control" 
+                required 
+                placeholder="Johannesburg"
+                autocomplete="address-level2"
+              >
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Postal Code</label>
-              <input type="text" name="postalCode" class="form-control" placeholder="2196">
+            <div class="form-group" data-field="postalCode">
+              <label class="form-label" for="postalCode">Postal Code</label>
+              <input 
+                type="text" 
+                id="postalCode"
+                name="postalCode" 
+                class="form-control" 
+                placeholder="2196"
+                autocomplete="postal-code"
+                pattern="[0-9]*"
+              >
+              <span class="validation-message" id="postalHelp"></span>
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label class="form-label">Operating Hours</label>
+          <div class="form-group full-width" data-field="operatingHours" style="margin-bottom: 1.5rem;">
+            <label class="form-label" for="operatingHours">Operating Hours</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-clock input-icon"></i>
-              <input type="text" name="operatingHours" class="form-control" placeholder="Mon-Fri: 8:00 AM - 6:00 PM">
+              <input 
+                type="text" 
+                id="operatingHours"
+                name="operatingHours" 
+                class="form-control" 
+                placeholder="Mon-Fri: 8:00 AM - 6:00 PM"
+              >
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Business Description</label>
-            <textarea name="description" class="form-control" rows="4" placeholder="Tell us about your dealership, specializations, and what makes you unique..."></textarea>
+          <div class="form-group full-width" data-field="description">
+            <label class="form-label" for="description">Business Description</label>
+            <textarea 
+              id="description"
+              name="description" 
+              class="form-control" 
+              rows="4" 
+              placeholder="Tell us about your dealership, specializations, and what makes you unique..."
+              maxlength="1000"
+            ></textarea>
+            <span class="validation-message" id="descHelp" style="justify-content: flex-end;"></span>
           </div>
 
-          <button type="submit" class="btn-submit">
-            <i class="fas fa-shield-alt"></i>
-            Register Dealership
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span class="btn-text">
+              <i class="fas fa-shield-alt"></i>
+              Register Dealership
+            </span>
+            <span class="btn-spinner"></span>
           </button>
 
         </form>
@@ -747,7 +1048,278 @@
     </div>
   </footer>
 
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="polite">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Action completed successfully</span>
+  </div>
+
   <script>
+    // Form state management
+    const form = document.getElementById('dealershipForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const STORAGE_KEY = 'dealership_registration_draft';
+
+    // Validation rules
+    const validators = {
+      username: {
+        validate: (value) => {
+          if (value.length < 3) return { valid: false, message: 'Username must be at least 3 characters' };
+          if (!/^[a-zA-Z0-9_]+$/.test(value)) return { valid: false, message: 'Only letters, numbers, and underscores allowed' };
+          return { valid: true, message: 'Looks good!' };
+        }
+      },
+      email: {
+        validate: (value) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) return { valid: false, message: 'Please enter a valid email address' };
+          return { valid: true, message: 'Valid email' };
+        }
+      },
+      password: {
+        validate: (value) => {
+          if (value.length < 8) return { valid: false, message: 'Password must be at least 8 characters' };
+          const strength = calculatePasswordStrength(value);
+          if (strength < 2) return { valid: false, message: 'Add numbers or special characters for stronger password' };
+          return { valid: true, message: 'Strong password' };
+        }
+      },
+      confirmPassword: {
+        validate: (value) => {
+          const password = document.getElementById('password').value;
+          if (value !== password) return { valid: false, message: 'Passwords do not match' };
+          if (value === '') return { valid: false, message: 'Please confirm your password' };
+          return { valid: true, message: 'Passwords match' };
+        }
+      },
+      phone: {
+        validate: (value) => {
+          const phoneRegex = /^[\+\d\s\-\(\)]{10,}$/;
+          if (!phoneRegex.test(value)) return { valid: false, message: 'Please enter a valid phone number' };
+          return { valid: true, message: 'Valid number' };
+        }
+      },
+      yearEstablished: {
+        validate: (value) => {
+          if (!value) return { valid: true };
+          const year = parseInt(value);
+          const currentYear = new Date().getFullYear();
+          if (year < 1900 || year > currentYear) return { valid: false, message: `Year must be between 1900 and ${currentYear}` };
+          return { valid: true, message: '' };
+        }
+      },
+      website: {
+        validate: (value) => {
+          if (!value) return { valid: true };
+          try {
+            new URL(value);
+            return { valid: true, message: 'Valid URL' };
+          } catch {
+            return { valid: false, message: 'Please enter a valid URL (include https://)' };
+          }
+        }
+      },
+      postalCode: {
+        validate: (value) => {
+          if (!value) return { valid: true };
+          if (!/^\d+$/.test(value)) return { valid: false, message: 'Only numbers allowed' };
+          return { valid: true, message: '' };
+        }
+      },
+      description: {
+        validate: (value) => {
+          const remaining = 1000 - value.length;
+          return { valid: true, message: `${remaining} characters remaining` };
+        }
+      }
+    };
+
+    // Calculate password strength (0-4)
+    function calculatePasswordStrength(password) {
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+      if (password.match(/\d/)) strength++;
+      if (password.match(/[^a-zA-Z\d]/)) strength++;
+      return strength;
+    }
+
+    // Real-time validation
+    function validateField(field) {
+      const fieldName = field.name;
+      const value = field.value.trim();
+      const group = field.closest('.form-group');
+      const helpText = document.getElementById(fieldName + 'Help') || group.querySelector('.validation-message');
+      
+      if (!validators[fieldName]) return true;
+
+      const result = validators[fieldName].validate(value);
+      
+      // Update UI
+      group.classList.remove('has-error', 'has-success');
+      helpText.classList.remove('show', 'error', 'success');
+      
+      if (value !== '' || field.hasAttribute('required')) {
+        if (result.valid) {
+          group.classList.add('has-success');
+          helpText.classList.add('show', 'success');
+          helpText.innerHTML = `<i class="fas fa-check-circle"></i> ${result.message}`;
+          return true;
+        } else {
+          group.classList.add('has-error');
+          helpText.classList.add('show', 'error');
+          helpText.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${result.message}`;
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Attach validation listeners
+    form.querySelectorAll('input, textarea').forEach(field => {
+      // Validate on blur
+      field.addEventListener('blur', () => validateField(field));
+      
+      // Validate on input (with debounce for performance)
+      let timeout;
+      field.addEventListener('input', (e) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          validateField(field);
+          saveFormDraft();
+        }, 300);
+      });
+    });
+
+    // Password confirmation validation triggers when password changes
+    document.getElementById('password').addEventListener('input', () => {
+      const confirmField = document.getElementById('confirmPassword');
+      if (confirmField.value) validateField(confirmField);
+    });
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Validate all fields
+      let isValid = true;
+      const requiredFields = form.querySelectorAll('[required]');
+      
+      requiredFields.forEach(field => {
+        if (!validateField(field)) {
+          isValid = false;
+          // Focus first invalid field
+          if (isValid === false && !form.querySelector('.has-error:focus')) {
+            field.focus();
+          }
+        }
+      });
+
+      if (!isValid) {
+        showToast('Please fix the errors above', 'error');
+        // Scroll to first error
+        const firstError = form.querySelector('.has-error');
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
+
+      // Simulate submission or proceed
+      try {
+        // Remove draft on successful submission
+        localStorage.removeItem(STORAGE_KEY);
+        
+        // Actually submit the form
+        form.submit();
+      } catch (error) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        showToast('Something went wrong. Please try again.', 'error');
+      }
+    });
+
+    // Password visibility toggle
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      const icon = document.getElementById(fieldId + '-icon');
+      
+      if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+    // Save form draft to localStorage
+    function saveFormDraft() {
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => {
+        if (key !== 'password' && key !== 'confirmPassword') { // Don't save passwords
+          data[key] = value;
+        }
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    // Restore form draft
+    function restoreFormDraft() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          Object.keys(data).forEach(key => {
+            const field = form.querySelector(`[name="${key}"]`);
+            if (field && !field.value) {
+              field.value = data[key];
+            }
+          });
+        } catch (e) {
+          console.error('Error restoring form draft:', e);
+        }
+      }
+    }
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      
+      toast.className = 'toast ' + type;
+      toastMessage.textContent = message;
+      
+      // Update icon based on type
+      const icon = toast.querySelector('i');
+      if (type === 'error') {
+        icon.className = 'fas fa-exclamation-circle';
+      } else {
+        icon.className = 'fas fa-check-circle';
+      }
+      
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 5000);
+    }
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const currentDisplay = menu.style.display;
+      menu.style.display = currentDisplay === 'none' ? 'block' : 'none';
+      document.body.style.overflow = currentDisplay === 'none' ? 'hidden' : '';
+    }
+
     // Navbar scroll effect
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
@@ -758,15 +1330,38 @@
       }
     }, { passive: true });
 
-    // Form validation
-    document.getElementById('dealershipForm').addEventListener('submit', function(e) {
-      const password = document.querySelector('input[name="password"]').value;
-      const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+    // Close mobile menu on resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        document.getElementById('mobileMenu').style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Auto-save every 30 seconds as backup
+    setInterval(saveFormDraft, 30000);
+
+    // Restore draft on load
+    document.addEventListener('DOMContentLoaded', () => {
+      restoreFormDraft();
       
-      if (password !== confirmPassword) {
+      // Check if there's a server error and scroll to it
+      const serverError = document.getElementById('serverError');
+      if (serverError) {
+        serverError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    // Warn before leaving if form has unsaved changes
+    let formDirty = false;
+    form.addEventListener('input', () => {
+      formDirty = true;
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+      if (formDirty && !submitBtn.disabled) {
         e.preventDefault();
-        alert('Passwords do not match!');
-        return false;
+        e.returnValue = '';
       }
     });
   </script>
