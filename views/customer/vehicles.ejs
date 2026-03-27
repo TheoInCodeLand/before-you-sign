@@ -398,9 +398,10 @@
     }
 
     .filter-select {
-      padding: 0.625rem 1rem;
+      flex: 1;
+      padding: 0.625rem;
       border: 1px solid var(--gray-300);
-      border-radius: var(--radius);
+      border-radius: 1.2rem;
       background: var(--white);
       color: var(--gray-700);
       font-size: 0.875rem;
@@ -1021,7 +1022,7 @@
   <nav class="nav">
     <div class="nav-container">
       <a href="/" class="nav-brand">
-        <img src="/assets/logo-original.png" alt="" height="40">
+        <img src="/assets/logo-original.png" alt="" height="35">
       </a>
       <div class="nav-links">
         <a href="/" class="nav-link">Home</a>
@@ -1072,9 +1073,6 @@
           <button type="submit" class="search-btn">
             <i class="fas fa-shield-alt"></i> Verify Vehicle
           </button>
-          <button type="button" class="scan-btn" id="scanBtn">
-            <i class="fas fa-camera"></i> Scan QR
-          </button>
         </form>
       </div>
     </div>
@@ -1087,31 +1085,33 @@
         <i class="fas fa-filter"></i> Filters:
       </span>
       
-      <select class="filter-select" name="make" onchange="applyFilter('make', this.value)">
-        <option value="">All Makes</option>
-        <option value="BMW" <%= locals.filters && filters.make === 'BMW' ? 'selected' : '' %>>BMW</option>
-        <option value="Mercedes" <%= locals.filters && filters.make === 'Mercedes' ? 'selected' : '' %>>Mercedes</option>
-        <option value="Audi" <%= locals.filters && filters.make === 'Audi' ? 'selected' : '' %>>Audi</option>
-        <option value="Toyota" <%= locals.filters && filters.make === 'Toyota' ? 'selected' : '' %>>Toyota</option>
-        <option value="VW" <%= locals.filters && filters.make === 'VW' ? 'selected' : '' %>>VW</option>
-      </select>
+      <div style="display: flex; justify-content: space-evenly; width: 100%; flex-wrap: wrap; gap: 1rem;">
+        <select class="filter-select" name="make" onchange="applyFilter('make', this.value)">
+          <option value="">All Makes</option>
+          <option value="BMW" <%= locals.filters && filters.make === 'BMW' ? 'selected' : '' %>>BMW</option>
+          <option value="Mercedes" <%= locals.filters && filters.make === 'Mercedes' ? 'selected' : '' %>>Mercedes</option>
+          <option value="Audi" <%= locals.filters && filters.make === 'Audi' ? 'selected' : '' %>>Audi</option>
+          <option value="Toyota" <%= locals.filters && filters.make === 'Toyota' ? 'selected' : '' %>>Toyota</option>
+          <option value="VW" <%= locals.filters && filters.make === 'VW' ? 'selected' : '' %>>VW</option>
+        </select>
 
-      <select class="filter-select" name="year" onchange="applyFilter('year', this.value)">
-        <option value="">All Years</option>
-        <option value="2024" <%= locals.filters && filters.year === '2024' ? 'selected' : '' %>>2024</option>
-        <option value="2023" <%= locals.filters && filters.year === '2023' ? 'selected' : '' %>>2023</option>
-        <option value="2022" <%= locals.filters && filters.year === '2022' ? 'selected' : '' %>>2022</option>
-        <option value="2021" <%= locals.filters && filters.year === '2021' ? 'selected' : '' %>>2021</option>
-        <option value="2020" <%= locals.filters && filters.year === '2020' ? 'selected' : '' %>>2020</option>
-      </select>
+        <select class="filter-select" name="year" onchange="applyFilter('year', this.value)">
+          <option value="">All Years</option>
+          <option value="2024" <%= locals.filters && filters.year === '2024' ? 'selected' : '' %>>2024</option>
+          <option value="2023" <%= locals.filters && filters.year === '2023' ? 'selected' : '' %>>2023</option>
+          <option value="2022" <%= locals.filters && filters.year === '2022' ? 'selected' : '' %>>2022</option>
+          <option value="2021" <%= locals.filters && filters.year === '2021' ? 'selected' : '' %>>2021</option>
+          <option value="2020" <%= locals.filters && filters.year === '2020' ? 'selected' : '' %>>2020</option>
+        </select>
 
-      <select class="filter-select" name="price" onchange="applyFilter('maxPrice', this.value)">
-        <option value="">Any Price</option>
-        <option value="200000" <%= locals.filters && filters.maxPrice === '200000' ? 'selected' : '' %>>Under R200k</option>
-        <option value="500000" <%= locals.filters && filters.maxPrice === '500000' ? 'selected' : '' %>>Under R500k</option>
-        <option value="1000000" <%= locals.filters && filters.maxPrice === '1000000' ? 'selected' : '' %>>Under R1M</option>
-        <option value="2000000" <%= locals.filters && filters.maxPrice === '2000000' ? 'selected' : '' %>>Under R2M</option>
-      </select>
+        <select class="filter-select" name="price" onchange="applyFilter('maxPrice', this.value)">
+          <option value="">Any Price</option>
+          <option value="200000" <%= locals.filters && filters.maxPrice === '200000' ? 'selected' : '' %>>Under R200k</option>
+          <option value="500000" <%= locals.filters && filters.maxPrice === '500000' ? 'selected' : '' %>>Under R500k</option>
+          <option value="1000000" <%= locals.filters && filters.maxPrice === '1000000' ? 'selected' : '' %>>Under R1M</option>
+          <option value="2000000" <%= locals.filters && filters.maxPrice === '2000000' ? 'selected' : '' %>>Under R2M</option>
+        </select>
+      </div>
 
       <span class="results-count">
         Showing <%= vehicles.length %> of <%= totalVehicles || vehicles.length %> vehicles
@@ -1272,7 +1272,7 @@
     <div class="footer-container">
       <div>
         <div class="footer-brand">
-          <img src="/assets/logo-original.png" alt="" height="40">
+          <img src="/assets/logo-original.png" alt="" height="35">
         </div>
         <p class="footer-desc">
           Empowering car buyers with verified data and holding dealerships accountable through transparent verification.
