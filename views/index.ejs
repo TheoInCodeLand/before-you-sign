@@ -18,9 +18,9 @@
         :root {
             --black: #0a0a0a;
             --white: #ffffff;
-            --accent: #10b981;
-            --accent-light: #34d399;
-            --accent-dark: #059669;
+            --accent: #00a651;
+            --accent-light: #00c25e;
+            --accent-dark: #007237;
             --gray-50: #fafafa;
             --gray-100: #f4f4f5;
             --gray-200: #e4e4e7;
@@ -33,9 +33,9 @@
             --gray-900: #18181b;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --radius: 0.75rem;
-            --radius-lg: 1rem;
-            --radius-xl: 1.5rem;
+            --radius: 0.5rem;
+            --radius-lg: 0.2rem;
+            --radius-xl: 0.2rem;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
@@ -185,6 +185,7 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 0.875rem;
+            color: white;
             transition: all 0.3s ease;
             border: 2px solid var(--black);
         }
@@ -331,11 +332,11 @@
         }
 
         .hero-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 500;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            letter-spacing: -0.03em;
+            letter-spacing: 0em;
         }
 
         .hero-title .line {
@@ -373,10 +374,9 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 8px;
+            height: 2px;
             background: rgba(16, 185, 129, 0.2);
             z-index: -1;
-            border-radius: 4px;
         }
 
         .hero-subtitle {
@@ -408,7 +408,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-weight: 600;
+            font-weight: 400;
             font-size: 0.9375rem;
         }
 
@@ -449,15 +449,15 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--gray-400);
-            font-size: 1.125rem;
+            font-size: 1rem;
         }
 
         .vin-input {
             width: 100%;
             padding: 1rem 1rem 1rem 3rem;
-            border: 2px solid var(--gray-200);
-            border-radius: var(--radius);
-            font-size: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.6rem;
+            font-size: 0.7rem;
             font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
             transition: all 0.3s ease;
@@ -500,8 +500,8 @@
             color: var(--white);
             border: none;
             padding: 1rem;
-            border-radius: var(--radius);
-            font-weight: 600;
+            border-radius: 0.6rem;
+            font-weight: 400;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -546,7 +546,7 @@
             padding: 2rem;
             border-radius: var(--radius-xl);
             box-shadow: var(--shadow-xl), 0 0 0 1px var(--gray-200);
-            max-width: 320px;
+            max-width: 450px;
             width: 100%;
             position: relative;
             transform-style: preserve-3d;
@@ -575,13 +575,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1rem;
             box-shadow: var(--shadow-lg);
             animation: pulse 2s infinite;
         }
 
         .qr-code-large {
-            width: 180px;
+            width: 95%;
             height: 180px;
             margin: 0 auto 1.5rem;
             background: 
@@ -1422,10 +1422,7 @@
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
             <a href="/" class="nav-brand">
-                <div class="nav-logo-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                Before You Sign
+                <img src="/assets/logo-original.png" alt="" height="40">
             </a>
             <button onclick="toggleMobileMenu()" aria-label="Close menu">
                 <i class="fas fa-times"></i>
@@ -1436,7 +1433,7 @@
             <a href="#features" onclick="toggleMobileMenu()">Features</a>
             <a href="#for-dealers" onclick="toggleMobileMenu()">For Dealers</a>
             <a href="/vehicles" onclick="toggleMobileMenu()">Browse Vehicles</a>
-            <a href="/register/dealership" class="nav-cta" style="text-align: center; margin-top: 1rem;">Become Certified</a>
+            <a href="/register/dealership" class="nav-cta" style="text-align: center; margin-top: 1rem; color: white;">Become Certified</a>
         </div>
     </div>
 
@@ -1447,15 +1444,14 @@
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fas fa-check-circle"></i>
-                    <span>Now Protecting 12,000+ Vehicles</span>
+                    <span>Before you sign</span>
                 </div>
                 <h1 class="hero-title">
                     <div class="line"><span>The Trust Layer for</span></div>
                     <div class="line"><span>Vehicle <span class="accent-text">Commerce</span></span></div>
                 </h1>
                 <p class="hero-subtitle">
-                    Blockchain-verified vehicle histories. Zero-trust automotive marketplace.
-                    Every scan reveals the truth—mileage, accidents, service records, ownership.
+                    Protecting buyer's trust. Every scan reveals the truth—mileage, accidents, service records, ownership.
                 </p>
                 
                 <!-- Interactive VIN Scanner -->
