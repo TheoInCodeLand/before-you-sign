@@ -1,9 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %> - Verified Vehicle Report</title>
+    <%- include('partials/seo-meta', {
+        title: `${vehicle.year} ${vehicle.make} ${vehicle.model} - Verified Vehicle Report | Before You Sign`,
+        description: `Verified ${vehicle.year} ${vehicle.make} ${vehicle.model} with complete history report. ${vehicle.mileage} km, ${vehicle.fuel_type} engine. View 10-point verification instantly.`,
+        canonical: `https://beforeyousign.co.za/vehicle/${vehicle.id}`,
+        ogImage: vehicle.images && vehicle.images.length > 0 ? vehicle.images[0] : 'https://beforeyousign.co.za/assets/og-image.jpg',
+        ogType: 'product',
+        keywords: `${vehicle.make} ${vehicle.model}, ${vehicle.year} car for sale, verified ${vehicle.make}, used ${vehicle.model} South Africa`
+    }) %>
+    
+    <!-- Include vehicle structured data -->
+    <%- include('partials/structured-data-vehicle', { 
+        vehicle: vehicle, 
+        dealership: dealership,
+        pageUrl: `https://beforeyousign.co.za/vehicle/${vehicle.id}`
+    }) %>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1361,6 +1374,13 @@
             </div>
         </div>
     </header>
+    <%- include('partials/breadcrumbs', { 
+        items: [
+            {name: 'Home', url: '/'},
+            {name: 'Browse Vehicles', url: '/vehicles'},
+            {name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`, url: `/vehicle/${vehicle.id}`, active: true}
+        ]
+    }) %>
 
     <main class="container">
         <!-- Status Alerts -->

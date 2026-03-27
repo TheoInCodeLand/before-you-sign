@@ -5,6 +5,12 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 const auditLog = require('./middleware/audit');
+const compression = require('compression');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const app = express();
 
@@ -15,6 +21,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(compression());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -23,6 +30,11 @@ const isProd = process.env.NODE_ENV === 'production';
 const uploadBaseDir = isProd ? '/tmp/uploads' : path.join(__dirname, 'public/uploads');
 const qrBaseDir = isProd ? '/tmp/qr-codes' : path.join(__dirname, 'public/qr-codes');
 const logsDir = isProd ? '/tmp/logs' : path.join(__dirname, 'logs');
+
+app.use(express.static('public', {
+    maxAge: '1y',
+    etag: true
+}));
 
 const requiredDirs = [
   path.join(uploadBaseDir, 'vehicles'),
@@ -49,9 +61,16 @@ app.use(session({
   }
 }));
 
+// app.js - Replace the existing res.locals middleware with this:
 app.use((req, res, next) => {
   res.locals.session = req.session;
-  res.locals.user = req.session.user || null;
+  // Construct user object from individual session properties
+  res.locals.user = req.session.userId ? {
+    id: req.session.userId,
+    username: req.session.username,
+    role: req.session.role,
+    email: req.session.email
+  } : null;
   res.locals.userId = req.session.userId || null;
   res.locals.role = req.session.role || null;
   res.locals.username = req.session.username || null;

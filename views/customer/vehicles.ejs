@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verified Vehicles | Before You Sign</title>
-  <meta name="description" content="Browse certified vehicles with verified histories from ethical dealerships. Scan QR codes for instant vehicle verification.">
+  <%- include('partials/seo-meta', {
+        title: 'Browse Verified Vehicles | Certified Used Cars South Africa | Before You Sign',
+        description: `Browse ${total}+ certified vehicles with verified histories from ethical dealerships. All vehicles include 10-point verification reports. Find your perfect car today.`,
+        canonical: `https://beforeyousign.co.za/vehicles${page > 1 ? '?page=' + page : ''}`,
+        keywords: 'used cars South Africa, certified vehicles, verified cars for sale, pre-owned vehicles, car verification'
+  }) %>
+    
+  <!-- Include listing structured data -->
+  <%- include('partials/structured-data-vehicles-list', { 
+        vehicles: vehicles, 
+        totalCount: total,
+        currentPage: page
+  }) %>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -173,6 +181,22 @@
       color: var(--black);
     }
 
+    .nav-cta-outline {
+      background: transparent;
+      color: var(--black);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border: 2px solid var(--gray-300);
+      transition: all 0.3s ease;
+    }
+
+    .nav-cta-outline:hover {
+      border-color: var(--black);
+    }
+
     .mobile-menu-btn {
       display: none;
       background: none;
@@ -181,6 +205,173 @@
       cursor: pointer;
       color: var(--black);
       padding: 0.5rem;
+    }
+
+    /* User Menu Dropdown */
+    .user-menu {
+      position: relative;
+    }
+
+    .user-menu-trigger {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+
+    .user-menu-trigger:hover {
+      background: var(--gray-100);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.5rem;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-xl);
+      min-width: 220px;
+      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s;
+      z-index: 1001;
+    }
+
+    .user-dropdown.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .user-dropdown-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .user-dropdown-name {
+      font-weight: 600;
+      color: var(--black);
+      font-size: 0.9375rem;
+    }
+
+    .user-dropdown-role {
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      text-transform: capitalize;
+    }
+
+    .user-dropdown-links {
+      padding: 0.5rem;
+    }
+
+    .user-dropdown-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      color: var(--gray-700);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.2s;
+      font-size: 0.9375rem;
+    }
+
+    .user-dropdown-link:hover {
+      background: var(--gray-100);
+      color: var(--black);
+    }
+
+    .user-dropdown-link i {
+      width: 20px;
+      text-align: center;
+      color: var(--gray-500);
+    }
+
+    .user-dropdown-link:hover i {
+      color: var(--accent);
+    }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--white);
+      z-index: 1001;
+      padding: 1.5rem;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu.active {
+      display: flex;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-nav-links a {
+      text-decoration: none;
+      color: var(--black);
+      font-size: 1.25rem;
+      font-weight: 600;
+      padding: 1rem;
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+
+    .mobile-nav-links a:hover {
+      background: var(--gray-100);
+    }
+
+    .mobile-nav-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .mobile-nav-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-400);
+      margin-bottom: 0.5rem;
+      padding-left: 1rem;
     }
 
     /* Hero Section */
@@ -1022,20 +1213,159 @@
   <nav class="nav">
     <div class="nav-container">
       <a href="/" class="nav-brand">
-        <img src="/assets/logo-original.png" alt="" height="35">
+        <img src="/assets/logo-original.png" alt="Before You Sign - Vehicle Verification Platform Logo" height="35">
         <span style="font-weight: 500; font-size: 1rem;">Before You Sign</span>
       </a>
+      
+      <!-- Desktop Navigation -->
       <div class="nav-links">
         <a href="/" class="nav-link">Home</a>
         <a href="/vehicles" class="nav-link active">Browse</a>
         <a href="/#how-it-works" class="nav-link">How It Works</a>
-        <a href="/register/dealership" class="nav-cta">Become Certified</a>
+        
+        <% if (typeof user !== 'undefined' && user) { %>
+          <!-- Logged In Navigation -->
+          <% if (user.role === 'admin') { %>
+            <a href="/admin/dashboard" class="nav-link">Admin</a>
+          <% } else if (user.role === 'dealership') { %>
+            <a href="/dealership/dashboard" class="nav-link">Dealer Portal</a>
+          <% } else if (user.role === 'customer') { %>
+            <a href="/customer/dashboard" class="nav-link">My Account</a>
+          <% } %>
+          
+          <div class="user-menu" id="userMenu">
+            <div class="user-menu-trigger" onclick="toggleUserMenu()">
+              <div class="user-avatar">
+                <%= user.username ? user.username.charAt(0).toUpperCase() : 'U' %>
+              </div>
+              <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: var(--gray-500);"></i>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+              <div class="user-dropdown-header">
+                <div class="user-dropdown-name"><%= user.username || user.email %></div>
+                <div class="user-dropdown-role"><%= user.role %></div>
+              </div>
+              <div class="user-dropdown-links">
+                <% if (user.role === 'admin') { %>
+                  <a href="/admin/dashboard" class="user-dropdown-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                  </a>
+                  <a href="/admin/dealerships" class="user-dropdown-link">
+                    <i class="fas fa-store"></i> Dealerships
+                  </a>
+                  <a href="/admin/verify-vehicles" class="user-dropdown-link">
+                    <i class="fas fa-clipboard-check"></i> Verify Vehicles
+                  </a>
+                  <!-- <a href="/admin/disputes" class="user-dropdown-link">
+                    <i class="fas fa-gavel"></i> Disputes
+                  </a> -->
+                <% } else if (user.role === 'dealership') { %>
+                  <a href="/dealership/dashboard" class="user-dropdown-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                  </a>
+                  <a href="/dealership/vehicles" class="user-dropdown-link">
+                    <i class="fas fa-car"></i> My Vehicles
+                  </a>
+                  <a href="/dealership/add-vehicle" class="user-dropdown-link">
+                    <i class="fas fa-plus-circle"></i> Add Vehicle
+                  </a>
+                  <a href="/dealership/profile" class="user-dropdown-link">
+                    <i class="fas fa-user"></i> Profile
+                  </a>
+                  <!-- <a href="/dealership/disputes" class="user-dropdown-link">
+                    <i class="fas fa-exclamation-triangle"></i> Disputes
+                  </a> -->
+                <% } else { %>
+                  <!-- <a href="/customer/dashboard" class="user-dropdown-link">
+                    <i class="fas fa-user"></i> My Profile
+                  </a> -->
+                  <a href="/customer/searches" class="user-dropdown-link">
+                    <i class="fas fa-history"></i> Recent Searches
+                  </a>
+                  <!-- <a href="/customer/disputes" class="user-dropdown-link">
+                    <i class="fas fa-shield-alt"></i> My Disputes
+                  </a> -->
+                <% } %>
+                <div style="border-top: 1px solid var(--gray-200); margin: 0.5rem 0;"></div>
+                <a href="/logout" class="user-dropdown-link" style="color: var(--danger);">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+              </div>
+            </div>
+          </div>
+        <% } else { %>
+          <!-- Logged Out Navigation -->
+          <a href="/login" class="nav-cta-outline">Sign In</a>
+          <a href="/register/dealership" class="nav-cta">Become Certified</a>
+        <% } %>
       </div>
-      <button class="mobile-menu-btn" aria-label="Menu">
+      
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
         <i class="fas fa-bars"></i>
       </button>
     </div>
   </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo-original.png" alt="Before You Sign - Vehicle Verification Platform Logo" height="35">
+        <span style="font-weight: 500; font-size: 1rem;">Before You Sign</span>
+      </a>
+      <button onclick="toggleMobileMenu()" aria-label="Close menu" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="mobile-nav-links">
+      <a href="/" onclick="toggleMobileMenu()">Home</a>
+      <a href="/vehicles" onclick="toggleMobileMenu()" style="color: var(--accent);">Browse Vehicles</a>
+      <a href="/#how-it-works" onclick="toggleMobileMenu()">How It Works</a>
+      
+      <% if (typeof user !== 'undefined' && user) { %>
+        <!-- Mobile Logged In Menu -->
+        <div class="mobile-nav-section">
+          <div class="mobile-nav-section-title">Account</div>
+          
+          <% if (user.role === 'admin') { %>
+            <a href="/admin/dashboard" onclick="toggleMobileMenu()">Admin Dashboard</a>
+            <!-- <a href="/admin/dealerships" onclick="toggleMobileMenu()">Manage Dealerships</a> -->
+            <!-- <a href="/admin/verify-vehicles" onclick="toggleMobileMenu()">Verify Vehicles</a> -->
+            <!-- <a href="/admin/disputes" onclick="toggleMobileMenu()">Manage Disputes</a> -->
+            <!-- <a href="/admin/verified-vehicles" onclick="toggleMobileMenu()">Verified Inventory</a> -->
+          <% } else if (user.role === 'dealership') { %>
+            <a href="/dealership/dashboard" onclick="toggleMobileMenu()">Dealer Dashboard</a>
+            <!-- <a href="/dealership/vehicles" onclick="toggleMobileMenu()">My Vehicles</a> -->
+            <!-- <a href="/dealership/add-vehicle" onclick="toggleMobileMenu()">Add New Vehicle</a> -->
+            <!-- <a href="/dealership/profile" onclick="toggleMobileMenu()">Business Profile</a> -->
+            <!-- <a href="/dealership/disputes" onclick="toggleMobileMenu()">Customer Disputes</a> -->
+          <% } else { %>
+            <!-- <a href="/customer/dashboard" onclick="toggleMobileMenu()">My Account</a> -->
+            <a href="/customer/searches" onclick="toggleMobileMenu()">Recent Searches</a>
+            <!-- <a href="/customer/disputes" onclick="toggleMobileMenu()">My Disputes</a> -->
+          <% } %>
+          
+          <a href="/logout" onclick="toggleMobileMenu()" style="color: var(--danger); margin-top: 1rem;">Logout</a>
+        </div>
+      <% } else { %>
+        <!-- Mobile Logged Out Menu -->
+        <div class="mobile-nav-section">
+          <div class="mobile-nav-section-title">Account</div>
+          <a href="/login" onclick="toggleMobileMenu()">Login</a>
+          <a href="/register/customer" onclick="toggleMobileMenu()">Register as Buyer</a>
+          <a href="/register/dealership" class="nav-cta" style="text-align: center; margin-top: 1rem; color: white; display: block;" onclick="toggleMobileMenu()">Become Certified Dealer</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('partials/breadcrumbs', { 
+      items: [
+          {name: 'Home', url: '/'},
+          {name: 'Browse Vehicles', url: '/vehicles', active: true}
+      ]
+  }) %>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -1054,7 +1384,7 @@
           <button class="search-tab active" data-tab="vin">
             <i class="fas fa-barcode"></i> Search by VIN
           </button>
-          <button class="search-tab" data-tab="scan">
+          <button class="search-tab" data-tab="scan" onclick="openQrModal()">
             <i class="fas fa-qrcode"></i> Scan QR Code
           </button>
         </div>
@@ -1166,15 +1496,17 @@
                 </div>
               <% } %>
               
-              <div class="verified-badge">...</div>
-              <span class="vehicle-year">...</span>
+              <div class="verified-badge">
+                <i class="fas fa-check-circle"></i> Verified
+              </div>
+              <span class="vehicle-year"><%= vehicle.year %></span>
             </div>
 
             <!-- Vehicle Content -->
             <div class="vehicle-content">
               <div class="vehicle-header">
                 <a href="/vehicle/<%= vehicle.id %>" class="vehicle-title">
-                  <%= vehicle.make %> <%= vehicle.model %>
+                  <%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %>
                 </a>
                 <div class="vehicle-dealer">
                   <i class="fas fa-store"></i>
@@ -1203,8 +1535,12 @@
 
               <div class="vehicle-footer">
                 <div class="vehicle-price">
-                  <!-- <%= vehicle.price ? 'R' + vehicle.price.toLocaleString() : 'POA' %>
-                  <span><%= vehicle.price ? '' : 'Contact for price' %></span> -->
+                  <% if (vehicle.price) { %>
+                    R<%= vehicle.price.toLocaleString() %>
+                  <% } else { %>
+                    POA
+                    <span>Contact for price</span>
+                  <% } %>
                 </div>
                 <a href="/vehicle/<%= vehicle.id %>" class="view-btn">
                   View Details <i class="fas fa-arrow-right"></i>
@@ -1273,7 +1609,7 @@
     <div class="footer-container">
       <div>
         <div class="footer-brand">
-          <img src="/assets/logo-original.png" alt="" height="35">
+          <img src="/assets/logo-original.png" alt="Before You Sign - Vehicle Verification Platform Logo" height="35">
         </div>
         <p class="footer-desc">
           Empowering car buyers with verified data and holding dealerships accountable through transparent verification.
@@ -1297,10 +1633,10 @@
       <div class="footer-column">
         <h4>Legal</h4>
         <ul class="footer-links">
-          <li><a href="#">Consumer Protection Act</a></li>
-          <li><a href="#">Dispute Resolution</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
+          <li><a href="/legal/consumer-protection">Consumer Protection Act</a></li>
+          <li><a href="/legal/dispute-resolution">Dispute Resolution</a></li>
+          <li><a href="/legal/privacy">Privacy Policy</a></li>
+          <li><a href="/legal/terms">Terms of Service</a></li>
         </ul>
       </div>
       <div class="footer-column">
@@ -1321,28 +1657,42 @@
   </footer>
 
   <script>
-    // Tab switching
-    document.querySelectorAll('.search-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        
-        const tabType = tab.dataset.tab;
-        const searchForm = document.getElementById('searchForm');
-        const scanBtn = document.getElementById('scanBtn');
-        
-        if (tabType === 'scan') {
-          openQrModal();
-        }
-      });
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const isActive = menu.classList.toggle('active');
+      document.body.style.overflow = isActive ? 'hidden' : '';
+    }
+
+    // User menu dropdown toggle
+    function toggleUserMenu() {
+      const dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    // Close user dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const userMenu = document.getElementById('userMenu');
+      const dropdown = document.getElementById('userDropdown');
+      
+      if (userMenu && !userMenu.contains(e.target)) {
+        if (dropdown) dropdown.classList.remove('show');
+      }
+    });
+
+    // Close mobile menu on resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        const menu = document.getElementById('mobileMenu');
+        if (menu) menu.classList.remove('active');
+        document.body.style.overflow = '';
+      }
     });
 
     // QR Scanner
     let html5QrcodeScanner;
     const qrModal = document.getElementById('qrModal');
     const qrStatus = document.getElementById('qrStatus');
-
-    document.getElementById('scanBtn').addEventListener('click', openQrModal);
 
     function openQrModal() {
       qrModal.classList.add('active');
@@ -1414,8 +1764,20 @@
 
     // Close on ESC
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && qrModal.classList.contains('active')) {
-        closeQrModal();
+      if (e.key === 'Escape') {
+        if (qrModal.classList.contains('active')) {
+          closeQrModal();
+        }
+        const mobileMenu = document.getElementById('mobileMenu');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+          toggleMobileMenu();
+        }
+        
+        if (userDropdown && userDropdown.classList.contains('show')) {
+          userDropdown.classList.remove('show');
+        }
       }
     });
 
@@ -1457,6 +1819,17 @@
       vinInput.addEventListener('input', (e) => {
         e.target.value = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
       });
+    }
+
+    // Check for URL parameters (success/error messages)
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMsg = urlParams.get('success');
+    const errorMsg = urlParams.get('error');
+
+    if (successMsg) {
+      showToast(decodeURIComponent(successMsg), 'success');
+    } else if (errorMsg) {
+      showToast(decodeURIComponent(errorMsg), 'error');
     }
   </script>
 </body>
