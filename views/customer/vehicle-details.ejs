@@ -164,7 +164,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s;
+            transition: transform 0.3s, opacity 0.3s;
         }
 
         .gallery-main:hover img {
@@ -187,6 +187,7 @@
             opacity: 0;
             transition: opacity 0.2s;
             box-shadow: var(--shadow);
+            z-index: 10;
         }
 
         .gallery:hover .gallery-nav {
@@ -199,6 +200,11 @@
         .gallery-nav:hover {
             background: white;
             transform: translateY(-50%) scale(1.1);
+        }
+
+        .gallery-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .gallery-thumbs {
@@ -250,6 +256,7 @@
             border-radius: 20px;
             font-size: 0.875rem;
             font-weight: 500;
+            z-index: 5;
         }
 
         /* Vehicle Info Card */
@@ -706,6 +713,12 @@
             border: 1px solid #fde68a;
         }
 
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
         /* Footer */
         .footer {
             margin-top: 3rem;
@@ -725,6 +738,7 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
         }
 
         .modal.active {
@@ -735,6 +749,7 @@
             position: relative;
             max-width: 90vw;
             max-height: 90vh;
+            outline: none;
         }
 
         .modal img {
@@ -753,6 +768,13 @@
             cursor: pointer;
             opacity: 0.8;
             transition: opacity 0.2s;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-close:hover {
@@ -772,6 +794,10 @@
             cursor: pointer;
             font-size: 1.25rem;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
         }
 
         .modal-nav:hover {
@@ -796,7 +822,7 @@
 
         /* Print Styles */
         @media print {
-            .header, .gallery-nav, .btn, .modal {
+            .header, .gallery-nav, .btn, .modal, .dispute-modal, .modal-overlay {
                 display: none !important;
             }
             
@@ -805,6 +831,16 @@
             }
             
             .gallery {
+                page-break-inside: avoid;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
                 page-break-inside: avoid;
             }
         }
@@ -832,6 +868,475 @@
             outline: 2px solid var(--accent);
             outline-offset: 2px;
         }
+
+        /* Dispute Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .dispute-modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: #f59e0b;
+            color: white;
+            border-radius: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .header-text h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-text p {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .close-btn {
+            margin-left: auto;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255,255,255,0.5);
+            border-radius: 0.15rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.8);
+            color: #0f172a;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 100px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-label i {
+            color: #3b82f6;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 0.25rem;
+        }
+
+        /* Category Selection Grid */
+        .category-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .category-card {
+            position: relative;
+            cursor: pointer;
+            border-radius: 0.2rem;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s;
+            overflow: hidden;
+        }
+
+        .category-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .category-card input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .category-card input:checked + .category-content {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .category-card input:checked + .category-content .category-badge {
+            transform: scale(1.1);
+        }
+
+        .category-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 0.15rem;
+        }
+
+        .category-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: white;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .cat-a { background: #3b82f6; }
+        .cat-b { background: #8b5cf6; }
+        .cat-c { background: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+        .cat-d { background: #10b981; }
+        .cat-e { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
+
+        .category-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .category-info strong {
+            font-size: 0.9375rem;
+            color: #0f172a;
+        }
+
+        .category-info span {
+            font-size: 0.8125rem;
+            color: #64748b;
+        }
+
+        .category-legend {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: #fef2f2;
+            border-radius: 0.2rem;
+            font-size: 0.8125rem;
+            color: #991b1b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-legend i {
+            color: #ef4444;
+        }
+
+        /* Form Inputs */
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.2rem;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.8125rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        .char-count.error {
+            color: #ef4444;
+        }
+
+        /* CPA Notice */
+        .cpa-notice {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+            border-radius: 0.2rem;
+            border-left: 4px solid #3b82f6;
+            margin-bottom: 1.5rem;
+        }
+
+        .notice-icon {
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .notice-content h4 {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 0.25rem;
+        }
+
+        .notice-content p {
+            font-size: 0.875rem;
+            color: #3b82f6;
+            line-height: 1.5;
+        }
+
+        /* Modal Actions */
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Success State */
+        .success-state {
+            padding: 3rem 2rem;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #d1fae5;
+            color: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-state h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .reference-number {
+            font-size: 1.125rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+
+        .reference-number strong {
+            color: #3b82f6;
+            font-family: monospace;
+            font-size: 1.25rem;
+        }
+
+        .success-details {
+            background: #f8fafc;
+            border-radius: 0.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .success-details p {
+            color: #475569;
+            margin-bottom: 1rem;
+            font-size: 0.9375rem;
+        }
+
+        .success-details ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .success-details li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .success-details i {
+            color: #3b82f6;
+            width: 20px;
+        }
+
+        /* Loading State */
+        .loading-state {
+            padding: 3rem;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+            
+            .dispute-modal {
+                max-height: 95vh;
+                border-radius: 16px 16px 0 0;
+                animation: slideUpMobile 0.3s ease;
+            }
+            
+            @keyframes slideUpMobile {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
+            
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-actions {
+                flex-direction: column-reverse;
+            }
+            
+            .modal-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .loading-dots:after {
+            content: ' .';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ' .'; }
+            40% { content: ' ..'; }
+            60% { content: ' ...'; }
+            80%, 100% { content: ''; }
+        }
     </style>
 </head>
 <body>
@@ -839,19 +1344,18 @@
     <header class="header">
         <div class="header-content">
             <a href="/" class="logo">
-                <img src="/assets/logo-original.png" alt="" height="35">
+                <img src="/assets/logo-original.png" alt="" height="35" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <!-- <div class="logo-icon" style="display: none;"><i class="fas fa-shield-alt"></i></div>
+                <span>Before You Sign</span> -->
             </a>
             <div class="header-actions">
                 <button class="btn btn-secondary" onclick="window.print()">
-                    <i class="fas fa-print"></i>
-                    Print Report
+                    <!-- <i class="fas fa-print"></i> -->
+                    Print
                 </button>
-                <button class="btn btn-primary" onclick="shareVehicle()" style="display: none;">
-                    <i class="fas fa-share-alt"></i>
-                    Share
-                </button>
+                
                 <button class="btn btn-warning" onclick="openDisputeModal()" style="background: #f59e0b; color: white; border: none;">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <!-- <i class="fas fa-exclamation-triangle"></i> -->
                     Report Issue
                 </button>
             </div>
@@ -861,7 +1365,7 @@
     <main class="container">
         <!-- Status Alerts -->
         <% if (vehicle.status === 'rejected' && vehicle.rejection_reason) { %>
-            <div class="alert alert-error">
+            <div class="alert alert-error" role="alert">
                 <i class="fas fa-exclamation-circle"></i>
                 <div>
                     <strong>Verification Failed:</strong> <%= vehicle.rejection_reason %>
@@ -870,7 +1374,7 @@
         <% } %>
 
         <% if (vehicle.status === 'pending_verification') { %>
-            <div class="alert alert-warning">
+            <div class="alert alert-warning" role="alert">
                 <i class="fas fa-clock"></i>
                 <div>
                     <strong>Pending Verification:</strong> This vehicle is awaiting verification by our team.
@@ -882,12 +1386,12 @@
         <section class="hero">
             <!-- Image Gallery -->
             <div class="gallery">
-                <div class="gallery-main" onclick="openModal(currentImageIndex)">
+                <div class="gallery-main" onclick="openModal(currentImageIndex)" role="button" tabindex="0" aria-label="Open image gallery">
                     <% if (vehicle.image_urls) { %>
                         <% try { %>
                             <% const images = JSON.parse(vehicle.image_urls); %>
                             <% if (images && images.length > 0) { %>
-                                <img id="mainImage" src="<%= images[0] %>" alt="<%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %>" loading="eager">
+                                <img id="mainImage" src="<%= images[0] %>" alt="<%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %>" loading="eager" onerror="this.src='/assets/placeholder-car.jpg'">
                                 <span class="image-counter"><span id="currentIndex">1</span> / <%= images.length %></span>
                             <% } else { %>
                                 <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
@@ -904,10 +1408,10 @@
                             <i class="fas fa-car" style="font-size: 4rem; opacity: 0.3;"></i>
                         </div>
                     <% } %>
-                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">
+                    <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)" aria-label="Previous image">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">
+                    <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)" aria-label="Next image">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -918,8 +1422,8 @@
                         <% if (images && images.length > 1) { %>
                             <div class="gallery-thumbs">
                                 <% images.forEach((img, idx) => { %>
-                                    <div class="thumb <%= idx === 0 ? 'active' : '' %>" onclick="selectImage(<%= idx %>)">
-                                        <img src="<%= img %>" alt="Thumbnail <%= idx + 1 %>" loading="lazy">
+                                    <div class="thumb <%= idx === 0 ? 'active' : '' %>" onclick="selectImage(<%= idx %>)" role="button" tabindex="0" aria-label="View image <%= idx + 1 %>">
+                                        <img src="<%= img %>" alt="Thumbnail <%= idx + 1 %>" loading="lazy" onerror="this.src='/assets/placeholder-thumb.jpg'">
                                     </div>
                                 <% }); %>
                             </div>
@@ -1023,7 +1527,7 @@
                             </a>
                         <% } %>
                         <% if (vehicle.website) { %>
-                            <a href="<%= vehicle.website %>" target="_blank">
+                            <a href="<%= vehicle.website %>" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-globe"></i> Visit Website
                             </a>
                         <% } %>
@@ -1172,10 +1676,10 @@
                                 </div>
                                 <% if (vehicle.service_history && vehicle.service_history.startsWith('http')) { %>
                                     <div class="doc-actions">
-                                        <a href="<%= vehicle.service_history %>" target="_blank" class="btn btn-secondary btn-sm">
+                                        <a href="<%= vehicle.service_history %>" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" aria-label="View service history">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="<%= vehicle.service_history %>" download class="btn btn-primary btn-sm">
+                                        <a href="<%= vehicle.service_history %>" download class="btn btn-primary btn-sm" aria-label="Download service history">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     </div>
@@ -1195,10 +1699,10 @@
                                 </div>
                                 <% if (vehicle.accident_history && vehicle.accident_history.startsWith('http')) { %>
                                     <div class="doc-actions">
-                                        <a href="<%= vehicle.accident_history %>" target="_blank" class="btn btn-secondary btn-sm">
+                                        <a href="<%= vehicle.accident_history %>" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" aria-label="View accident report">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="<%= vehicle.accident_history %>" download class="btn btn-primary btn-sm">
+                                        <a href="<%= vehicle.accident_history %>" download class="btn btn-primary btn-sm" aria-label="Download accident report">
                                             <i class="fas fa-download"></i>
                                         </a>
                                     </div>
@@ -1364,771 +1868,6 @@
                     </div>
                 </div>
 
-                <!-- Dispute Modal -->
-<div id="disputeModal" class="modal-overlay" style="display: none;">
-    <div class="dispute-modal">
-        <div class="modal-header">
-            <div class="header-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="header-text">
-                <h2>Report a Discrepancy</h2>
-                <p>File a dispute under the Consumer Protection Act (CPA)</p>
-            </div>
-            <button class="close-btn" onclick="closeDisputeModal()" aria-label="Close">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <form id="disputeForm" class="modal-body">
-            <!-- Vehicle Info (Hidden if pre-filled) -->
-            <input type="hidden" name="vehicle_id" value="<%= vehicle.id %>">
-
-            <!-- CPA Category Selection -->
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-layer-group"></i>
-                    Dispute Category (CPA Section 55)
-                    <span class="required">*</span>
-                </label>
-                <div class="category-grid">
-                    <label class="category-card" data-category="A">
-                        <input type="radio" name="cpa_category" value="A" required>
-                        <div class="category-content">
-                            <span class="category-badge cat-a">A</span>
-                            <div class="category-info">
-                                <strong>Non-Conforming Goods</strong>
-                                <span>Vehicle not as described</span>
-                            </div>
-                        </div>
-                    </label>
-                    
-                    <label class="category-card" data-category="B">
-                        <input type="radio" name="cpa_category" value="B" required>
-                        <div class="category-content">
-                            <span class="category-badge cat-b">B</span>
-                            <div class="category-info">
-                                <strong>Undisclosed Defects</strong>
-                                <span>Hidden faults not reported</span>
-                            </div>
-                        </div>
-                    </label>
-                    
-                    <label class="category-card" data-category="C">
-                        <input type="radio" name="cpa_category" value="C" required>
-                        <div class="category-content">
-                            <span class="category-badge cat-c">C</span>
-                            <div class="category-info">
-                                <strong>Safety Issue</strong>
-                                <span>Immediate safety concern</span>
-                            </div>
-                        </div>
-                    </label>
-                    
-                    <label class="category-card" data-category="D">
-                        <input type="radio" name="cpa_category" value="D" required>
-                        <div class="category-content">
-                            <span class="category-badge cat-d">D</span>
-                            <div class="category-info">
-                                <strong>Documentation Error</strong>
-                                <span>Incorrect paperwork</span>
-                            </div>
-                        </div>
-                    </label>
-                    
-                    <label class="category-card" data-category="E">
-                        <input type="radio" name="cpa_category" value="E" required>
-                        <div class="category-content">
-                            <span class="category-badge cat-e">E</span>
-                            <div class="category-info">
-                                <strong>Misrepresentation</strong>
-                                <span>False or misleading info</span>
-                            </div>
-                        </div>
-                    </label>
-                </div>
-                <div class="category-legend">
-                    <span class="urgent"><i class="fas fa-bolt"></i> Categories C & E = Immediate Response Required</span>
-                </div>
-            </div>
-
-            <!-- Discrepancy Description -->
-            <div class="form-group">
-                <label class="form-label" for="discrepancy_description">
-                    <i class="fas fa-edit"></i>
-                    Describe the Discrepancy
-                    <span class="required">*</span>
-                </label>
-                <textarea 
-                    id="discrepancy_description" 
-                    name="discrepancy_description" 
-                    class="form-textarea" 
-                    placeholder="Please provide specific details about what is incorrect or missing from the vehicle report. Include dates, locations, and any supporting evidence you may have."
-                    required
-                    minlength="50"
-                    maxlength="2000"
-                ></textarea>
-                <div class="char-count"><span id="charCount">0</span> / 2000 characters (minimum 50)</div>
-            </div>
-
-            <!-- Preferred Resolution -->
-            <div class="form-group">
-                <label class="form-label" for="preferred_resolution">
-                    <i class="fas fa-handshake"></i>
-                    Preferred Resolution
-                    <span class="required">*</span>
-                </label>
-                <select id="preferred_resolution" name="preferred_resolution" class="form-select" required>
-                    <option value="">Select your preferred outcome...</option>
-                    <option value="vehicle_repair">Vehicle repair at dealer expense</option>
-                    <option value="price_adjustment">Price adjustment/refund</option>
-                    <option value="contract_cancellation">Cancel purchase contract</option>
-                    <option value="documentation_correction">Correct documentation</option>
-                    <option value="full_refund">Full refund with return</option>
-                    <option value="other">Other (specify in description)</option>
-                </select>
-            </div>
-
-            <!-- CPA Rights Notice -->
-            <div class="cpa-notice">
-                <div class="notice-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="notice-content">
-                    <h4>Your CPA Rights</h4>
-                    <p>Under Section 16 of the Consumer Protection Act, you have the right to cancel this transaction within <strong>5 business days</strong> if this was a direct marketing sale. All disputes are logged with the National Consumer Commission.</p>
-                </div>
-            </div>
-
-            <!-- Submit Actions -->
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeDisputeModal()">
-                    Cancel
-                </button>
-                <button type="submit" class="btn btn-primary" id="submitBtn">
-                    <i class="fas fa-paper-plane"></i>
-                    Submit Dispute
-                </button>
-            </div>
-        </form>
-
-        <!-- Success State (Hidden by default) -->
-        <div id="successState" class="success-state" style="display: none;">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h3>Dispute Submitted Successfully</h3>
-            <p class="reference-number">Reference: <strong id="disputeRef">DIS-00000</strong></p>
-            <div class="success-details">
-                <p>Your dispute has been filed and the dealership has been notified.</p>
-                <ul>
-                    <li><i class="fas fa-clock"></i> Response deadline set per CPA Category <span id="cpaCat"></span></li>
-                    <li><i class="fas fa-envelope"></i> Confirmation email sent to your registered address</li>
-                    <li><i class="fas fa-gavel"></i> National Consumer Commission will be notified if unresolved</li>
-                </ul>
-            </div>
-            <button class="btn btn-primary" onclick="closeDisputeModal()">
-                <i class="fas fa-check"></i>
-                Done
-            </button>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="loading-state" style="display: none;">
-            <div class="spinner"></div>
-            <p>Submitting your dispute...</p>
-        </div>
-    </div>
-</div>
-
-<!-- Add this button somewhere on your page (e.g., in the header-actions or near vehicle info) -->
-<button class="btn btn-warning" onclick="openDisputeModal()" style="background: #f59e0b; color: white; border: none;">
-    <i class="fas fa-exclamation-triangle"></i>
-    Report Issue
-</button>
-
-<style>
-/* Dispute Modal Styles */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    animation: fadeIn 0.3s ease;
-}
-
-.dispute-modal {
-    background: white;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 640px;
-    max-height: 90vh;
-    overflow: hidden;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    animation: slideUp 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from { 
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to { 
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
-}
-
-.header-icon {
-    width: 48px;
-    height: 48px;
-    background: #f59e0b;
-    color: white;
-    border-radius: 0.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
-
-.header-text h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 0.25rem;
-}
-
-.header-text p {
-    font-size: 0.875rem;
-    color: #64748b;
-}
-
-.close-btn {
-    margin-left: auto;
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: rgba(255,255,255,0.5);
-    border-radius: 0.15rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #64748b;
-    transition: all 0.2s;
-}
-
-.close-btn:hover {
-    background: rgba(255,255,255,0.8);
-    color: #0f172a;
-}
-
-.modal-body {
-    padding: 1.5rem;
-    overflow-y: auto;
-    max-height: calc(90vh - 100px);
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: #0f172a;
-    margin-bottom: 0.75rem;
-}
-
-.form-label i {
-    color: #3b82f6;
-}
-
-.required {
-    color: #ef4444;
-    margin-left: 0.25rem;
-}
-
-/* Category Selection Grid */
-.category-grid {
-    display: grid;
-    gap: 0.75rem;
-}
-
-.category-card {
-    position: relative;
-    cursor: pointer;
-    border-radius: 0.2rem;
-    border: 2px solid #e2e8f0;
-    transition: all 0.2s;
-    overflow: hidden;
-}
-
-.category-card:hover {
-    border-color: #cbd5e1;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.category-card input {
-    position: absolute;
-    opacity: 0;
-}
-
-.category-card input:checked + .category-content {
-    border-color: #3b82f6;
-    background: #eff6ff;
-}
-
-.category-card input:checked + .category-content .category-badge {
-    transform: scale(1.1);
-}
-
-.category-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 0.15rem;
-}
-
-.category-badge {
-    width: 40px;
-    height: 40px;
-    border-radius: 0.15rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.125rem;
-    color: white;
-    flex-shrink: 0;
-    transition: transform 0.2s;
-}
-
-.cat-a { background: #3b82f6; }
-.cat-b { background: #8b5cf6; }
-.cat-c { background: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
-.cat-d { background: #10b981; }
-.cat-e { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
-
-.category-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.category-info strong {
-    font-size: 0.9375rem;
-    color: #0f172a;
-}
-
-.category-info span {
-    font-size: 0.8125rem;
-    color: #64748b;
-}
-
-.category-legend {
-    margin-top: 0.75rem;
-    padding: 0.75rem;
-    background: #fef2f2;
-    border-radius: 0.2rem;
-    font-size: 0.8125rem;
-    color: #991b1b;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.category-legend i {
-    color: #ef4444;
-}
-
-/* Form Inputs */
-.form-textarea,
-.form-select {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 0.2rem;
-    font-family: inherit;
-    font-size: 0.9375rem;
-    transition: all 0.2s;
-    background: white;
-}
-
-.form-textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-.form-textarea:focus,
-.form-select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-select {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    padding-right: 2.5rem;
-}
-
-.char-count {
-    text-align: right;
-    font-size: 0.8125rem;
-    color: #94a3b8;
-    margin-top: 0.5rem;
-}
-
-/* CPA Notice */
-.cpa-notice {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
-    border-radius: 0.2rem;
-    border-left: 4px solid #3b82f6;
-    margin-bottom: 1.5rem;
-}
-
-.notice-icon {
-    width: 40px;
-    height: 40px;
-    background: #3b82f6;
-    color: white;
-    border-radius: 0.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    flex-shrink: 0;
-}
-
-.notice-content h4 {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: #1e40af;
-    margin-bottom: 0.25rem;
-}
-
-.notice-content p {
-    font-size: 0.875rem;
-    color: #3b82f6;
-    line-height: 1.5;
-}
-
-/* Modal Actions */
-.modal-actions {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
-    padding-top: 1rem;
-    border-top: 1px solid #e2e8f0;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.2rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-}
-
-.btn-secondary {
-    background: #f1f5f9;
-    color: #475569;
-}
-
-.btn-secondary:hover {
-    background: #e2e8f0;
-}
-
-.btn-primary {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-    background: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-}
-
-.btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Success State */
-.success-state {
-    padding: 3rem 2rem;
-    text-align: center;
-    animation: fadeIn 0.4s ease;
-}
-
-.success-icon {
-    width: 80px;
-    height: 80px;
-    background: #d1fae5;
-    color: #10b981;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    margin: 0 auto 1.5rem;
-    animation: scaleIn 0.3s ease;
-}
-
-@keyframes scaleIn {
-    from { transform: scale(0); }
-    to { transform: scale(1); }
-}
-
-.success-state h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 0.5rem;
-}
-
-.reference-number {
-    font-size: 1.125rem;
-    color: #64748b;
-    margin-bottom: 1.5rem;
-}
-
-.reference-number strong {
-    color: #3b82f6;
-    font-family: monospace;
-    font-size: 1.25rem;
-}
-
-.success-details {
-    background: #f8fafc;
-    border-radius: 0.2rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    text-align: left;
-}
-
-.success-details p {
-    color: #475569;
-    margin-bottom: 1rem;
-    font-size: 0.9375rem;
-}
-
-.success-details ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.success-details li {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.875rem;
-    color: #64748b;
-}
-
-.success-details i {
-    color: #3b82f6;
-    width: 20px;
-}
-
-/* Loading State */
-.loading-state {
-    padding: 3rem;
-    text-align: center;
-    color: #64748b;
-}
-
-.spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid #e2e8f0;
-    border-top-color: #3b82f6;
-    border-radius: 50%;
-    margin: 0 auto 1rem;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-    .modal-overlay {
-        padding: 0;
-        align-items: flex-end;
-    }
-    
-    .dispute-modal {
-        max-height: 95vh;
-        border-radius: 16px 16px 0 0;
-        animation: slideUpMobile 0.3s ease;
-    }
-    
-    @keyframes slideUpMobile {
-        from { transform: translateY(100%); }
-        to { transform: translateY(0); }
-    }
-    
-    .category-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .modal-actions {
-        flex-direction: column-reverse;
-    }
-    
-    .modal-actions .btn {
-        width: 100%;
-        justify-content: center;
-    }
-}
-</style>
-
-<script>
-// Modal Controls
-function openDisputeModal() {
-    document.getElementById('disputeModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    
-    // Reset form
-    document.getElementById('disputeForm').reset();
-    document.getElementById('disputeForm').style.display = 'block';
-    document.getElementById('successState').style.display = 'none';
-    document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('charCount').textContent = '0';
-    document.getElementById('submitBtn').disabled = false;
-    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Submit Dispute';
-}
-
-function closeDisputeModal() {
-    document.getElementById('disputeModal').style.display = 'none';
-    document.body.style.overflow = '';
-}
-
-// Close on overlay click
-document.getElementById('disputeModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeDisputeModal();
-});
-
-// Close on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById('disputeModal').style.display === 'flex') {
-        closeDisputeModal();
-    }
-});
-
-// Character counter
-document.getElementById('discrepancy_description')?.addEventListener('input', function() {
-    document.getElementById('charCount').textContent = this.value.length;
-});
-
-// Category selection visual feedback
-document.querySelectorAll('.category-card').forEach(card => {
-    card.addEventListener('click', function() {
-        document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
-        this.classList.add('selected');
-    });
-});
-
-// Form Submission
-document.getElementById('disputeForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const form = e.target;
-    const formData = new FormData(form);
-    
-    // Validation
-    const description = formData.get('discrepancy_description');
-    if (description.length < 50) {
-        alert('Please provide at least 50 characters in the description.');
-        return;
-    }
-    
-    // Show loading
-    form.style.display = 'none';
-    document.getElementById('loadingState').style.display = 'block';
-    submitBtn.disabled = true;
-    
-    try {
-        const response = await fetch('/report-dispute', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                vehicle_id: formData.get('vehicle_id'),
-                cpa_category: formData.get('cpa_category'),
-                discrepancy_description: formData.get('discrepancy_description'),
-                preferred_resolution: formData.get('preferred_resolution')
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('successState').style.display = 'block';
-            document.getElementById('disputeRef').textContent = 'DIS-' + result.dispute_id;
-            document.getElementById('cpaCat').textContent = formData.get('cpa_category');
-        } else {
-            throw new Error(result.error || 'Failed to submit dispute');
-        }
-    } catch (error) {
-        alert('Error: ' + error.message);
-        form.style.display = 'block';
-        document.getElementById('loadingState').style.display = 'none';
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Dispute';
-    }
-});
-</script>
-
                 <!-- QR Code -->
                 <% if (vehicle.qr_code_path) { %>
                     <div class="card">
@@ -2140,7 +1879,7 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
                         </div>
                         <div class="card-content">
                             <div class="qr-section">
-                                <img src="<%= vehicle.qr_code_path %>" alt="QR Code" class="qr-code">
+                                <img src="<%= vehicle.qr_code_path %>" alt="QR Code" class="qr-code" onerror="this.style.display='none'">
                                 <p class="qr-text">Scan to verify this vehicle instantly</p>
                             </div>
                         </div>
@@ -2183,16 +1922,196 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
     </footer>
 
     <!-- Image Modal -->
-    <div id="imageModal" class="modal" onclick="closeModal()">
-        <span class="modal-close">&times;</span>
-        <button class="modal-nav prev" onclick="event.stopPropagation(); navigateModal(-1)">
+    <div id="imageModal" class="modal" role="dialog" aria-modal="true" aria-label="Image Gallery">
+        <button class="modal-close" onclick="closeModal()" aria-label="Close gallery">&times;</button>
+        <button class="modal-nav prev" onclick="navigateModal(-1)" aria-label="Previous image">
             <i class="fas fa-chevron-left"></i>
         </button>
-        <button class="modal-nav next" onclick="event.stopPropagation(); navigateModal(1)">
+        <button class="modal-nav next" onclick="navigateModal(1)" aria-label="Next image">
             <i class="fas fa-chevron-right"></i>
         </button>
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <img id="modalImage" src="" alt="Full size image">
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Full size vehicle image">
+        </div>
+    </div>
+
+    <!-- Dispute Modal -->
+    <div id="disputeModal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="disputeTitle">
+        <div class="dispute-modal">
+            <div class="modal-header">
+                <div class="header-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="header-text">
+                    <h2 id="disputeTitle">Report a Discrepancy</h2>
+                    <p>File a dispute under the Consumer Protection Act (CPA)</p>
+                </div>
+                <button class="close-btn" onclick="closeDisputeModal()" aria-label="Close dispute form">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="disputeForm" class="modal-body">
+                <input type="hidden" name="vehicle_id" value="<%= vehicle.id %>">
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-layer-group"></i>
+                        Dispute Category (CPA Section 55)
+                        <span class="required">*</span>
+                    </label>
+                    <div class="category-grid" role="radiogroup" aria-required="true">
+                        <label class="category-card" data-category="A">
+                            <input type="radio" name="cpa_category" value="A" required aria-label="Category A: Non-Conforming Goods">
+                            <div class="category-content">
+                                <span class="category-badge cat-a">A</span>
+                                <div class="category-info">
+                                    <strong>Non-Conforming Goods</strong>
+                                    <span>Vehicle not as described</span>
+                                </div>
+                            </div>
+                        </label>
+                        
+                        <label class="category-card" data-category="B">
+                            <input type="radio" name="cpa_category" value="B" required aria-label="Category B: Undisclosed Defects">
+                            <div class="category-content">
+                                <span class="category-badge cat-b">B</span>
+                                <div class="category-info">
+                                    <strong>Undisclosed Defects</strong>
+                                    <span>Hidden faults not reported</span>
+                                </div>
+                            </div>
+                        </label>
+                        
+                        <label class="category-card" data-category="C">
+                            <input type="radio" name="cpa_category" value="C" required aria-label="Category C: Safety Issue">
+                            <div class="category-content">
+                                <span class="category-badge cat-c">C</span>
+                                <div class="category-info">
+                                    <strong>Safety Issue</strong>
+                                    <span>Immediate safety concern</span>
+                                </div>
+                            </div>
+                        </label>
+                        
+                        <label class="category-card" data-category="D">
+                            <input type="radio" name="cpa_category" value="D" required aria-label="Category D: Documentation Error">
+                            <div class="category-content">
+                                <span class="category-badge cat-d">D</span>
+                                <div class="category-info">
+                                    <strong>Documentation Error</strong>
+                                    <span>Incorrect paperwork</span>
+                                </div>
+                            </div>
+                        </label>
+                        
+                        <label class="category-card" data-category="E">
+                            <input type="radio" name="cpa_category" value="E" required aria-label="Category E: Misrepresentation">
+                            <div class="category-content">
+                                <span class="category-badge cat-e">E</span>
+                                <div class="category-info">
+                                    <strong>Misrepresentation</strong>
+                                    <span>False or misleading info</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="category-legend">
+                        <span class="urgent"><i class="fas fa-bolt"></i> Categories C & E = Immediate Response Required</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="discrepancy_description">
+                        <i class="fas fa-edit"></i>
+                        Describe the Discrepancy
+                        <span class="required">*</span>
+                    </label>
+                    <textarea 
+                        id="discrepancy_description" 
+                        name="discrepancy_description" 
+                        class="form-textarea" 
+                        placeholder="Please provide specific details about what is incorrect or missing from the vehicle report. Include dates, locations, and any supporting evidence you may have."
+                        required
+                        minlength="50"
+                        maxlength="2000"
+                        aria-describedby="charCount"
+                    ></textarea>
+                    <div class="char-count" id="charCount">0 / 2000 characters (minimum 50)</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="preferred_resolution">
+                        <i class="fas fa-handshake"></i>
+                        Preferred Resolution
+                        <span class="required">*</span>
+                    </label>
+                    <select id="preferred_resolution" name="preferred_resolution" class="form-select" required>
+                        <option value="">Select your preferred outcome...</option>
+                        <option value="vehicle_repair">Vehicle repair at dealer expense</option>
+                        <option value="price_adjustment">Price adjustment/refund</option>
+                        <option value="contract_cancellation">Cancel purchase contract</option>
+                        <option value="documentation_correction">Correct documentation</option>
+                        <option value="full_refund">Full refund with return</option>
+                        <option value="other">Other (specify in description)</option>
+                    </select>
+                </div>
+
+                <div class="cpa-notice">
+                    <div class="notice-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="notice-content">
+                        <h4>Your CPA Rights</h4>
+                        <p>Under Section 16 of the Consumer Protection Act, you have the right to cancel this transaction within <strong>5 business days</strong> if this was a direct marketing sale. All disputes are logged with the National Consumer Commission.</p>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeDisputeModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span class="btn-text">Submit Dispute</span>
+                    </button>
+                </div>
+            </form>
+
+            <div id="successState" class="success-state" style="display: none;">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Dispute Submitted Successfully</h3>
+                <p class="reference-number">Reference: <strong id="disputeRef">DIS-00000</strong></p>
+                <div class="success-details">
+                    <p>Your dispute has been filed and the dealership has been notified.</p>
+                    <ul>
+                        <li><i class="fas fa-clock"></i> Response deadline set per CPA Category <span id="cpaCat"></span></li>
+                        <li><i class="fas fa-envelope"></i> Confirmation email sent to your registered address</li>
+                        <li><i class="fas fa-gavel"></i> National Consumer Commission will be notified if unresolved</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="closeDisputeModal()">
+                    <i class="fas fa-check"></i>
+                    Done
+                </button>
+            </div>
+
+            <div id="loadingState" class="loading-state" style="display: none;">
+                <div class="spinner"></div>
+                <p>Submitting your dispute<span class="loading-dots"></span></p>
+            </div>
+
+            <div id="errorState" class="loading-state" style="display: none; color: #991b1b;">
+                <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <h3 style="margin-bottom: 0.5rem;">Submission Failed</h3>
+                <p id="errorMessage" style="margin-bottom: 1.5rem;">Something went wrong. Please try again.</p>
+                <button type="button" class="btn btn-primary" onclick="retryDispute()">
+                    <i class="fas fa-redo"></i>
+                    Try Again
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2200,27 +2119,30 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
         // Image Gallery Logic
         let currentImageIndex = 0;
         let images = [];
+        let preloadedImages = {};
         
         // Initialize images array from server data
         <% if (vehicle.image_urls) { %>
             <% try { %>
                 <% const imgs = JSON.parse(vehicle.image_urls); %>
                 images = <%= JSON.stringify(imgs) %>;
-            <% } catch(e) { } %>
+            <% } catch(e) { 
+                console.error('Error parsing image URLs:', e);
+            } %>
         <% } %>
 
         function selectImage(index) {
-            if (!images.length) return;
+            if (!images.length || index === currentImageIndex) return;
             currentImageIndex = index;
             updateMainImage();
             updateThumbnails();
+            preloadNearbyImages();
         }
 
         function changeImage(direction) {
             if (!images.length) return;
-            currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
-            updateMainImage();
-            updateThumbnails();
+            const newIndex = (currentImageIndex + direction + images.length) % images.length;
+            selectImage(newIndex);
         }
 
         function updateMainImage() {
@@ -2241,6 +2163,22 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
         function updateThumbnails() {
             document.querySelectorAll('.thumb').forEach((thumb, idx) => {
                 thumb.classList.toggle('active', idx === currentImageIndex);
+                thumb.setAttribute('aria-current', idx === currentImageIndex ? 'true' : 'false');
+            });
+        }
+
+        function preloadNearbyImages() {
+            const indicesToPreload = [
+                (currentImageIndex - 1 + images.length) % images.length,
+                (currentImageIndex + 1) % images.length
+            ];
+            
+            indicesToPreload.forEach(idx => {
+                if (!preloadedImages[idx] && images[idx]) {
+                    const img = new Image();
+                    img.src = images[idx];
+                    preloadedImages[idx] = img;
+                }
             });
         }
 
@@ -2253,6 +2191,7 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
             modalImg.src = images[currentImageIndex];
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            trapFocus(modal);
         }
 
         function closeModal() {
@@ -2274,19 +2213,31 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
 
         // Keyboard Navigation
         document.addEventListener('keydown', (e) => {
-            const modal = document.getElementById('imageModal');
-            if (!modal.classList.contains('active')) return;
+            const imageModal = document.getElementById('imageModal');
+            const disputeModal = document.getElementById('disputeModal');
             
-            switch(e.key) {
-                case 'Escape':
-                    closeModal();
-                    break;
-                case 'ArrowLeft':
-                    navigateModal(-1);
-                    break;
-                case 'ArrowRight':
-                    navigateModal(1);
-                    break;
+            if (imageModal.classList.contains('active')) {
+                switch(e.key) {
+                    case 'Escape':
+                        closeModal();
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        navigateModal(-1);
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        navigateModal(1);
+                        break;
+                }
+            }
+            
+            if (disputeModal.style.display === 'flex' && e.key === 'Escape') {
+                const form = document.getElementById('disputeForm');
+                const success = document.getElementById('successState');
+                if (form.style.display !== 'none' || success.style.display === 'none') {
+                    closeDisputeModal();
+                }
             }
         });
 
@@ -2298,34 +2249,53 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
                 url: window.location.href
             };
 
-            if (navigator.share) {
-                try {
+            const btn = document.getElementById('shareBtn');
+            const originalContent = btn.innerHTML;
+            
+            try {
+                if (navigator.share) {
                     await navigator.share(shareData);
-                } catch (err) {
-                    console.log('Share cancelled');
+                } else if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(window.location.href);
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        btn.innerHTML = originalContent;
+                    }, 2000);
+                } else {
+                    throw new Error('Share not supported');
                 }
-            } else {
-                // Fallback to clipboard
-                navigator.clipboard.writeText(window.location.href).then(() => {
-                    alert('Link copied to clipboard!');
-                }).catch(() => {
-                    prompt('Copy this link:', window.location.href);
-                });
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    // Fallback
+                    const input = document.createElement('input');
+                    input.value = window.location.href;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        btn.innerHTML = originalContent;
+                    }, 2000);
+                }
             }
         }
 
         // Touch/Swipe support for mobile
         let touchStartX = 0;
         let touchEndX = 0;
+        const galleryMain = document.querySelector('.gallery-main');
 
-        document.querySelector('.gallery-main')?.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
+        if (galleryMain) {
+            galleryMain.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
 
-        document.querySelector('.gallery-main')?.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
+            galleryMain.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+        }
 
         function handleSwipe() {
             const swipeThreshold = 50;
@@ -2333,30 +2303,287 @@ document.getElementById('disputeForm')?.addEventListener('submit', async functio
             
             if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0) {
-                    changeImage(1); // Swipe left, next image
+                    changeImage(1);
                 } else {
-                    changeImage(-1); // Swipe right, prev image
+                    changeImage(-1);
                 }
             }
         }
 
-        // Lazy loading enhancement
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src || img.src;
-                        img.classList.remove('lazy');
-                        observer.unobserve(img);
+        // Dispute Modal Functions
+        let disputeFormData = null;
+
+        function openDisputeModal() {
+            const modal = document.getElementById('disputeModal');
+            const form = document.getElementById('disputeForm');
+            const success = document.getElementById('successState');
+            const loading = document.getElementById('loadingState');
+            const error = document.getElementById('errorState');
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Reset states
+            form.style.display = 'block';
+            success.style.display = 'none';
+            loading.style.display = 'none';
+            error.style.display = 'none';
+            
+            // Restore draft if exists
+            restoreDisputeDraft();
+            
+            // Focus management
+            setTimeout(() => {
+                const firstInput = form.querySelector('input, select, textarea');
+                if (firstInput) firstInput.focus();
+            }, 100);
+            
+            trapFocus(modal);
+        }
+
+        function closeDisputeModal() {
+            const modal = document.getElementById('disputeModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            
+            // Save draft if form visible and not submitted
+            const form = document.getElementById('disputeForm');
+            if (form.style.display !== 'none') {
+                saveDisputeDraft();
+            }
+        }
+
+        function retryDispute() {
+            const form = document.getElementById('disputeForm');
+            const error = document.getElementById('errorState');
+            const loading = document.getElementById('loadingState');
+            
+            error.style.display = 'none';
+            form.style.display = 'block';
+            
+            // Restore form data
+            if (disputeFormData) {
+                Object.keys(disputeFormData).forEach(key => {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    if (field) {
+                        if (field.type === 'radio') {
+                            const radio = form.querySelector(`[name="${key}"][value="${disputeFormData[key]}"]`);
+                            if (radio) radio.checked = true;
+                        } else {
+                            field.value = disputeFormData[key];
+                        }
                     }
                 });
-            });
+                updateCharCount();
+            }
+        }
 
-            document.querySelectorAll('img[loading="lazy"]').forEach(img => {
-                imageObserver.observe(img);
+        // Character counter
+        const descField = document.getElementById('discrepancy_description');
+        if (descField) {
+            descField.addEventListener('input', updateCharCount);
+        }
+
+        function updateCharCount() {
+            const field = document.getElementById('discrepancy_description');
+            const count = document.getElementById('charCount');
+            if (field && count) {
+                const length = field.value.length;
+                count.textContent = `${length} / 2000 characters (minimum 50)`;
+                
+                if (length < 50) {
+                    count.classList.add('error');
+                } else {
+                    count.classList.remove('error');
+                }
+            }
+        }
+
+        // Category selection visual feedback
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Form Submission
+        document.getElementById('disputeForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // Store for retry
+            disputeFormData = {};
+            formData.forEach((value, key) => {
+                disputeFormData[key] = value;
+            });
+            
+            // Validation
+            const description = formData.get('discrepancy_description');
+            if (description.length < 50) {
+                alert('Please provide at least 50 characters in the description.');
+                document.getElementById('discrepancy_description').focus();
+                return;
+            }
+            
+            // Show loading
+            form.style.display = 'none';
+            document.getElementById('loadingState').style.display = 'block';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/report-dispute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        vehicle_id: formData.get('vehicle_id'),
+                        cpa_category: formData.get('cpa_category'),
+                        discrepancy_description: formData.get('discrepancy_description'),
+                        preferred_resolution: formData.get('preferred_resolution')
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('successState').style.display = 'block';
+                    document.getElementById('disputeRef').textContent = 'DIS-' + (result.dispute_id || '00000');
+                    document.getElementById('cpaCat').textContent = formData.get('cpa_category');
+                    
+                    // Clear draft on success
+                    localStorage.removeItem('dispute_draft_<%= vehicle.id %>');
+                    disputeFormData = null;
+                } else {
+                    throw new Error(result.error || 'Failed to submit dispute');
+                }
+            } catch (error) {
+                console.error('Dispute submission error:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').textContent = error.message || 'Network error. Please check your connection and try again.';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Draft auto-save
+        function saveDisputeDraft() {
+            const form = document.getElementById('disputeForm');
+            if (!form) return;
+            
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                if (key !== 'vehicle_id') data[key] = value;
+            });
+            
+            localStorage.setItem('dispute_draft_<%= vehicle.id %>', JSON.stringify(data));
+        }
+
+        function restoreDisputeDraft() {
+            const saved = localStorage.getItem('dispute_draft_<%= vehicle.id %>');
+            if (!saved) return;
+            
+            try {
+                const data = JSON.parse(saved);
+                const form = document.getElementById('disputeForm');
+                
+                Object.keys(data).forEach(key => {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    if (field && !field.value) {
+                        if (field.type === 'radio') {
+                            const radio = form.querySelector(`[name="${key}"][value="${data[key]}"]`);
+                            if (radio) {
+                                radio.checked = true;
+                                radio.closest('.category-card').classList.add('selected');
+                            }
+                        } else {
+                            field.value = data[key];
+                        }
+                    }
+                });
+                
+                updateCharCount();
+            } catch (e) {
+                console.error('Error restoring draft:', e);
+            }
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(() => {
+            const modal = document.getElementById('disputeModal');
+            if (modal.style.display === 'flex') {
+                const form = document.getElementById('disputeForm');
+                if (form.style.display !== 'none') {
+                    saveDisputeDraft();
+                }
+            }
+        }, 30000);
+
+        // Close on overlay click
+        document.getElementById('disputeModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDisputeModal();
+            }
+        });
+
+        // Focus trap for accessibility
+        function trapFocus(element) {
+            const focusableElements = element.querySelectorAll(
+                'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+            );
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+
+            element.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            lastFocusable.focus();
+                            e.preventDefault();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            firstFocusable.focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
             });
         }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            preloadNearbyImages();
+            
+            // Add keyboard navigation for gallery main
+            const galleryMain = document.querySelector('.gallery-main');
+            if (galleryMain) {
+                galleryMain.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openModal(currentImageIndex);
+                    }
+                });
+            }
+        });
+
+        // Handle visibility change (pause expensive operations when tab hidden)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Page is hidden, could pause auto-save here if needed
+            }
+        });
     </script>
 </body>
 </html>
