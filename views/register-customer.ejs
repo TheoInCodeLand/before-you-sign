@@ -3,77 +3,810 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+  <title><%= title %> | Before You Sign</title>
+  <meta name="description" content="Create your account to access verified vehicle histories and buy with confidence.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --accent: #00a651;
+      --accent-light: #00c25e;
+      --accent-dark: #007237;
+      --gray-50: #fafafa;
+      --gray-100: #f4f4f5;
+      --gray-200: #e4e4e7;
+      --gray-300: #d4d4d8;
+      --gray-400: #a1a1aa;
+      --gray-500: #71717a;
+      --gray-600: #52525b;
+      --gray-700: #3f3f46;
+      --gray-800: #27272a;
+      --gray-900: #18181b;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --success: #10b981;
+      --radius: 1.25rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gray-50);
+      color: var(--black);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid transparent;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav.scrolled {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom-color: var(--gray-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--black);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--black);
+      color: var(--white);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-brand:hover .nav-logo-icon {
+      background: var(--accent);
+      transform: rotate(5deg) scale(1.05);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--gray-600);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--black);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      background: var(--black);
+      color: var(--white);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+      border: 2px solid var(--black);
+    }
+
+    .nav-cta:hover {
+      background: transparent;
+      color: var(--black);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--black);
+      padding: 0.5rem;
+    }
+
+    /* Split Layout */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+
+    /* Left Side - Visual */
+    .split-visual {
+      background: linear-gradient(135deg, var(--black) 0%, var(--gray-900) 100%);
+      color: var(--white);
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .split-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    .visual-content {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+    }
+
+    .visual-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-light);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .visual-title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .visual-text {
+      font-size: 1.125rem;
+      color: var(--gray-400);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1rem;
+      color: var(--gray-300);
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    /* Right Side - Form */
+    .split-form {
+      padding: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .form-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .form-title {
+      font-size: 1.875rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      color: var(--black);
+    }
+
+    .form-subtitle {
+      color: var(--gray-500);
+      font-size: 1rem;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .alert-error {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+    }
+
+    .required::after {
+      content: '*';
+      color: var(--danger);
+      margin-left: 0.25rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 0.9375rem;
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-50);
+      color: var(--black);
+      transition: all 0.2s ease;
+    }
+
+    .form-control:hover {
+      border-color: var(--gray-300);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      font-size: 1rem;
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus + .input-icon {
+      color: var(--accent);
+    }
+
+    /* Password Strength */
+    .password-strength {
+      height: 3px;
+      background: var(--gray-200);
+      border-radius: 2px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+      display: none;
+    }
+
+    .password-strength.show {
+      display: block;
+    }
+
+    .strength-bar {
+      height: 100%;
+      width: 0;
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+
+    .strength-weak { width: 33%; background: var(--danger); }
+    .strength-medium { width: 66%; background: #f59e0b; }
+    .strength-strong { width: 100%; background: var(--accent); }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      padding: 1rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--gray-800);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: var(--gray-400);
+      font-size: 0.875rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    /* Social Login (optional enhancement) */
+    .social-login {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-social {
+      padding: 0.75rem;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-social:hover {
+      border-color: var(--gray-300);
+      background: var(--gray-50);
+    }
+
+    /* Footer Links */
+    .form-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--gray-500);
+      font-size: 0.9375rem;
+    }
+
+    .form-footer a {
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.2s;
+    }
+
+    .form-footer a:hover {
+      color: var(--accent);
+    }
+
+    .trust-text {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: var(--gray-400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .trust-text i {
+      color: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--black);
+      color: var(--gray-400);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 968px) {
+      .split-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .split-visual {
+        display: none;
+      }
+
+      .split-form {
+        padding: 2rem 1.5rem;
+        min-height: calc(100vh - 80px);
+      }
+
+      .form-wrapper {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+    }
+
+    /* Selection */
+    ::selection {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--black);
+    }
+  </style>
 </head>
 <body>
-  <%- include('partials/header') %>
-  
-  <div class="container" style="max-width: 600px;">
-    <div class="card">
-      <h1 class="card-title">Customer Registration</h1>
-      
-      <% if (error) { %>
-        <div class="alert alert-error"><%= error %></div>
-      <% } %>
-      
-      <form method="POST" action="/register/customer">
-        <div class="form-group">
-          <label class="form-label">Full Name *</label>
-          <input type="text" name="fullName" class="form-control" required>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo-original.png" alt="" height="35">
+      </a>
+      <div class="nav-links">
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/vehicles" class="nav-link">Browse</a>
+        <a href="/login" class="nav-link">Login</a>
+        <a href="/register/dealership" class="nav-cta">For Dealers</a>
+      </div>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Split Layout -->
+  <div class="split-layout">
+    
+    <!-- Left Side - Visual -->
+    <div class="split-visual">
+      <div class="visual-content">
+        <div class="visual-badge">
+          <i class="fas fa-user-shield"></i>
+          <span>Buyer Protection</span>
         </div>
+        <h1 class="visual-title">Buy your next car with absolute confidence</h1>
+        <p class="visual-text">
+          Join thousands of smart buyers who refuse to get scammed. Access verified vehicle histories, accident reports, and mileage validation.
+        </p>
+        <ul class="feature-list">
+          <li class="feature-item">
+            <div class="feature-icon">
+              <i class="fas fa-check"></i>
+            </div>
+            <span>Instant VIN verification</span>
+          </li>
+          <li class="feature-item">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <span>Fraud protection guarantee</span>
+          </li>
+          <li class="feature-item">
+            <div class="feature-icon">
+              <i class="fas fa-history"></i>
+            </div>
+            <span>Complete service history</span>
+          </li>
+          <li class="feature-item">
+            <div class="feature-icon">
+              <i class="fas fa-gavel"></i>
+            </div>
+            <span>Legal dispute support</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right Side - Form -->
+    <div class="split-form">
+      <div class="form-wrapper">
         
-        <div class="form-group">
-          <label class="form-label">Username *</label>
-          <input type="text" name="username" class="form-control" required>
+        <div class="form-header">
+          <h1 class="form-title">Create your account</h1>
+          <p class="form-subtitle">Start verifying vehicles in minutes</p>
         </div>
-        
-        <div class="form-group">
-          <label class="form-label">Email *</label>
-          <input type="email" name="email" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Password *</label>
-          <input type="password" name="password" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Confirm Password *</label>
-          <input type="password" name="confirmPassword" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Phone</label>
-          <input type="tel" name="phone" class="form-control">
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Address</label>
-          <input type="text" name="address" class="form-control">
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
-          <div class="form-group">
-            <label class="form-label">City</label>
-            <input type="text" name="city" class="form-control">
+
+        <% if (error) { %>
+          <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <%= error %>
           </div>
+        <% } %>
+
+        <form method="POST" action="/register/customer" id="registerForm">
           
           <div class="form-group">
-            <label class="form-label">Postal Code</label>
-            <input type="text" name="postalCode" class="form-control">
+            <label class="form-label required">Full Name</label>
+            <div class="input-wrapper">
+              <input type="text" name="fullName" class="form-control" required placeholder="John Smith">
+              <i class="fas fa-user input-icon"></i>
+            </div>
           </div>
+
+          <div class="form-group">
+            <label class="form-label required">Username</label>
+            <div class="input-wrapper">
+              <input type="text" name="username" class="form-control" required placeholder="johnsmith">
+              <i class="fas fa-at input-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Email Address</label>
+            <div class="input-wrapper">
+              <input type="email" name="email" class="form-control" required placeholder="john@example.com">
+              <i class="fas fa-envelope input-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Password</label>
+              <div class="input-wrapper">
+                <input type="password" name="password" class="form-control" id="password" required placeholder="••••••••">
+                <i class="fas fa-lock input-icon"></i>
+              </div>
+              <div class="password-strength" id="strengthBar">
+                <div class="strength-bar"></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Confirm Password</label>
+              <div class="input-wrapper">
+                <input type="password" name="confirmPassword" class="form-control" required placeholder="••••••••">
+                <i class="fas fa-lock input-icon"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <div class="input-wrapper">
+              <input type="tel" name="phone" class="form-control" placeholder="+27 83 744 0206">
+              <i class="fas fa-phone input-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Delivery Address</label>
+            <div class="input-wrapper">
+              <input type="text" name="address" class="form-control" placeholder="123 Main Street, Sandton">
+              <i class="fas fa-map-marker-alt input-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input type="text" name="city" class="form-control" placeholder="Johannesburg">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Postal Code</label>
+              <input type="text" name="postalCode" class="form-control" placeholder="2196">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <i class="fas fa-user-plus"></i>
+            Create Account
+          </button>
+
+        </form>
+
+        <div class="form-footer">
+          <p>Already have an account? <a href="/login">Sign in</a></p>
         </div>
-        
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
-      </form>
-      
-      <div style="margin-top: 20px; text-align: center;">
-        <p>Already have an account? <a href="/login">Login here</a></p>
+
+        <div class="trust-text">
+          <i class="fas fa-lock"></i>
+          <span>Your data is secured with bank-level encryption</span>
+        </div>
+
       </div>
     </div>
   </div>
-  
-  <%- include('partials/footer') %>
+
+  <script>
+    // Navbar scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // Password strength indicator
+    const password = document.getElementById('password');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthBarInner = strengthBar.querySelector('.strength-bar');
+
+    password.addEventListener('input', (e) => {
+      const val = e.target.value;
+      if (val.length > 0) {
+        strengthBar.classList.add('show');
+        let strength = 0;
+        if (val.length > 5) strength++;
+        if (val.length > 8) strength++;
+        if (/[A-Z]/.test(val)) strength++;
+        if (/[0-9]/.test(val)) strength++;
+        if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+        strengthBarInner.className = 'strength-bar';
+        if (strength < 2) {
+          strengthBarInner.classList.add('strength-weak');
+        } else if (strength < 4) {
+          strengthBarInner.classList.add('strength-medium');
+        } else {
+          strengthBarInner.classList.add('strength-strong');
+        }
+      } else {
+        strengthBar.classList.remove('show');
+      }
+    });
+
+    // Form validation
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      const pwd = document.querySelector('input[name="password"]').value;
+      const confirm = document.querySelector('input[name="confirmPassword"]').value;
+      
+      if (pwd !== confirm) {
+        e.preventDefault();
+        alert('Passwords do not match');
+        return false;
+      }
+    });
+  </script>
+
 </body>
 </html>

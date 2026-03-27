@@ -3,119 +3,773 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+  <title><%= title %> | Before You Sign</title>
+  <meta name="description" content="Join South Africa's first ethical vehicle certification program. Register your dealership today.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --accent: #00a651;
+      --accent-light: #00c25e;
+      --accent-dark: #007237;
+      --gray-50: #fafafa;
+      --gray-100: #f4f4f5;
+      --gray-200: #e4e4e7;
+      --gray-300: #d4d4d8;
+      --gray-400: #a1a1aa;
+      --gray-500: #71717a;
+      --gray-600: #52525b;
+      --gray-700: #3f3f46;
+      --gray-800: #27272a;
+      --gray-900: #18181b;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --radius: 1.25rem;
+      --radius-lg: 0rem;
+      --radius-xl: 0rem;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
+      color: var(--black);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid transparent;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav.scrolled {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom-color: var(--gray-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--black);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--black);
+      color: var(--white);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-brand:hover .nav-logo-icon {
+      background: var(--accent);
+      transform: rotate(5deg) scale(1.05);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--gray-600);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--black);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      background: var(--black);
+      color: var(--white);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+      border: 2px solid var(--black);
+    }
+
+    .nav-cta:hover {
+      background: transparent;
+      color: var(--black);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--black);
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding-top: 120px;
+      padding-bottom: 6rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Clean Form Card - No gimmicky borders */
+    .form-card {
+      background: var(--white);
+      padding: 3rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--gray-200);
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .form-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-dark);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .form-title {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--black);
+    }
+
+    .form-subtitle {
+      color: var(--gray-500);
+      font-size: 1.125rem;
+    }
+
+    /* Section Headers */
+    .section-header-form {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2.5rem 0 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .section-header-form:first-of-type {
+      margin-top: 0;
+    }
+
+    .section-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+    }
+
+    .section-title-form {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Form Elements */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-grid.three-col {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .required::after {
+      content: '*';
+      color: var(--danger);
+      margin-left: 0.25rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 0.9375rem;
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-50);
+      color: var(--black);
+      transition: all 0.2s ease;
+    }
+
+    .form-control:hover {
+      border-color: var(--gray-300);
+      background: var(--gray-100);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* Input with icon */
+    .input-icon-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      font-size: 1rem;
+    }
+
+    .input-icon-wrapper .form-control {
+      padding-left: 2.75rem;
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+    }
+
+    .alert-error {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      padding: 1.125rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2.5rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--gray-800);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Footer Note */
+    .form-footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--gray-200);
+      color: var(--gray-500);
+      font-size: 0.9375rem;
+    }
+
+    .form-footer a {
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid var(--accent);
+      transition: all 0.2s;
+    }
+
+    .form-footer a:hover {
+      color: var(--accent);
+    }
+
+    /* Trust Badges */
+    .trust-badges-form {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .trust-badge i {
+      color: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--black);
+      color: var(--gray-400);
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .footer-brand {
+      color: var(--white);
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .footer-text {
+      font-size: 0.875rem;
+      max-width: 400px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .form-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .form-grid,
+      .form-grid.three-col {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+      }
+
+      .trust-badges-form {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+      }
+    }
+
+    /* Selection color */
+    ::selection {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--black);
+    }
+  </style>
 </head>
 <body>
-  <%- include('partials/header') %>
-  
-  <div class="container">
-    <div class="card">
-      <h1 class="card-title">Dealership Registration</h1>
-      
-      <% if (error) { %>
-        <div class="alert alert-error"><%= error %></div>
-      <% } %>
-      
-      <form method="POST" action="/register/dealership">
-        <h3>Account Information</h3>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <img src="/assets/logo-original.png" alt="" height="35">
+      </a>
+      <div class="nav-links">
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/vehicles" class="nav-link">Browse</a>
+        <a href="/login" class="nav-link">Login</a>
+        <a href="/register/dealership" class="nav-cta">Become Certified</a>
+      </div>
+      <button class="mobile-menu-btn" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <div class="form-card animate-fade-in">
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Username *</label>
-            <input type="text" name="username" class="form-control" required>
+        <div class="form-header">
+          <div class="form-badge">
+            <i class="fas fa-store"></i>
+            <span>Dealership Application</span>
           </div>
+          <h1 class="form-title">Join Our Certified Network</h1>
+          <p class="form-subtitle">Transform your dealership with blockchain-verified vehicle histories</p>
+        </div>
+
+        <% if (error) { %>
+          <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <%= error %>
+          </div>
+        <% } %>
+
+        <form method="POST" action="/register/dealership" id="dealershipForm">
           
+          <!-- Account Information -->
+          <div class="section-header-form">
+            <div class="section-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <h3 class="section-title-form">Account Information</h3>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">Username</label>
+              <div class="input-icon-wrapper">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" name="username" class="form-control" required placeholder="johnsmith">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Email Address</label>
+              <div class="input-icon-wrapper">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" name="email" class="form-control" required placeholder="john@dealership.com">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">Password</label>
+              <div class="input-icon-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" name="password" class="form-control" required placeholder="••••••••">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Confirm Password</label>
+              <div class="input-icon-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" name="confirmPassword" class="form-control" required placeholder="••••••••">
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Information -->
+          <div class="section-header-form">
+            <div class="section-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <h3 class="section-title-form">Business Information</h3>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label required">Business Name</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-building input-icon"></i>
+              <input type="text" name="businessName" class="form-control" required placeholder="Premium Auto Dealership">
+            </div>
+          </div>
+
+          <div class="form-grid three-col">
+            <div class="form-group">
+              <label class="form-label required">Registration Number</label>
+              <input type="text" name="registrationNumber" class="form-control" required placeholder="CK2012/123456/07">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">License Number</label>
+              <input type="text" name="licenseNumber" class="form-control" placeholder="Optional">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Year Established</label>
+              <input type="number" name="yearEstablished" class="form-control" min="1900" max="2025" placeholder="2020">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">Phone Number</label>
+              <div class="input-icon-wrapper">
+                <i class="fas fa-phone input-icon"></i>
+                <input type="tel" name="phone" class="form-control" required placeholder="+27 83 744 0206">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Website</label>
+              <div class="input-icon-wrapper">
+                <i class="fas fa-globe input-icon"></i>
+                <input type="url" name="website" class="form-control" placeholder="https://www.example.com">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label required">Street Address</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-map-marker-alt input-icon"></i>
+              <input type="text" name="address" class="form-control" required placeholder="123 Main Street, Sandton">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">City</label>
+              <input type="text" name="city" class="form-control" required placeholder="Johannesburg">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Postal Code</label>
+              <input type="text" name="postalCode" class="form-control" placeholder="2196">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label">Operating Hours</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-clock input-icon"></i>
+              <input type="text" name="operatingHours" class="form-control" placeholder="Mon-Fri: 8:00 AM - 6:00 PM">
+            </div>
+          </div>
+
           <div class="form-group">
-            <label class="form-label">Email *</label>
-            <input type="email" name="email" class="form-control" required>
+            <label class="form-label">Business Description</label>
+            <textarea name="description" class="form-control" rows="4" placeholder="Tell us about your dealership, specializations, and what makes you unique..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <i class="fas fa-shield-alt"></i>
+            Register Dealership
+          </button>
+
+        </form>
+
+        <div class="trust-badges-form">
+          <div class="trust-badge">
+            <i class="fas fa-lock"></i>
+            <span>Bank-Level Security</span>
+          </div>
+          <div class="trust-badge">
+            <i class="fas fa-check-circle"></i>
+            <span>Instant Verification</span>
+          </div>
+          <div class="trust-badge">
+            <i class="fas fa-user-shield"></i>
+            <span>POPIA Compliant</span>
           </div>
         </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Password *</label>
-            <input type="password" name="password" class="form-control" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Confirm Password *</label>
-            <input type="password" name="confirmPassword" class="form-control" required>
-          </div>
+
+        <div class="form-footer">
+          <p>Already have an account? <a href="/login">Sign in here</a></p>
         </div>
-        
-        <h3 style="margin-top: 30px;">Business Information</h3>
-        
-        <div class="form-group">
-          <label class="form-label">Business Name *</label>
-          <input type="text" name="businessName" class="form-control" required>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Registration Number *</label>
-            <input type="text" name="registrationNumber" class="form-control" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">License Number</label>
-            <input type="text" name="licenseNumber" class="form-control">
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Year Established</label>
-            <input type="number" name="yearEstablished" class="form-control" min="1900" max="2025">
-          </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">Phone *</label>
-            <input type="tel" name="phone" class="form-control" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Website</label>
-            <input type="url" name="website" class="form-control">
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Address *</label>
-          <input type="text" name="address" class="form-control" required>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-          <div class="form-group">
-            <label class="form-label">City *</label>
-            <input type="text" name="city" class="form-control" required>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">Postal Code</label>
-            <input type="text" name="postalCode" class="form-control">
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Operating Hours</label>
-          <input type="text" name="operatingHours" class="form-control" placeholder="e.g., Mon-Fri 8AM-6PM">
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea name="description" class="form-control" rows="4"></textarea>
-        </div>
-        
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Register Dealership</button>
-      </form>
-      
-      <div style="margin-top: 20px; text-align: center;">
-        <p>Already have an account? <a href="/login">Login here</a></p>
+
       </div>
     </div>
-  </div>
-  
-  <%- include('partials/footer') %>
+  </main>
+
+  <!-- Simple Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <i class="fas fa-shield-alt" style="color: var(--accent);"></i>
+        <span>Before You Sign</span>
+      </div>
+      <p class="footer-text">
+        Empowering car buyers with verified data and holding dealerships accountable through transparent verification.
+      </p>
+      <p style="margin-top: 1.5rem; font-size: 0.875rem; opacity: 0.6;">
+        © <%= new Date().getFullYear() %> Before You Sign. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // Form validation
+    document.getElementById('dealershipForm').addEventListener('submit', function(e) {
+      const password = document.querySelector('input[name="password"]').value;
+      const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+      
+      if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+        return false;
+      }
+    });
+  </script>
+
 </body>
 </html>
