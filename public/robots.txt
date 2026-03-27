@@ -1,0 +1,34 @@
+# robots.txt for Before You Sign - Vehicle Verification Platform
+# https://beforeyousign.co.za/robots.txt
+
+User-agent: *
+Allow: /
+
+# Allow all search engines to crawl public pages
+Allow: /vehicles
+Allow: /vehicle/
+Allow: /login
+Allow: /register/
+
+# Protect private/admin areas
+Disallow: /admin/
+Disallow: /dealership/dashboard
+Disallow: /dealership/vehicles
+Disallow: /dealership/add-vehicle
+Disallow: /dealership/profile
+Disallow: /customer/dashboard
+Disallow: /customer/searches
+Disallow: /api/
+Disallow: /uploads/documents/
+
+# Prevent crawling of temporary files
+Disallow: /tmp/
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?page=
+
+# Crawl rate limit for bots
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://beforeyousign.co.za/sitemap.xml

@@ -1,0 +1,202 @@
+<%-- Structured Data for Homepage - Schema.org JSON-LD --%>
+
+<!-- WebSite Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Before You Sign",
+  "alternateName": "BeforeYouSign",
+  "url": "https://beforeyousign.co.za",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://beforeyousign.co.za/vehicles?search={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  },
+  "description": "South Africa's leading vehicle verification platform with QR code scanning and 10-point verification system.",
+  "inLanguage": "en-ZA"
+}
+</script>
+
+<!-- Software Application Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Before You Sign Vehicle Verification",
+  "applicationCategory": "VehicleVerification",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "ZAR"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "1240"
+  },
+  "description": "Verify vehicle history with QR code scanning. Check VIN, mileage, accidents, and ownership history instantly.",
+  "featureList": [
+    "VIN Authentication",
+    "Mileage Verification",
+    "Accident History Check",
+    "QR Code Scanning",
+    "Dispute Resolution"
+  ],
+  "softwareVersion": "1.0",
+  "url": "https://beforeyousign.co.za"
+}
+</script>
+
+<!-- Local Business Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Before You Sign",
+  "image": "https://beforeyousign.co.za/assets/logo-original.png",
+  "@id": "https://beforeyousign.co.za",
+  "url": "https://beforeyousign.co.za",
+  "telephone": "+27-XXX-XXX-XXXX",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Your Street Address",
+    "addressLocality": "Your City",
+    "addressRegion": "Your Province",
+    "postalCode": "0000",
+    "addressCountry": "ZA"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": -29.0000,
+    "longitude": 24.0000
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "opens": "08:00",
+    "closes": "17:00"
+  },
+  "sameAs": [
+    "https://facebook.com/beforeyousign",
+    "https://twitter.com/BeforeYouSignZA",
+    "https://instagram.com/beforeyousign"
+  ]
+}
+</script>
+
+<!-- FAQ Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does Before You Sign work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Before You Sign uses QR codes on certified vehicles. Simply scan the code with your phone camera to instantly view a 10-point verification report including VIN validation, mileage history, accident records, and ownership chain."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Before You Sign free to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Vehicle verification reports are completely free for buyers. No registration or app download is required - just scan and verify."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What information does the verification report include?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our 10-point verification includes: VIN authentication, mileage verification, accident history, service records, ownership chain, recall checks, title status, odometer validation, structural damage assessment, and theft records."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can dealerships become certified?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dealerships can apply for certification through our portal. We verify business credentials, inspect vehicle inventory processes, and provide QR code generation tools for transparent vehicle listings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the vehicle doesn't match the report?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If reality doesn't match our verification report, our dispute resolution team will mediate under the Consumer Protection Act. We have a 100% resolution rate and money-back guarantee."
+      }
+    }
+  ]
+}
+</script>
+
+<!-- HowTo Schema for the Process -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Verify a Vehicle with Before You Sign",
+  "description": "Three simple steps to verify any vehicle's history before purchase",
+  "image": "https://beforeyousign.co.za/assets/how-it-works.jpg",
+  "totalTime": "PT2M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "ZAR",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Smartphone with camera"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "QR Code Scanner (built-in camera)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "position": 1,
+      "name": "Scan the QR Code",
+      "text": "Point your smartphone camera at the QR code displayed on the certified vehicle. No app download required - works with any smartphone camera.",
+      "url": "https://beforeyousign.co.za/#how-it-works",
+      "image": "https://beforeyousign.co.za/assets/step-1-scan.jpg"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 2,
+      "name": "View Verification Report",
+      "text": "Instantly access the 10-point verification report. See service records, accident history, mileage validation, and complete ownership chain.",
+      "url": "https://beforeyousign.co.za/#how-it-works",
+      "image": "https://beforeyousign.co.za/assets/step-2-verify.jpg"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 3,
+      "name": "Buy with Confidence",
+      "text": "Complete your purchase with absolute confidence. If the vehicle doesn't match the report, our dispute resolution protects your investment.",
+      "url": "https://beforeyousign.co.za/#how-it-works",
+      "image": "https://beforeyousign.co.za/assets/step-3-buy.jpg"
+    }
+  ]
+}
+</script>

@@ -1,0 +1,97 @@
+{
+  "name": "Before You Sign - Vehicle Verification Platform",
+  "short_name": "Before You Sign",
+  "description": "Scan. Verify. Buy with Confidence. South Africa's trusted vehicle verification platform with QR code scanning.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00a651",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-ZA",
+  "icons": [
+    {
+      "src": "/assets/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["vehicle", "shopping", "utilities"],
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homepage of Before You Sign"
+    },
+    {
+      "src": "/assets/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile view of vehicle verification"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Vehicles",
+      "short_name": "Browse",
+      "description": "View all verified vehicles",
+      "url": "/vehicles",
+      "icons": [{ "src": "/assets/shortcut-browse.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Verify VIN",
+      "short_name": "Verify",
+      "description": "Check vehicle by VIN number",
+      "url": "/vehicles?action=vin",
+      "icons": [{ "src": "/assets/shortcut-verify.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

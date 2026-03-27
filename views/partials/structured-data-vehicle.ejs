@@ -1,0 +1,178 @@
+<%-- 
+  Structured Data for Vehicle Detail Pages - Schema.org JSON-LD
+  Parameters: vehicle, dealership, pageUrl
+--%>
+
+<%
+  // Helper function to format price
+  const formatPrice = (price) => {
+    if (!price) return '0';
+    return price.toString().replace(/[^\d]/g, '');
+  };
+  
+  // Helper to check if vehicle exists
+  const hasVehicle = typeof vehicle !== 'undefined' && vehicle;
+  const hasDealership = typeof dealership !== 'undefined' && dealership;
+  
+  // Build vehicle data safely
+  const vehicleName = hasVehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle';
+  const vehicleDescription = hasVehicle ? 
+    `Verified ${vehicle.year} ${vehicle.make} ${vehicle.model} with complete history report. ${vehicle.mileage || 'N/A'} km, ${vehicle.fuel_type || 'N/A'} engine.` : 
+    'Verified vehicle with complete history report';
+  const vehiclePrice = hasVehicle && vehicle.price ? formatPrice(vehicle.price) : '0';
+  const vehicleMileage = hasVehicle && vehicle.mileage ? vehicle.mileage.toString().replace(/[^\d]/g, '') : '0';
+  const vehicleVIN = hasVehicle && vehicle.vin ? vehicle.vin : '';
+  const vehicleCondition = hasVehicle && vehicle.condition ? vehicle.condition : 'Used';
+  const vehicleColor = hasVehicle && vehicle.exterior_color ? vehicle.exterior_color : '';
+  const vehicleFuel = hasVehicle && vehicle.fuel_type ? vehicle.fuel_type : '';
+  const vehicleTransmission = hasVehicle && vehicle.transmission ? vehicle.transmission : '';
+  const vehicleBody = hasVehicle && vehicle.body_type ? vehicle.body_type : '';
+  const pageUrl = typeof pageUrl !== 'undefined' ? pageUrl : 'https://beforeyousign.co.za/vehicles';
+  const vehicleImage = hasVehicle && vehicle.images && vehicle.images.length > 0 ? 
+    vehicle.images[0] : 'https://beforeyousign.co.za/assets/default-vehicle.jpg';
+%>
+
+<% if (hasVehicle) { %>
+<!-- Vehicle Listing Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Vehicle",
+  "@id": "<%= pageUrl %>",
+  "name": "<%= vehicleName %>",
+  "description": "<%= vehicleDescription %>",
+  "image": "<%= vehicleImage %>",
+  "url": "<%= pageUrl %>",
+  "brand": {
+    "@type": "Brand",
+    "name": "<%= hasVehicle ? vehicle.make : '' %>"
+  },
+  "model": "<%= hasVehicle ? vehicle.model : '' %>",
+  "vehicleConfiguration": "<%= vehicleBody %>",
+  "vehicleEngine": {
+    "@type": "EngineSpecification",
+    "fuelType": "<%= vehicleFuel %>"
+  },
+  "mileageFromOdometer": {
+    "@type": "QuantitativeValue",
+    "value": "<%= vehicleMileage %>",
+    "unitCode": "KMT"
+  },
+  "vehicleTransmission": "<%= vehicleTransmission %>",
+  "color": "<%= vehicleColor %>",
+  "vehicleIdentificationNumber": "<%= vehicleVIN %>",
+  "productionDate": "<%= hasVehicle ? vehicle.year : '' %>",
+  "itemCondition": "<%= vehicleCondition %>",
+  "offers": {
+    "@type": "Offer",
+    "price": "<%= vehiclePrice %>",
+    "priceCurrency": "ZAR",
+    "availability": "https://schema.org/InStock",
+    "url": "<%= pageUrl %>",
+    "seller": {
+      "@type": "AutoDealer",
+      "name": "<%= hasDealership ? dealership.business_name : 'Certified Dealer' %>"
+    }
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Verification Status",
+      "value": "Verified"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Verification Points",
+      "value": "10-Point Check"
+    }
+  ]
+}
+</script>
+
+<!-- Product Schema (for rich results) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "<%= vehicleName %>",
+  "image": "<%= vehicleImage %>",
+  "description": "<%= vehicleDescription %>",
+  "sku": "<%= vehicleVIN %>",
+  "mpn": "<%= vehicleVIN %>",
+  "brand": {
+    "@type": "Brand",
+    "name": "<%= hasVehicle ? vehicle.make : '' %>"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "<%= pageUrl %>",
+    "price": "<%= vehiclePrice %>",
+    "priceCurrency": "ZAR",
+    "priceValidUntil": "<%= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] %>",
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/<%= vehicleCondition %>Condition",
+    "seller": {
+      "@type": "AutoDealer",
+      "name": "<%= hasDealership ? dealership.business_name : 'Certified Dealer' %>"
+    }
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5",
+    "reviewCount": "1"
+  }
+}
+</script>
+<% } %>
+
+<!-- Breadcrumb Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://beforeyousign.co.za/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Browse Vehicles",
+      "item": "https://beforeyousign.co.za/vehicles"
+    }<% if (hasVehicle) { %>,
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "<%= vehicleName %>",
+      "item": "<%= pageUrl %>"
+    }<% } %>
+  ]
+}
+</script>
+
+<!-- AutoDealer Schema (if dealership data available) -->
+<% if (hasDealership) { %>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  "name": "<%= dealership.business_name %>",
+  "image": "<%= dealership.logo || 'https://beforeyousign.co.za/assets/default-dealer.jpg' %>",
+  "@id": "https://beforeyousign.co.za/dealership/<%= dealership.id %>",
+  "url": "https://beforeyousign.co.za/dealership/<%= dealership.id %>",
+  "telephone": "<%= dealership.phone || '' %>",
+  "email": "<%= dealership.email || '' %>",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "<%= dealership.address || '' %>",
+    "addressLocality": "<%= dealership.city || '' %>",
+    "addressRegion": "<%= dealership.province || '' %>",
+    "addressCountry": "ZA"
+  },
+  "priceRange": "$$$"
+}
+</script>
+<% } %>

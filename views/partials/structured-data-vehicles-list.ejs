@@ -1,0 +1,95 @@
+<%-- 
+  Structured Data for Vehicles Listing Page - Schema.org JSON-LD
+  Parameters: vehicles (array), totalCount, currentPage
+--%>
+
+<%
+  const siteUrl = 'https://beforeyousign.co.za';
+  const currentPage = typeof page !== 'undefined' ? page : 1;
+  const totalCount = typeof total !== 'undefined' ? total : 0;
+  const hasVehicles = typeof vehicles !== 'undefined' && vehicles && vehicles.length > 0;
+%>
+
+<!-- WebPage Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Browse Verified Vehicles | Before You Sign",
+  "description": "Browse certified vehicles with verified histories from ethical dealerships. All vehicles include 10-point verification reports.",
+  "url": "<%= siteUrl %>/vehicles<%= currentPage > 1 ? '?page=' + currentPage : '' %>",
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "<%= siteUrl %>/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Browse Vehicles",
+        "item": "<%= siteUrl %>/vehicles"
+      }
+    ]
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": [
+      <% if (hasVehicles) { %>
+      <% vehicles.slice(0, 10).forEach((vehicle, index) => { %>
+      {
+        "@type": "ListItem",
+        "position": <%= index + 1 %>,
+        "item": {
+          "@type": "Vehicle",
+          "name": "<%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %>",
+          "url": "<%= siteUrl %>/vehicle/<%= vehicle.id %>",
+          "image": "<%= vehicle.images && vehicle.images.length > 0 ? vehicle.images[0] : siteUrl + '/assets/default-vehicle.jpg' %>",
+          "offers": {
+            "@type": "Offer",
+            "price": "<%= vehicle.price ? vehicle.price.toString().replace(/[^\\d]/g, '') : '0' %>",
+            "priceCurrency": "ZAR"
+          }
+        }
+      }<%= index < Math.min(vehicles.length, 10) - 1 ? ',' : '' %>
+      <% }); %>
+      <% } %>
+    ]
+  }
+}
+</script>
+
+<!-- Search Results Page Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SearchResultsPage",
+  "name": "Verified Vehicles for Sale in South Africa",
+  "description": "Find verified used cars with complete history reports. <%= totalCount %>+ vehicles available from certified dealerships.",
+  "url": "<%= siteUrl %>/vehicles",
+  "numberOfItems": <%= totalCount %>
+}
+</script>
+
+<!-- Collection Page Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Certified Vehicle Inventory",
+  "description": "Browse our collection of verified vehicles with complete history reports and QR code verification.",
+  "url": "<%= siteUrl %>/vehicles",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Before You Sign",
+    "url": "<%= siteUrl %>"
+  },
+  "about": {
+    "@type": "Thing",
+    "name": "Verified Used Vehicles"
+  }
+}
+</script>

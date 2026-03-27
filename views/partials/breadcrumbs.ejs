@@ -1,0 +1,118 @@
+<%-- 
+  Breadcrumb Navigation Component with Structured Data
+  Parameters: items (array of {name, url, active})
+  Usage: <%- include('partials/breadcrumbs', { items: [{name: 'Home', url: '/'}, {name: 'Vehicles', url: '/vehicles', active: true}] }) %>
+--%>
+
+<%
+  const breadcrumbItems = typeof items !== 'undefined' ? items : [{name: 'Home', url: '/', active: true}];
+  const siteUrl = 'https://beforeyousign.co.za';
+%>
+
+<!-- Visual Breadcrumb Navigation -->
+<nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <% breadcrumbItems.forEach((item, index) => { %>
+    <li class="breadcrumb-item<%= item.active ? ' active' : '' %>" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <% if (!item.active && item.url) { %>
+        <a href="<%= item.url %>" itemprop="item" class="breadcrumb-link">
+          <span itemprop="name"><%= item.name %></span>
+        </a>
+      <% } else { %>
+        <span itemprop="name" class="breadcrumb-text" aria-current="page"><%= item.name %></span>
+        <meta itemprop="item" content="<%= siteUrl %><%= item.url || '' %>">
+      <% } %>
+      <meta itemprop="position" content="<%= index + 1 %>">
+    </li>
+    <% if (index < breadcrumbItems.length - 1) { %>
+    <li class="breadcrumb-separator" aria-hidden="true">
+      <i class="fas fa-chevron-right"></i>
+    </li>
+    <% } %>
+    <% }); %>
+  </ol>
+</nav>
+
+<!-- JSON-LD Structured Data for Breadcrumbs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    <% breadcrumbItems.forEach((item, index) => { %>
+    {
+      "@type": "ListItem",
+      "position": <%= index + 1 %>,
+      "name": "<%= item.name %>",
+      "item": "<%= siteUrl %><%= item.url || '' %>"
+    }<%= index < breadcrumbItems.length - 1 ? ',' : '' %>
+    <% }); %>
+  ]
+}
+</script>
+
+<style>
+.breadcrumb-nav {
+  padding: 1rem 0;
+  background: var(--gray-50, #fafafa);
+  border-bottom: 1px solid var(--gray-200, #e4e4e7);
+}
+
+.breadcrumb-list {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-link {
+  color: var(--accent, #00a651);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: var(--accent-dark, #007237);
+  text-decoration: underline;
+}
+
+.breadcrumb-text {
+  color: var(--gray-600, #52525b);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.breadcrumb-separator {
+  color: var(--gray-400, #a1a1aa);
+  font-size: 0.625rem;
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-item.active .breadcrumb-text {
+  color: var(--gray-900, #18181b);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .breadcrumb-list {
+    padding: 0 1rem;
+  }
+  
+  .breadcrumb-link,
+  .breadcrumb-text {
+    font-size: 0.8125rem;
+  }
+}
+</style>
