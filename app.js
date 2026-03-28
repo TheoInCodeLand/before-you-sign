@@ -75,6 +75,8 @@ requiredDirs.forEach(dir => {
 // ==========================================
 // 3. SESSION & LOCAL VARIABLES
 // ==========================================
+
+app.set('trust proxy', 1);
 app.use(session({
   secret: process.env.SESSION_SECRET || 'before-you-sign-secret-key-2024',
   resave: false,
@@ -82,7 +84,8 @@ app.use(session({
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 Day
     httpOnly: true,
-    secure: isProd
+    secure: isProd, 
+    sameSite: 'lax' // Optional but highly recommended for modern browsers
   }
 }));
 
