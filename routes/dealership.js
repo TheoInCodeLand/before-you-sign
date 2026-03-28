@@ -220,7 +220,7 @@ router.post('/add-vehicle', uploadFields, async (req, res) => {
     ]);
 
     const vehicleId = insertRes.rows[0].id;
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl = `https://www.beforeyousign.co.za` || process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
     const qrData = `${baseUrl}/vehicle/${vehicleId}`;
 
     // QR Generation
