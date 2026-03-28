@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('partials/seo-meta', {
+    <%- include('../partials/seo-meta', {
         title: `${vehicle.year} ${vehicle.make} ${vehicle.model} - Verified Vehicle Report | Before You Sign`,
         description: `Verified ${vehicle.year} ${vehicle.make} ${vehicle.model} with complete history report. ${vehicle.mileage} km, ${vehicle.fuel_type} engine. View 10-point verification instantly.`,
         canonical: `https://beforeyousign.co.za/vehicle/${vehicle.id}`,
@@ -11,11 +11,7 @@
     }) %>
     
     <!-- Include vehicle structured data -->
-    <%- include('partials/structured-data-vehicle', { 
-        vehicle: vehicle, 
-        dealership: dealership,
-        pageUrl: `https://beforeyousign.co.za/vehicle/${vehicle.id}`
-    }) %>
+    
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1381,7 +1377,7 @@
             </div>
         </div>
     </header>
-    <%- include('partials/breadcrumbs', { 
+    <%- include('../partials/breadcrumbs', { 
         items: [
             {name: 'Home', url: '/'},
             {name: 'Browse Vehicles', url: '/vehicles'},

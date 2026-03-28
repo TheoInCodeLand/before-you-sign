@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database/init-db');
 const { isAuthenticated, hasRole } = require('./auth');
+const { seoConfigs } = require('../middleware/seo');
 
 // Customer dashboard (requires authentication)
 router.get('/dashboard', isAuthenticated, hasRole('customer'), async (req, res) => {
@@ -121,7 +122,8 @@ router.get('/vehicles', async (req, res) => {
     
     // Execute
     const { rows } = await pool.query(query, params);
-    
+
+    res.setSeo(seoConfigs.vehicles);
     res.render('customer/vehicles', {
       title: 'Browse Vehicles',
       vehicles: rows || [],

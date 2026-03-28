@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database/init-db');
+const { seoConfigs } = require('../middleware/seo');
 
 // View vehicle details by ID
 router.get('/:id', async (req, res) => {
@@ -25,9 +26,11 @@ router.get('/:id', async (req, res) => {
       return res.status(404).send('Vehicle not found or not verified');
     }
     
+    res.setSeo(seoConfigs.vehicleDetail(vehicle));
     res.render('customer/vehicle-details', {
       title: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
       vehicle: vehicle,
+      dealership: vehicle, // Pass the 'vehicle' object here because it contains the joined dealership data
       role: req.session?.role || null
     });
   } catch (err) {
@@ -86,6 +89,7 @@ router.get('/vin/:vin', async (req, res) => {
     res.render('customer/vehicle-details', {
       title: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
       vehicle: vehicle,
+      dealership: vehicle, // 'vehicle' has the dealership info joined to it
       role: req.session?.role || null
     });
   } catch (err) {

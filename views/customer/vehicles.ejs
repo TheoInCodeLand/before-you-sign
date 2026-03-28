@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('partials/seo-meta', {
+  <%- include('../partials/seo-meta.ejs', {
         title: 'Browse Verified Vehicles | Certified Used Cars South Africa | Before You Sign',
         description: `Browse ${total}+ certified vehicles with verified histories from ethical dealerships. All vehicles include 10-point verification reports. Find your perfect car today.`,
         canonical: `https://beforeyousign.co.za/vehicles${page > 1 ? '?page=' + page : ''}`,
@@ -9,7 +9,7 @@
   }) %>
     
   <!-- Include listing structured data -->
-  <%- include('partials/structured-data-vehicles-list', { 
+  <%- include('../partials/structured-data-vehicles-list.ejs', { 
         vehicles: vehicles, 
         totalCount: total,
         currentPage: page
@@ -1367,7 +1367,7 @@
     </div>
   </div>
 
-  <%- include('partials/breadcrumbs', { 
+  <%- include('../partials/breadcrumbs.ejs', { 
       items: [
           {name: 'Home', url: '/'},
           {name: 'Browse Vehicles', url: '/vehicles', active: true}

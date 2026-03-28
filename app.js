@@ -1,16 +1,11 @@
-// app.js - Main application entry point
+// app.js - Main application entry point WITH SEO
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 const auditLog = require('./middleware/audit');
-const compression = require('compression');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
+const { seoMiddleware } = require('./middleware/seo'); // NEW: SEO middleware
 
 const app = express();
 
@@ -21,7 +16,6 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(compression());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,11 +24,6 @@ const isProd = process.env.NODE_ENV === 'production';
 const uploadBaseDir = isProd ? '/tmp/uploads' : path.join(__dirname, 'public/uploads');
 const qrBaseDir = isProd ? '/tmp/qr-codes' : path.join(__dirname, 'public/qr-codes');
 const logsDir = isProd ? '/tmp/logs' : path.join(__dirname, 'logs');
-
-app.use(express.static('public', {
-    maxAge: '1y',
-    etag: true
-}));
 
 const requiredDirs = [
   path.join(uploadBaseDir, 'vehicles'),
@@ -61,10 +50,12 @@ app.use(session({
   }
 }));
 
-// app.js - Replace the existing res.locals middleware with this:
+// ===== SEO MIDDLEWARE (NEW) =====
+app.use(seoMiddleware);
+
+// User session middleware
 app.use((req, res, next) => {
   res.locals.session = req.session;
-  // Construct user object from individual session properties
   res.locals.user = req.session.userId ? {
     id: req.session.userId,
     username: req.session.username,
@@ -93,7 +84,7 @@ app.use('/customer', customerRoutes);
 app.use('/vehicle', vehicleRoutes);
 
 // ====================
-// STATIC FILE SERVING (/tmp for Vercel)
+// STATIC FILE SERVING
 // ====================
 app.get('/uploads/vehicles/:filename', (req, res) => {
   const filePath = path.join(isProd ? '/tmp/uploads/vehicles' : path.join(__dirname, 'public/uploads/vehicles'), req.params.filename);
@@ -108,15 +99,53 @@ app.get('/uploads/documents/:filename', (req, res) => {
   res.sendFile(filePath);
 });
 
+// ====================
+// SITEMAP ROUTE (NEW)
+// ====================
+app.get('/sitemap.xml', (req, res) => {
+  res.setHeader('Content-Type', 'application/xml');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
+});
+
+// ====================
+// ROBOTS.TXT ROUTE (NEW)
+// ====================
+app.get('/robots.txt', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
+});
+
+// ====================
+// WEBMANIFEST ROUTE (NEW)
+// ====================
+app.get('/site.webmanifest', (req, res) => {
+  res.setHeader('Content-Type', 'application/manifest+json');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(__dirname, 'public', 'site.webmanifest'));
+});
+
 app.use(auditLog);
 
+// ====================
+// 404 HANDLER (UPDATED WITH SEO)
+// ====================
 app.use((req, res) => {
   res.status(404).render('404', {
-    title: 'Page Not Found',
-    message: 'The page you are looking for does not exist.'
+    title: 'Page Not Found | Before You Sign',
+    message: 'The page you are looking for does not exist.',
+    noindex: true,
+    breadcrumbs: [
+      { name: 'Home', url: '/' },
+      { name: 'Page Not Found', active: true }
+    ]
   });
 });
 
+// ====================
+// ERROR HANDLER (UPDATED WITH SEO)
+// ====================
 app.use((err, req, res, next) => {
     console.error('Error:', {
         message: err.message,
@@ -129,32 +158,36 @@ app.use((err, req, res, next) => {
     
     const isDev = process.env.NODE_ENV === 'development';
     
-    if (err.code === '23505') { // PostgreSQL unique violation
+    if (err.code === '23505') {
         return res.status(400).render('error', {
-            title: 'Duplicate Entry',
+            title: 'Duplicate Entry | Before You Sign',
             message: 'This record already exists.',
-            error: isDev ? err : {}
+            error: isDev ? err : {},
+            noindex: true
         });
     }
     
     if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).render('error', {
-            title: 'File Too Large',
+            title: 'File Too Large | Before You Sign',
             message: 'Maximum file size is 5MB.',
-            error: isDev ? err : {}
+            error: isDev ? err : {},
+            noindex: true
         });
     }
     
     res.status(500).render('error', {
-        title: 'Server Error',
+        title: 'Server Error | Before You Sign',
         message: isDev ? err.message : 'Something went wrong. Please try again.',
-        error: isDev ? err : {}
+        error: isDev ? err : {},
+        noindex: true
     });
 });
 
 app.listen(PORT, () => {
-  console.log(`The Before-You-Sign Server is running and listening on port ${PORT}`);
-  console.log(`Visit http://localhost:${PORT}`);
-}); 
+  console.log(`✓ Before You Sign Server running on port ${PORT}`);
+  console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✓ Visit: http://localhost:${PORT}`);
+});
 
 module.exports = app;

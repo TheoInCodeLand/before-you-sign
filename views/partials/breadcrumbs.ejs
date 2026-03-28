@@ -1,11 +1,12 @@
-<%-- 
+<%# 
   Breadcrumb Navigation Component with Structured Data
   Parameters: items (array of {name, url, active})
-  Usage: <%- include('partials/breadcrumbs', { items: [{name: 'Home', url: '/'}, {name: 'Vehicles', url: '/vehicles', active: true}] }) %>
---%>
+  Usage: include('partials/breadcrumbs', { items: [...] }) 
+%>
 
 <%
-  const breadcrumbItems = typeof items !== 'undefined' ? items : [{name: 'Home', url: '/', active: true}];
+  const breadcrumbItems = typeof items !== 'undefined' ? 
+      items : [{name: 'Home', url: '/', active: true}];
   const siteUrl = 'https://beforeyousign.co.za';
 %>
 
