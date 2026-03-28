@@ -123,7 +123,6 @@ router.get('/login', (req, res) => {
   if (req.session && req.session.userId) {
     return res.redirect(`/${req.session.role}`);
   }
-  res.setSeo(seoConfigs.login);
   res.render('login', { title: 'Login', error: null });
 });
 
@@ -164,7 +163,6 @@ router.post('/login', async (req, res) => {
 
 // Register dealership page
 router.get('/register/dealership', (req, res) => {
-  res.setSeo(seoConfigs.registerDealership);
   res.render('register-dealership', { title: 'Dealership Registration', error: null });
 });
 
@@ -229,7 +227,6 @@ router.post('/register/dealership', async (req, res) => {
 
 // Register customer page
 router.get('/register/customer', (req, res) => {
-  res.setSeo(seoConfigs.registerDealership);
   res.render('register-customer', { title: 'Customer Registration', error: null });
 });
 

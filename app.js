@@ -1,25 +1,58 @@
-// app.js - Main application entry point WITH SEO
+// app.js - Main Application Entry Point (Production Ready)
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
+
+// Custom Middleware
 const auditLog = require('./middleware/audit');
-const { seoMiddleware } = require('./middleware/seo'); // NEW: SEO middleware
+const { seoMiddleware } = require('./middleware/seo');
+
+// Security & Performance Packages
+const compression = require('compression');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
  
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// ==========================================
+// 1. SECURITY & PERFORMANCE MIDDLEWARE
+// ==========================================
+// Hide Express signature and set security headers
+app.use(helmet({
+    contentSecurityPolicy: false, // Disabled temporarily to allow external QR scripts and fonts
+}));
+app.use(cors());
+
+// Compress responses for faster load times on mobile data
+app.use(compression());
+
+// Basic Rate Limiting to prevent brute-force attacks
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.'
+});
+app.use('/login', limiter); // Apply rate limiting to login routes
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Cache static assets for 1 year to improve returning visitor speed
+app.use(express.static(path.join(__dirname, 'public'), {
+    maxAge: '1y',
+    etag: true
+}));
 
-// ===== DIRECTORY SETUP =====
+// ==========================================
+// 2. VERCEL DIRECTORY SETUP
+// ==========================================
 const isProd = process.env.NODE_ENV === 'production';
 const uploadBaseDir = isProd ? '/tmp/uploads' : path.join(__dirname, 'public/uploads');
 const qrBaseDir = isProd ? '/tmp/qr-codes' : path.join(__dirname, 'public/qr-codes');
@@ -39,21 +72,21 @@ requiredDirs.forEach(dir => {
   }
 });
 
+// ==========================================
+// 3. SESSION & LOCAL VARIABLES
+// ==========================================
 app.use(session({
   secret: process.env.SESSION_SECRET || 'before-you-sign-secret-key-2024',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 24 * 60 * 60 * 1000, // 1 Day
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production'
+    secure: isProd
   }
 }));
 
-// ===== SEO MIDDLEWARE (NEW) =====
-app.use(seoMiddleware);
-
-// User session middleware
+// Construct user object from session properties
 app.use((req, res, next) => {
   res.locals.session = req.session;
   res.locals.user = req.session.userId ? {
@@ -68,9 +101,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// ====================
-// IMPORT & USE ROUTES
-// ====================
+// ==========================================
+// 4. GLOBAL SEO MIDDLEWARE
+// ==========================================
+app.use(seoMiddleware);
+
+// ==========================================
+// 5. IMPORT & USE ROUTES
+// ==========================================
 const authRoutes = require('./routes/auth');
 const dealershipRoutes = require('./routes/dealership');
 const adminRoutes = require('./routes/admin');
@@ -83,9 +121,9 @@ app.use('/admin', adminRoutes);
 app.use('/customer', customerRoutes);
 app.use('/vehicle', vehicleRoutes);
 
-// ====================
-// STATIC FILE SERVING
-// ====================
+// ==========================================
+// 6. STATIC FILE SERVING (/tmp for Vercel)
+// ==========================================
 app.get('/uploads/vehicles/:filename', (req, res) => {
   const filePath = path.join(isProd ? '/tmp/uploads/vehicles' : path.join(__dirname, 'public/uploads/vehicles'), req.params.filename);
   res.sendFile(filePath);
@@ -99,27 +137,21 @@ app.get('/uploads/documents/:filename', (req, res) => {
   res.sendFile(filePath);
 });
 
-// ====================
-// SITEMAP ROUTE (NEW)
-// ====================
+// ==========================================
+// 7. SEO METADATA ROUTES (With Caching)
+// ==========================================
 app.get('/sitemap.xml', (req, res) => {
   res.setHeader('Content-Type', 'application/xml');
   res.setHeader('Cache-Control', 'public, max-age=3600');
   res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
 
-// ====================
-// ROBOTS.TXT ROUTE (NEW)
-// ====================
 app.get('/robots.txt', (req, res) => {
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Cache-Control', 'public, max-age=86400');
   res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
 });
 
-// ====================
-// WEBMANIFEST ROUTE (NEW)
-// ====================
 app.get('/site.webmanifest', (req, res) => {
   res.setHeader('Content-Type', 'application/manifest+json');
   res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -128,14 +160,14 @@ app.get('/site.webmanifest', (req, res) => {
 
 app.use(auditLog);
 
-// ====================
-// 404 HANDLER (UPDATED WITH SEO)
-// ====================
+// ==========================================
+// 8. SEO-FRIENDLY ERROR HANDLERS
+// ==========================================
 app.use((req, res) => {
   res.status(404).render('404', {
     title: 'Page Not Found | Before You Sign',
     message: 'The page you are looking for does not exist.',
-    noindex: true,
+    noindex: true, // Prevents Google from indexing 404 pages
     breadcrumbs: [
       { name: 'Home', url: '/' },
       { name: 'Page Not Found', active: true }
@@ -143,9 +175,6 @@ app.use((req, res) => {
   });
 });
 
-// ====================
-// ERROR HANDLER (UPDATED WITH SEO)
-// ====================
 app.use((err, req, res, next) => {
     console.error('Error:', {
         message: err.message,
