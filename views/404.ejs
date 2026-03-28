@@ -1,23 +1,622 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Before You Sign</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --white: #ffffff;
+            --accent: #00a651;
+            --accent-light: #00c25e;
+            --accent-dark: #007237;
+            --gray-50: #fafafa;
+            --gray-100: #f4f4f5;
+            --gray-200: #e4e4e7;
+            --gray-300: #d4d4d8;
+            --gray-400: #a1a1aa;
+            --gray-500: #71717a;
+            --gray-600: #52525b;
+            --gray-700: #3f3f46;
+            --gray-800: #27272a;
+            --gray-900: #18181b;
+            --danger: #ef4444;
+            --radius: 1.25rem;
+            --radius-lg: 0.2rem;
+            --radius-xl: 0.2rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom-color: var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--black);
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-brand img {
+            height: 35px;
+            width: auto;
+        }
+
+        .nav-brand span {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Error Section */
+        .error-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 2rem 4rem;
+            background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-bg-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(239, 68, 68, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 166, 81, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 60% 80%, rgba(0, 0, 0, 0.02) 0%, transparent 30%);
+            pointer-events: none;
+        }
+
+        .error-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Animated 404 Display */
+        .error-code-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .error-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(6rem, 15vw, 12rem);
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--gray-200) 0%, var(--gray-400) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            letter-spacing: -0.05em;
+        }
+
+        .error-code::after {
+            content: '404';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            clip-path: inset(0 100% 0 0);
+            animation: revealText 2s ease-out forwards;
+        }
+
+        @keyframes revealText {
+            to {
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        /* Glitch Effect Overlay */
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: glitch 3s infinite;
+            animation-delay: 2s;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { opacity: 0; transform: translate(0); }
+            92% { opacity: 0.8; transform: translate(-2px, 2px); }
+            94% { opacity: 0; transform: translate(2px, -2px); }
+            96% { opacity: 0.8; transform: translate(-2px, -2px); }
+            98% { opacity: 0; transform: translate(2px, 2px); }
+        }
+
+        /* Error Content */
+        .error-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .error-title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            color: var(--black);
+        }
+
+        .error-message {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        /* Search Box */
+        .error-search {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl), 0 0 0 1px var(--gray-200);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            margin-bottom: 1rem;
+            color: var(--gray-700);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.6rem;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-button {
+            width: 100%;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: 0.6rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .search-button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Action Buttons */
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--white);
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--gray-700);
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--black);
+            color: var(--black);
+            transform: translateY(-2px);
+        }
+
+        /* Helpful Links */
+        .helpful-links {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .helpful-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .link-card {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            text-decoration: none;
+            color: var(--gray-700);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .link-card:hover {
+            background: var(--white);
+            border-color: var(--accent);
+            color: var(--black);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .link-card:hover .link-icon {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .link-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .simple-footer {
+            background: var(--black);
+            color: var(--gray-400);
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .simple-footer a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .simple-footer a:hover {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .error-section {
+                padding: 100px 1.5rem 3rem;
+            }
+
+            .error-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .links-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            .error-code::after {
+                animation: none;
+                clip-path: inset(0 0 0 0);
+            }
+            
+            .glitch-overlay {
+                animation: none;
+            }
+        }
+    </style>
 </head>
 <body>
-  <%- include('partials/header') %>
-  
-  <div class="container">
-    <div class="card" style="text-align: center;">
-      <h1 style="font-size: 4rem; color: var(--primary);">404</h1>
-      <h2>Page Not Found</h2>
-      <p><%= message %></p>
-      <a href="/" class="btn btn-primary">Go Home</a>
-    </div>
-  </div>
-  
-  <%- include('partials/footer') %>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/assets/logo-original.png" alt="Before You Sign">
+                <span>Before You Sign</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Error Section -->
+    <section class="error-section">
+        <div class="error-bg-pattern"></div>
+        
+        <div class="error-container">
+            <!-- Animated 404 -->
+            <div class="error-code-wrapper">
+                <div class="error-code">404</div>
+                <div class="glitch-overlay">404</div>
+            </div>
+
+            <!-- Error Badge -->
+            <div class="error-badge">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Page Not Found</span>
+            </div>
+
+            <!-- Content -->
+            <h1 class="error-title">Looks like this page took a wrong turn</h1>
+            <p class="error-message">
+                <%= message || "The page you're looking for doesn't exist or may have been moved. Don't worry—your vehicle verification journey doesn't end here." %>
+            </p>
+
+            <!-- Search Box -->
+            <div class="error-search">
+                <div class="search-label">
+                    <i class="fas fa-search" style="color: var(--accent);"></i>
+                    Search for a vehicle instead
+                </div>
+                <form action="/vehicles/search" method="GET">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-barcode search-icon"></i>
+                        <input 
+                            type="text" 
+                            name="vin" 
+                            class="search-input" 
+                            placeholder="Enter 17-digit VIN number"
+                            maxlength="17"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-shield-alt"></i>
+                        Verify Vehicle
+                    </button>
+                </form>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="error-actions">
+                <a href="/" class="btn-primary">
+                    <i class="fas fa-home"></i>
+                    Back to Home
+                </a>
+                <a href="/vehicles" class="btn-secondary">
+                    <i class="fas fa-car"></i>
+                    Browse Vehicles
+                </a>
+            </div>
+
+            <!-- Helpful Links -->
+            <div class="helpful-links">
+                <div class="helpful-title">Popular Destinations</div>
+                <div class="links-grid">
+                    <a href="/vehicles" class="link-card">
+                        <div class="link-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <span class="link-text">Browse Cars</span>
+                    </a>
+                    <a href="/#how-it-works" class="link-card">
+                        <div class="link-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <span class="link-text">How It Works</span>
+                    </a>
+                    <a href="/register/dealership" class="link-card">
+                        <div class="link-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <span class="link-text">For Dealers</span>
+                    </a>
+                    <a href="mailto:mxolisimkhonza23@gmail.com" class="link-card">
+                        <div class="link-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span class="link-text">Contact Us</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simple Footer -->
+    <footer class="simple-footer">
+        <p>&copy; <%= new Date().getFullYear() %> Before You Sign. All rights reserved. | 
+        <a href="/">Return to Safety</a></p>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const nav = document.getElementById('nav');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        }, { passive: true });
+
+        // VIN input validation (same as homepage)
+        const vinInput = document.querySelector('input[name="vin"]');
+        
+        if (vinInput) {
+            vinInput.addEventListener('input', (e) => {
+                let value = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, '');
+                e.target.value = value;
+            });
+        }
+
+        // Trigger nav effect on load
+        window.dispatchEvent(new Event('scroll'));
+    </script>
 </body>
 </html>
