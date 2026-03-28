@@ -29,6 +29,11 @@ router.get('/', (req, res) => {
   res.render('index', { title: 'Before You Sign - Home' });
 });
 
+// Home page
+router.get('/about', (req, res) => {
+  res.render('about', { title: 'Before You Sign - About' });
+});
+
 // ==========================================
 //  NEW: PUBLIC VEHICLE SEARCH ROUTE
 // ==========================================
